@@ -19,6 +19,7 @@ namespace LingsuMVP
 
         private Hero _hero;
         private bool _canEvolve = false;
+        private bool _hasEvolved = false;
 
         private void Awake()
         {
@@ -53,6 +54,11 @@ namespace LingsuMVP
                     _canEvolve = canEvolve;
                     UpdateButtonState();
                 }
+
+                if (_canEvolve && !_hasEvolved)
+                {
+                    OnEvolutionClicked();
+                }
             }
         }
 
@@ -60,12 +66,12 @@ namespace LingsuMVP
         {
             if (evolutionButton != null)
             {
-                evolutionButton.interactable = _canEvolve;
+                evolutionButton.interactable = _canEvolve && !_hasEvolved;
             }
 
             if (statusText != null)
             {
-                statusText.text = _canEvolve ? "可以进化！" : $"需要{materialCost}个材料";
+                statusText.text = _hasEvolved ? "Evolution complete" : (_canEvolve ? "Auto evolving" : $"Need {materialCost} materials");
             }
         }
 
@@ -75,7 +81,7 @@ namespace LingsuMVP
 
             if (buttonText != null)
             {
-                buttonText.text = "进化";
+                buttonText.text = "Evolve";
             }
         }
 
@@ -95,6 +101,7 @@ namespace LingsuMVP
             if (DropSystem.Instance.ConsumeMaterials(materialCost))
             {
                 ApplyEvolution();
+                _hasEvolved = true;
                 Debug.Log($"Evolution successful! HP: {_hero.hp}->{_hero.hp + hpBonus}, ATK: {_hero.attack}->{_hero.attack + attackBonus}, DEF: {_hero.defense}->{_hero.defense + defenseBonus}");
             }
             else
@@ -116,6 +123,7 @@ namespace LingsuMVP
         public void ResetEvolution()
         {
             _canEvolve = false;
+            _hasEvolved = false;
             UpdateUI();
         }
     }

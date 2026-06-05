@@ -11,14 +11,20 @@ namespace LingsuMVP
         public int defense = 5;
 
         private BattleManager _battleManager;
+        private int _initialHp;
+        private int _initialAttack;
+        private int _initialDefense;
 
         public void Initialize(BattleManager battleManager)
         {
             _battleManager = battleManager;
             maxHp = hp;
+            _initialHp = hp;
+            _initialAttack = attack;
+            _initialDefense = defense;
         }
 
-        public void TakeDamage(int damage)
+        public int TakeDamage(int damage)
         {
             int actualDamage = Mathf.Max(1, damage - defense);
             hp -= actualDamage;
@@ -30,6 +36,8 @@ namespace LingsuMVP
             {
                 Die();
             }
+
+            return actualDamage;
         }
 
         public void Attack(Monster target)
@@ -37,7 +45,13 @@ namespace LingsuMVP
             if (target != null && target.gameObject.activeSelf)
             {
                 int damage = attack;
-                target.TakeDamage(damage);
+                CombatFeedback.PlayBasicAttack(
+                    this,
+                    transform,
+                    target.transform,
+                    damage,
+                    new Color(1f, 0.42f, 0.12f, 1f),
+                    () => target.TakeDamage(damage));
                 Debug.Log($"Hero attacks Monster for {damage} damage!");
             }
         }
@@ -58,10 +72,10 @@ namespace LingsuMVP
 
         public void ResetStats()
         {
-            hp = 100;
-            maxHp = 100;
-            attack = 10;
-            defense = 5;
+            hp = _initialHp;
+            maxHp = _initialHp;
+            attack = _initialAttack;
+            defense = _initialDefense;
         }
     }
 }

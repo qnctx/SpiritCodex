@@ -8,8 +8,10 @@ namespace LingsuMVP
         [Header("References")]
         public Hero hero;
         public List<Monster> monsters = new List<Monster>();
+        public SkillController skillController;
         public Monster bossPrefab;
         public Transform bossSpawnPoint;
+        public MonsterConfig bossConfig;
 
         [Header("Attack Intervals")]
         public float heroAttackInterval = 1f;
@@ -20,8 +22,18 @@ namespace LingsuMVP
         private float _monsterTimer = 0f;
         private float _bossTimer = 0f;
         private Monster _activeBoss;
+        private Sprite _runtimeBossSprite;
         private bool _bossSpawned = false;
         private bool _battleActive = false;
+        private int _nextMonsterAttackIndex = 0;
+        private int _currentStage = 1;
+        private UnitHealthBar _activeBossHealthBar;
+        private Monster _selectedMonster;
+
+        public Monster SelectedMonster
+        {
+            get { return _selectedMonster; }
+        }
 
         private void Update()
         {
@@ -51,15 +63,29 @@ namespace LingsuMVP
                     _activeBoss.Attack(hero);
                 }
             }
+
+            if (!_bossSpawned && AreAllMonstersDead())
+            {
+                SpawnBoss();
+            }
         }
 
         private void TriggerMonsterAttacks()
         {
-            foreach (Monster monster in monsters)
+            if (monsters.Count == 0)
             {
-                if (monster != null && monster.gameObject.activeSelf)
+                return;
+            }
+
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                int index = (_nextMonsterAttackIndex + i) % monsters.Count;
+                Monster monster = monsters[index];
+                if (monster != null && monster.IsAlive)
                 {
                     monster.Attack(hero);
+                    _nextMonsterAttackIndex = (index + 1) % monsters.Count;
+                    return;
                 }
             }
         }
@@ -68,20 +94,25 @@ namespace LingsuMVP
         {
             if (hero == null) return;
 
-            // Attack the first active monster
-            foreach (Monster monster in monsters)
+            Monster target = GetCurrentTarget();
+            if (target != null)
             {
-                if (monster != null && monster.gameObject.activeSelf)
+                hero.Attack(target);
+                if (skillController != null)
                 {
-                    hero.Attack(monster);
-                    return;
+                    skillController.GrantBasicAttackEnergy();
                 }
+                return;
             }
 
             // If no monsters, attack boss if exists
             if (_activeBoss != null && _activeBoss.gameObject.activeSelf)
             {
                 hero.Attack(_activeBoss);
+                if (skillController != null)
+                {
+                    skillController.GrantBasicAttackEnergy();
+                }
             }
         }
 
@@ -91,6 +122,19 @@ namespace LingsuMVP
             _heroTimer = 0f;
             _monsterTimer = 0f;
             _bossTimer = 0f;
+            _nextMonsterAttackIndex = 0;
+        }
+
+        public void SetStage(int stageIndex)
+        {
+            _currentStage = Mathf.Max(1, stageIndex);
+            foreach (Monster monster in monsters)
+            {
+                if (monster != null)
+                {
+                    monster.ApplyStageScale(_currentStage);
+                }
+            }
         }
 
         public void StopBattle()
@@ -98,26 +142,95 @@ namespace LingsuMVP
             _battleActive = false;
         }
 
-        public void OnMonsterDead(Monster monster, bool isBoss)
+        public Monster GetFirstAliveMonster()
         {
-            if (!isBoss)
+            foreach (Monster monster in monsters)
             {
-                // Check if all monsters are dead
-                bool allMonstersDead = true;
-                foreach (Monster m in monsters)
+                if (monster != null && monster.IsAlive)
                 {
-                    if (m != null && m.gameObject.activeSelf)
-                    {
-                        allMonstersDead = false;
-                        break;
-                    }
-                }
-
-                if (allMonstersDead && !_bossSpawned)
-                {
-                    SpawnBoss();
+                    return monster;
                 }
             }
+
+            return null;
+        }
+
+        public Monster GetCurrentTarget()
+        {
+            if (_selectedMonster != null && _selectedMonster.IsAlive)
+            {
+                return _selectedMonster;
+            }
+
+            _selectedMonster = GetFirstAliveMonster();
+            if (_selectedMonster != null)
+            {
+                return _selectedMonster;
+            }
+
+            return GetActiveBoss();
+        }
+
+        public Monster GetActiveBoss()
+        {
+            if (_activeBoss != null && _activeBoss.IsAlive)
+            {
+                return _activeBoss;
+            }
+
+            return null;
+        }
+
+        public void SelectMonster(Monster monster)
+        {
+            if (monster != null && monster.IsAlive)
+            {
+                _selectedMonster = monster;
+            }
+        }
+
+        public void OnMonsterDead(Monster monster, bool isBoss)
+        {
+            // Trigger drop for every kill
+            if (DropSystem.Instance != null)
+            {
+                Vector3 dropPosition = monster != null ? monster.transform.position : Vector3.zero;
+                DropSystem.Instance.OnMonsterDead(isBoss, dropPosition);
+            }
+
+            if (isBoss)
+            {
+                OnBossDead();
+                return;
+            }
+
+            if (_selectedMonster == monster)
+            {
+                _selectedMonster = null;
+            }
+
+            if (AreAllMonstersDead() && !_bossSpawned)
+            {
+                SpawnBoss();
+            }
+        }
+
+        private bool AreAllMonstersDead()
+        {
+            if (monsters.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (Monster monster in monsters)
+            {
+                if (monster != null && !monster.IsCleared)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void SpawnBoss()
@@ -127,25 +240,127 @@ namespace LingsuMVP
             {
                 _activeBoss = Instantiate(bossPrefab, bossSpawnPoint.position, Quaternion.identity);
                 _activeBoss.Initialize(this, true);
+                _activeBoss.ApplyStageScale(_currentStage);
                 Debug.Log("BOSS has appeared!");
+                return;
             }
+
+            if (bossConfig != null && bossSpawnPoint != null)
+            {
+                _activeBoss = CreateRuntimeBoss();
+                Debug.Log("Runtime BOSS has appeared!");
+                return;
+            }
+
+            Debug.LogWarning("Boss config not set. Auto-victory after clearing all monsters.");
+            OnBossDead();
+        }
+
+        private Monster CreateRuntimeBoss()
+        {
+            GameObject bossObject = new GameObject(string.IsNullOrEmpty(bossConfig.id) ? "Boss" : bossConfig.id);
+            bossObject.transform.position = bossSpawnPoint.position;
+
+            SpriteRenderer renderer = bossObject.AddComponent<SpriteRenderer>();
+            renderer.sprite = GetRuntimeBossSprite();
+            renderer.color = new Color(1f, 0.22f, 0.2f, 1f);
+            renderer.sortingOrder = 9;
+
+            Monster boss = bossObject.AddComponent<Monster>();
+            boss.hp = ScaleHpForStage(bossConfig.hp);
+            boss.maxHp = boss.hp;
+            boss.attack = ScaleAttackForStage(bossConfig.attack);
+            boss.defense = bossConfig.defense;
+
+            FitSpriteHeight(bossObject.transform, renderer, bossConfig.spriteHeight);
+            boss.Initialize(this, true);
+            _activeBossHealthBar = CreateBossHealthBar(bossObject.transform, boss);
+            return boss;
+        }
+
+        private int ScaleHpForStage(int baseHp)
+        {
+            float scale = 1f + (_currentStage - 1) * 0.25f;
+            return Mathf.Max(1, Mathf.RoundToInt(baseHp * scale));
+        }
+
+        private int ScaleAttackForStage(int baseAttack)
+        {
+            float scale = 1f + (_currentStage - 1) * 0.15f;
+            return Mathf.Max(1, Mathf.RoundToInt(baseAttack * scale));
+        }
+
+        private Sprite GetRuntimeBossSprite()
+        {
+            if (_runtimeBossSprite != null)
+            {
+                return _runtimeBossSprite;
+            }
+
+            foreach (Monster monster in monsters)
+            {
+                if (monster == null)
+                {
+                    continue;
+                }
+
+                SpriteRenderer renderer = monster.GetComponent<SpriteRenderer>();
+                if (renderer != null && renderer.sprite != null)
+                {
+                    _runtimeBossSprite = renderer.sprite;
+                    return _runtimeBossSprite;
+                }
+            }
+
+            return null;
+        }
+
+        private static void FitSpriteHeight(Transform transform, SpriteRenderer renderer, float targetHeight)
+        {
+            if (renderer == null || renderer.sprite == null || renderer.sprite.bounds.size.y <= 0f || targetHeight <= 0f)
+            {
+                return;
+            }
+
+            float scale = targetHeight / renderer.sprite.bounds.size.y;
+            transform.localScale = new Vector3(scale, scale, 1f);
+        }
+
+        private static UnitHealthBar CreateBossHealthBar(Transform target, Monster boss)
+        {
+            GameObject barObject = new GameObject("BossHealthBar");
+            UnitHealthBar healthBar = barObject.AddComponent<UnitHealthBar>();
+            healthBar.target = target;
+            healthBar.monster = boss;
+            healthBar.worldOffset = new Vector3(0f, 0.92f, 0f);
+            healthBar.width = 1.05f;
+            healthBar.fillColor = new Color(0.95f, 0.15f, 0.12f, 1f);
+            return healthBar;
         }
 
         public void OnHeroDead()
         {
-            StopBattle();
-            if (GameManager.Instance != null)
+            if (_bossSpawned && _activeBoss != null && !_activeBoss.IsAlive)
             {
-                GameManager.Instance.SetGameState(GameManager.GameState.Defeat);
+                StopBattle();
+                return;
+            }
+
+            StopBattle();
+            GameManager gameManager = GameManager.Instance != null ? GameManager.Instance : FindObjectOfType<GameManager>();
+            if (gameManager != null)
+            {
+                gameManager.SetGameState(GameManager.GameState.Defeat);
             }
         }
 
         public void OnBossDead()
         {
             StopBattle();
-            if (GameManager.Instance != null)
+            GameManager gameManager = GameManager.Instance != null ? GameManager.Instance : FindObjectOfType<GameManager>();
+            if (gameManager != null)
             {
-                GameManager.Instance.SetGameState(GameManager.GameState.Victory);
+                gameManager.SetGameState(GameManager.GameState.Victory);
             }
         }
 
@@ -156,11 +371,33 @@ namespace LingsuMVP
             _heroTimer = 0f;
             _monsterTimer = 0f;
             _bossTimer = 0f;
+            _nextMonsterAttackIndex = 0;
+            _selectedMonster = null;
+
+            if (skillController != null)
+            {
+                skillController.ResetEnergy();
+            }
+
+            // Reset all monsters
+            foreach (Monster monster in monsters)
+            {
+                if (monster != null)
+                {
+                    monster.ResetMonster();
+                }
+            }
 
             if (_activeBoss != null)
             {
                 Destroy(_activeBoss.gameObject);
                 _activeBoss = null;
+            }
+
+            if (_activeBossHealthBar != null)
+            {
+                Destroy(_activeBossHealthBar.gameObject);
+                _activeBossHealthBar = null;
             }
         }
 

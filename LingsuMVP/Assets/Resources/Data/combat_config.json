@@ -1,0 +1,75 @@
+{
+  "hero": {
+    "hp": 100,
+    "attack": 10,
+    "defense": 5,
+    "positionX": 0.0,
+    "positionY": -2.35,
+    "spriteHeight": 2.8
+  },
+  "battle": {
+    "heroAttackInterval": 1.0,
+    "monsterAttackInterval": 1.0,
+    "bossAttackInterval": 0.8
+  },
+  "monsters": [
+    {
+      "id": "Monster1",
+      "hp": 30,
+      "attack": 5,
+      "defense": 2,
+      "positionX": -3.0,
+      "positionY": 1.15,
+      "spriteHeight": 1.15
+    },
+    {
+      "id": "Monster2",
+      "hp": 30,
+      "attack": 5,
+      "defense": 2,
+      "positionX": 0.0,
+      "positionY": 1.35,
+      "spriteHeight": 1.15
+    },
+    {
+      "id": "Monster3",
+      "hp": 60,
+      "attack": 5,
+      "defense": 2,
+      "positionX": 3.0,
+      "positionY": 1.15,
+      "spriteHeight": 1.15
+    }
+  ],
+  "boss": {
+    "id": "Boss",
+    "hp": 90,
+    "attack": 10,
+    "defense": 4,
+    "positionX": 0.0,
+    "positionY": 2.0,
+    "spriteHeight": 1.55
+  },
+  "skills": {
+    "skillOneCooldown": 4.0,
+    "skillOneDamageMultiplier": 2,
+    "skillTwoCooldown": 5.0,
+    "skillTwoInitialDamage": 5,
+    "skillTwoBurnDamage": 5,
+    "skillTwoBurnTicks": 3,
+    "skillTwoBurnInterval": 0.75,
+    "maxEnergy": 100,
+    "basicAttackEnergyGain": 20,
+    "skillOneEnergyGain": 25,
+    "skillTwoEnergyGain": 25,
+    "ultimateDamage": 18
+  },
+  "drops": {
+    "monsterDropAmount": 1,
+    "bossDropAmount": 5
+  },
+  "bossSpawn": {
+    "positionX": 0.0,
+    "positionY": 2.0
+  }
+}

@@ -1,67 +1,116 @@
-# LingsuMVP · 最小可行测试
+# LingsuMVP
 
-> 灵素图谱的最小可运行单元，用于验证核心循环是否走得通。
+`LingsuMVP` 是 SpiritCodex 当前的 Unity/Tuanjie 原型工程。
 
-## 🎯 定位
+它现在的目标不是发布正式游戏，而是用一个个小闭环验证核心玩法。长期目标仍然是移动端策略养成手游；Windows `.exe` 只是本地测试用的临时构建。
 
-本目录是 **SpiritCodex 的一个子项目**，采用「小步验证」策略：
+## 当前原型状态
 
-```
-SpiritCodex（主项目，统一规划）
-├── LingsuMVP/          ← 本目录：最小闭环测试
-│   ├── 战斗 → 掉落 → 进化 → 通关
-│   └── 验证核心玩法循环是否成立
-└── 其他子模块/          ← 后续逐步拆分测试
-    ├── 角色系统
-    ├── 元素融合
-    ├── PVP 模块
-    └── ...
+当前已经验证的最小循环：
+
+```text
+进入战斗
+  -> Hero 和小怪自动战斗
+  -> 小怪死亡后掉落材料
+  -> 敌人清空后出现 Victory
+  -> Hero 死亡后出现 Defeat
 ```
 
-## 📦 当前实现（v0.1）
+这说明第一个最小 MVP 已经跑通，但它还不是一个完整战斗 Demo。
 
-仅包含 **6 个脚本**，跑通最基础的游戏循环：
+## 重要场景说明
 
-| 文件 | 职责 |
-|------|------|
-| `BattleManager.cs` | 战斗流程管理 |
-| `GameManager.cs` | 游戏状态管理 |
-| `Hero.cs` | 角色属性与技能 |
-| `Monster.cs` | 怪物AI与属性 |
-| `DropSystem.cs` | 掉落逻辑 |
-| `EvolutionUI.cs` | 进化界面 |
-| `GameScene.unity` | Unity场景 |
+现在只使用这个场景：
 
-## 🔄 核心循环（已验证）
-
-```
-战斗 (BattleManager)
-  → 击杀怪物 (Monster)
-    → 触发掉落 (DropSystem)
-      → 获得材料
-        → 进化角色 (EvolutionUI)
-          → 阵容变强
-            → 挑战更高难度关卡
-              → 循环
+```text
+Assets/Scenes/GameSceneClean.unity
 ```
 
-## ⚠️ 缺失内容（未完成）
+不要打开旧的 `GameScene.unity` 或 `.bak` 备份文件。旧场景已经损坏，曾经导致编辑器崩溃。
 
-- Unity 项目配置文件（`Packages/manifest.json` 等）
-- UI 界面（主菜单、背包、关卡选择）
-- 数值平衡与配置表
-- 存档与持久化
-- Android APK 打包
+干净场景主要依赖运行时自动搭建：
 
-## 📐 设计原则
+```text
+Assets/Scripts/MVPBootstrapper.cs
+```
 
-1. **MVP 优先**：先跑通核心循环，不做复杂设计
-2. **快速验证**：每个子模块独立测试后再合并
-3. **原子化拆分**：一个目录测一个明确的小目标
-4. **数据驱动**：数值和配置与代码分离
+## 当前脚本职责
 
-## 🔗 关联
+| 文件 | 作用 |
+| --- | --- |
+| `BattleManager.cs` | 管理自动战斗、攻击计时、胜负判断 |
+| `Hero.cs` | Hero 血量、攻击、防御、受伤、重置 |
+| `Monster.cs` | 小怪/Boss 血量、攻击、防御、死亡 |
+| `DropSystem.cs` | 材料掉落和材料数量 UI |
+| `EvolutionUI.cs` | 临时进化测试逻辑 |
+| `GameManager.cs` | 游戏状态、Victory/Defeat 面板、重开流程 |
+| `MVPBootstrapper.cs` | 运行时创建相机、UI、Hero、小怪和管理器 |
 
-- 主设计文档：`game-design-doc.md`
-- 美术设计文档：`game-art-design.md`
-- 仓库：https://github.com/qnctx/SpiritCodex
+## 当前限制
+
+这些问题在当前阶段是预期内的：
+
+- 没有可见攻击动作。
+- 没有弹道、斩击、命中特效、伤害数字。
+- 还没有真正的技能系统。
+- 还没有移动端战斗 UI。
+- 还没有队伍和站位系统。
+- 还没有城镇、角色界面、进化界面。
+- 进化目前只是为了验证“掉落材料 -> 属性增强”的临时逻辑，后续应移出战斗地图。
+- Victory/Defeat 按钮还需要补完整 UI 输入处理，才能稳定点击。
+
+## 编辑器测试流程
+
+1. 打开 Tuanjie Hub。
+2. 打开 `LingsuMVP` 项目。
+3. 打开 `Assets/Scenes/GameSceneClean.unity`。
+4. 点击 `Play`。
+5. 检查：
+   - Hero 和小怪能显示。
+   - 战斗中血量会变化。
+   - 敌人清空后出现 Victory。
+   - Hero 死亡后出现 Defeat。
+   - Console 没有红色报错。
+
+## Build 策略
+
+不要每改一点就 Build。
+
+只有在这些情况才 Build：
+
+- 一个完整小切片已经做完。
+- 编辑器 Play Mode 已经验证通过。
+- 需要确认 Windows 独立运行版是否正常。
+
+当前阶段主要在编辑器 Play Mode 里测试。
+
+## 下一阶段目标
+
+下一阶段是：
+
+```text
+v0.2 战斗表现原型
+```
+
+目标：
+
+```text
+让当前自动战斗看起来像一场真正的战斗。
+```
+
+计划功能：
+
+- Hero 和小怪头顶血条。
+- 可见的普通攻击反馈。
+- 简单弹道或攻击闪光。
+- 目标受击闪烁。
+- 飘字伤害数字。
+- 死亡淡出或缩小。
+- Victory/Defeat 按钮可点击重开。
+- 暂时隐藏战斗中的 Evolve 按钮。
+
+详细拆分见：
+
+```text
+docs/mvp-development-plan.md
+```

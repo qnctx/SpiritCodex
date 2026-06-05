@@ -1,0 +1,465 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 26
+  productGUID: 8a2f1c3d4e5b6a7d9c0e1f2a3b4c5d6e
+  AndroidProfiler: 0
+  defaultScreenOrientation: 4
+  targetDevice: 2
+  targetPlatform: 2
+  useOnDemandResourcesAPIForAssetBundles: 0
+  useSRGBBackBuffer: 1
+  useRGBA4BackBuffer: 1
+  m_ColorGamuts: 00000000
+  targetPixelDensity: 30
+  resolutionScalingMode: 0
+  resetResolutionOnWindowResize: 0
+  androidSupportedAspectRatio: 1
+  androidMaxAspectRatio: 2.1
+  applicationIdentifier:
+    Standalone: com.lingsu.mvp
+  buildNumber:
+    Standalone: 0
+  AndroidBundleVersionCode: 1
+  AndroidMinSdkVersion: 22
+  AndroidTargetSdkVersion: 0
+  AndroidPreferredInstallLocation: 1
+  aotOptions:
+  stripEngineCode: 1
+  iPhoneStrippingLevel: 0
+  iPhoneScriptCallOptimization: 0
+  ForceInternetPermission: 0
+  ForceSDCardPermission: 0
+  CreateWallpaper: 0
+  enabledVRDevices: []
+  enableNativePlatformBackButtonForTouchInput: 0
+  disableHWStatistics: 0
+  iPhoneBundleIdentifier:
+  iPhoneBuildNumber: 0
+  iPhoneSdkVersion: 988
+  iPhoneTargetOSVersion: 22
+  uIPrerenderedIcon: 0
+  uIRequiresPersistentWiFi: 0
+  uIRequiresFullScreen: 1
+  uIStatusBarHidden: 1
+  uIExitOnSuspend: 0
+  uIStatusBarStyle: 0
+  iPhoneSplashScreen: {fileID: 0}
+  iPhoneHighResSplashScreen: {fileID: 0}
+  iPhoneTallHighResSplashScreen: {fileID: 0}
+  iPhone47inSplashScreen: {fileID: 0}
+  iPhone55inPortraitSplashScreen: {fileID: 0}
+  iPhone55inLandscapeSplashScreen: {fileID: 0}
+  iPhone58inPortraitSplashScreen: {fileID: 0}
+  iPhone58inLandscapeSplashScreen: {fileID: 0}
+  iPadPortraitSplashScreen: {fileID: 0}
+  iPadHighResPortraitSplashScreen: {fileID: 0}
+  iPadLandscapeSplashScreen: {fileID: 0}
+  iPadHighResLandscapeSplashScreen: {fileID: 0}
+  appleTVSplashScreen: {fileID: 0}
+  appleTVSmallSplashScreen: {fileID: 0}
+  appleTVSplashScreen2x: {fileID: 0}
+  appleTVSmallSplashScreen2x: {fileID: 0}
+  AndroidKeystoreName:
+  AndroidKeystorePassword:
+  AndroidKeyAliasName:
+  AndroidKeyAliasPassword:
+  AndroidEnableArmv9SecurityFeatures: 0
+  defaultScreenWidthWeb: 960
+  defaultScreenHeightWeb: 600
+  webPlayerTemplate: APPLICATION:Default
+  runInBackground: 1
+  captureSingleScreen: 0
+  muteOtherAudioSources: 0
+  Prepare IOS For Recording: 1
+  Force IOS Speakers When Recording: 0
+  audioSpatialExperience: 0
+  useMacAppStoreValidation: 0
+  macAppStoreCategory: public.app-category.games
+  usePlayerLog: 1
+  bakeCollisionMeshes: 0
+  useScriptsCache: 1
+  explicitNullChecks: 0
+  explicitDivideByZeroWarnings: 0
+  suppressCommonWarnings: 1
+  preloadedAssets: []
+  metroInputSource: 0
+  wsaTransparentSwapchain: 0
+  m_HolographicPauseOnTrackingLoss: 1
+  xboxOneDisableKinectGpuReservation: 1
+  xboxOneEnable7thCore: 1
+  vrSettings:
+    cardboardDepthFormat: 0
+    enable360StereoCapture: 0
+  isWsaHolographicRemotingEnabled: 0
+  protectGraphicsMemoryInBackground: 0
+  enableFrameTimingStats: 0
+  useHDRDisplay: 0
+  D3DHDRBitDepth: 0
+  m_ColorGamut: 0
+  targetPixelDensity: 30
+  m_RenderingPath: 1
+  m_MobileRenderingPath: 1
+  m_ActivePlatformTarget: 0
+  m_StackTraceTypes: 010000000100000001000000010000000100000001000000
+  m_Il2CppCompilerConfiguration: {}
+  m_ManagedDebugging: 0
+  m_EnableRenderThread: 1
+  m_EnableEnlightenSceneViewDiskSerialization: 1
+  m_StereoRenderingPath: 0
+  m_ActiveSubsystem:
+  m_OpenGLForceCore: 0
+  m_OpenGLForceCompatibility: 0
+  m_OpenGLForceClampFragShader: 0
+  m_EnableBluetooth: 0
+  m_EnableCustomVirtualTexturing: 0
+  m_VirtualTexturingMasterTextureLimit: 256
+  m_Enable360Camera: 0
+  m_EnableVuforia: 0
+  m_EnableGoogleVR: 0
+  m_EnableSplit: 0
+  m_Enable360StereoCapture: 0
+  m_EnableOculus: 0
+  m_EnableGeneratedShaderName: 0
+  m_EnableGearVr: 0
+  m_EnableKupuna: 0
+  m_EnableDaydream: 0
+  m_EnableArcore: 0
+  m_EnableArkit: 0
+  m_EnableMagicLeap: 0
+  m_EnableWearables: 0
+  m_EnableXiaomi: 0
+  m_EnableVideo: 0
+  companyName: SpiritCodex
+  productName: LingsuMVP
+  defaultCursor: {fileID: 0}
+  cursorHotspot: {x: 0, y: 0}
+  m_ShowUnitySplashScreen: 1
+  m_VirtualGeometryDataRuntimeSupport: 0
+  m_VirtualGeometryDataPlayerUsage: 0
+  m_PlayerGraphicsAPI: 0000000002000000
+  m_ActiveSplashScreen: 0
+  m_SplashScreenBackground:
+    serializedVersion: 2
+    m_Texture: {fileID: 0}
+    m_ScaleMode: 1
+    m_BackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
+    m_OverrideBackgroundColor: 0
+    m_LogoFilterMode: 0
+  m_VirtualRealitySplashScreen: {fileID: 0}
+  m_SplashScreenLogo: {fileID: 0}
+  m_HolographicTrackingLossScreen: {fileID: 0}
+  m_RequestedDpi: 0
+  defaultScreenWidth: 1920
+  defaultScreenHeight: 1080
+  defaultScreenWidthGrowth: 0
+  defaultScreenHeightGrowth: 0
+  m_MTRendering: 1
+  m_MobileMTRendering: 1
+  m_ClampPhysicsStep: 0
+  m_BuildTargetGroupGraphicsAPIs: []
+  m_SupportedAspectRatios:
+    4:3: 0
+    5:4: 0
+    16:10: 0
+    16:9: 1
+    Others: 0
+  m_OpenGLCoreFeatures: 0000000000000000000000000000000000000000000000000000000000000000
+  m_LinuxOpenGLFallback: 0
+  m_AndroidBlitType: 0
+  m_UseDisplayInHDRMode: 1
+  m_DisableBluetoothUpdate: 0
+  m_AllowLargeUIDeviation: 0
+  m_GPUInputShaping: 0
+  m_MinimumStreamingMipLevel: 144
+  m_MaximumStreamingMipLevel: 151
+  spritePackerPolicy:
+  m_PublicDisableSRGBWrite: 0
+  m_LocalDisableSRGBWrite: 0
+  m_BuildTargetEnableVuforia: []
+  m_BuildTargetEnableGoogleVR: []
+  m_BuildTargetEnableMeta: []
+  m_BuildTargetEnableDaydream: []
+  m_BuildTargetEnableArcore: []
+  m_BuildTargetEnableArkit: []
+  m_BuildTargetEnableMagicLeap: []
+  banner: {fileID: 0}
+  apiCompatibilityLevelPerPlatform: {}
+  m_ClampPhysicsTargetFramerate: 0
+  m_EnableNewInputSystem: 0
+  m_ActiveInputHandler: 2
+  cloudProjectId:
+  projectName:
+  organizationId:
+  cloudEnabled: 1
+  legacyClampBlendShapeWeights: 1
+  hmiPlayerDataPath:
+  hmiForceSRGBWriteIntensity: 0
+  hmiUseCustomEditorOnlyScriptExecution: 1
+  hmiVRProjectSplashScreenTexture: {fileID: 0}
+  hmiCustomEditorOnlyScriptExecution: 0
+  hmiIsVisibleInTheBackground: 1
+  inertialSensorSupport: 1
+  hmiGameOptimizationLevel: 0
+  hmiLogLevel: 0
+  hmiUseCustomFoveatedRendering: 0
+  hmiUseCustomFoveatedRenderingMode: 0
+  hmiFoveatedRenderingMethod: 0
+  androidPackageManager:
+  qualitySettings:
+    shadowmaskMode: 0
+    blendWeights: 1
+    vSyncCount: 1
+    lodBias: 1
+    maximumLODLevel: 0
+    streamingMipmapsActive: 0
+    streamingMipmapsAddAllCameras: 1
+    streamingMipmapsMemoryBudget: 512
+    streamingMipmapsRenderersPerFrame: 512
+    streamingMipmapsMaxLevelReduction: 2
+    streamingMipmapsMaxFileIORequests: 1024
+    particleRaycastBudget: 4
+    asyncUploadTimeSlice: 2
+    asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
+    resolutionScalingFixedDPIFactor: 0.5
+    customRenderPipeline: {fileID: 0}
+    excludedTargetPlatforms: []
+  metroPackageName: LingsuMVP
+  metroPackageVersion:
+  metroCertificatePath:
+  metroCertificatePassword:
+  metroCertificateSubject:
+  metroCertificateIssuer:
+  metroCertificateNotAfter: 01000000
+  metroApplicationDescription: LingsuMVP
+  wsaImages: {}
+  metroTileShortName:
+  metroTileShowName: 0
+  metroMediumTileShowName: 0
+  metroLargeTileShowName: 0
+  metroWideTileShowName: 0
+  metroSupportStreamingInstall: 0
+  metroLastRequiredScene: 0
+  metroDefaultTileSize: 1
+  metroTileForegroundText: 2
+  metroTileBackgroundColor: {r: 0.13333334, g: 0.17254902, b: 0.21568628, a: 0}
+  metroSplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
+  metroSplashScreenUseBackgroundColor: 0
+  syncCapabilities: 0
+  platformCapabilities: {}
+  metroFTAName:
+  metroFTAFileTypes: []
+  metroProtocolName:
+  vcxProjDefaultLanguage:
+  XboxOneProductId:
+  XboxOneUpdateKey:
+  XboxOneSandboxId:
+  XboxOneContentId:
+  XboxOneTitleId:
+  XboxOneSCId:
+  XboxOneGameOsOverridePath:
+  XboxOnePackagingOverridePath:
+  XboxOneAppManifestOverridePath:
+  XboxOneVersion: 1.0.0.0
+  XboxOnePackageEncryption: 0
+  XboxOnePackageUpdateGranularity: 2
+  XboxOneDescription:
+  XboxOneLanguage:
+  - enus
+  XboxOneCapability: []
+  XboxOneGameRating: {}
+  XboxOneIsContentPackage: 0
+  XboxOneEnhancedXboxCompatibilityMode: 0
+  XboxOneEnableGPUVariability: 1
+  XboxOneSockets: {}
+  XboxOneSplashScreen: {fileID: 0}
+  XboxOneAllowedProductIds: []
+  XboxOnePersistentLocalStorageSize: 0
+  XboxOneXTitleMemory: 8
+  XboxOneOverrideIdentityName:
+  XboxOneOverrideIdentityPublisher:
+  vrEditorSettings:
+    daydream:
+      daydreamIconForeground: {fileID: 0}
+      daydreamIconBackground: {fileID: 0}
+  luminIcon:
+    m_ModelFolderPath:
+    m_PortalFolderPath:
+  hmiPlayerDataPath:
+  hmiForceSRGBWriteIntensity: 0
+  hmiUseCustomEditorOnlyScriptExecution: 1
+  hmiVRProjectSplashScreenTexture: {fileID: 0}
+  hmiCustomEditorOnlyScriptExecution: 0
+  hmiIsVisibleInTheBackground: 1
+  luminVersion:
+    m_VersionCode: 1
+    m_VersionName:
+  luminSplashScreen: {fileID: 0}
+  luminUsesAppCharm: 0
+  facebookSdkVersion:
+  facebookAppId:
+  facebookCookies: 1
+  facebookLogging: 1
+  facebookStatus: 1
+  facebookXfbml: 0
+  facebookFrictionlessRequests: 1
+  apiCompatibilityLevel: 6
+  activeSubsystem:
+  cloudProjectId:
+  framebufferDepthMemorylessMode: 0
+  qualitySettingsNames: []
+  m_BuildTargetGraphicsAPIs: []
+  m_BuildTargetPlatformIcons:
+  - m_BuildTarget:
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 128
+      m_Height: 128
+      m_Kind: 0
+  m_BuildTargetBatching: []
+  m_BuildTargetMaxTextureSize: []
+  m_BuildTargetTextureCompression: []
+  m_BuildTargetGraphicsJobMode: []
+  m_BuildTargetGraphicsAPIs:
+  - m_BuildTarget: Android
+    m_APIs: 02000000
+  - m_BuildTarget: Standalone
+    m_APIs: 02000000
+  m_BuildTargetVRSettings: []
+  openGLRequireES31: 0
+  openGLRequireES31AEP: 0
+  openGLRequireES32: 0
+  m_TemplatePackageId:
+  m_MobileOptimizedBuild: 1
+  m_StripUnusedMeshComponents: 1
+  m_BuildTargetEnableVuforia: []
+  m_BuildTargetEnableGoogleVR: []
+  m_BuildTargetEnableMeta: []
+  m_BuildTargetEnableDaydream: []
+  m_BuildTargetEnableArcore: []
+  m_BuildTargetEnableArkit: []
+  m_BuildTargetEnableMagicLeap: []
+  m_OpenGLForceCore: 0
+  m_OpenGLForceCompatibility: 0
+  m_OpenGLForceClampFragShader: 0
+  m_EnableBluetooth: 0
+  m_EnableCustomVirtualTexturing: 0
+  m_VirtualTexturingMasterTextureLimit: 256
+  m_Enable360Camera: 0
+  m_EnableVuforia: 0
+  m_EnableGoogleVR: 0
+  m_EnableSplit: 0
+  m_Enable360StereoCapture: 0
+  m_EnableOculus: 0
+  m_EnableGeneratedShaderName: 0
+  m_EnableGearVr: 0
+  m_EnableKupuna: 0
+  m_EnableDaydream: 0
+  m_EnableArcore: 0
+  m_EnableArkit: 0
+  m_EnableMagicLeap: 0
+  m_EnableWearables: 0
+  m_EnableXiaomi: 0
+  m_EnableVideo: 0
+  webGLMemorySize: 16
+  webGLExceptionSupport: 1
+  webGLNameFilesAsHashes: 0
+  webGLShowDiagnostics: 0
+  webGLEmscriptenArgs:
+  webGLModulesDirectory:
+  webGLTemplate: APPLICATION:Default
+  webGLAnalyzeBuildSize: 0
+  webGLUseEmbeddedResources: 0
+  webGLCompressionFormat: 0
+  webGLWasmArithmeticExceptions: 0
+  webGLThreadsSupport: 0
+  webGLDecompressionFallback: 0
+  webGLInitialMemorySizeAdvanced: 0
+  webGLMaximumMemorySize: 2048
+  webGLMemoryGrowthMode: 2
+  webGLMemoryLinearGrowthStep: 16
+  webGLMemoryGeometricGrowthStep: 0.2
+  webGLMemoryGeometricGrowthCap: 96
+  webGLPowerPreference: 2
+  scriptingDefineSymbols: {}
+  additionalCompilerArguments: {}
+  platformArchitecture: {}
+  scriptingBackend: {}
+  il2cppCompilerConfiguration: {}
+  il2cppCodeGeneration: {}
+  managedStrippingLevel:
+    Standalone: 1
+    Android: 1
+  incrementalIl2cppBuild: {}
+  suppressCommonWarnings: 1
+  allowUnsafeCode: 0
+  useDeterministicCompilation: 1
+  enableRoslynAnalyzers: 0
+  additionalIl2CppArgs:
+  scriptingRuntimeVersion: 1
+  gcIncremental: 1
+  gcWBarrierValidation: 0
+  apiCompatibilityLevelPerPlatform:
+    Standalone: 6
+    Android: 6
+  m_Il2CppCompatibilityConfiguration:
+  m_Il2CppCodeGeneration: {}
+  m_MonoInterpreterInput: 0
+  m_StripUnusedMeshComponents: 1
+  m_DisableAnalyticsAndPro: 0
+  m_LogStartupTiming: 0
+  m_AssembliesWithExceptionMessages:
+  m_ClampPhysicsTargetFramerate: 0
+  m_EnableNativePlatformBackButtonForTouchInput: 0
+  additionalIl2CppArgs:
+  scriptingRuntimeVersion: 0
+  m_PlayerGraphicsAPI:
+  m_VRDeviceManagement: 0
+  m_VRDeviceManagementDisabled: 0
+  m_Enable360StereoCapture: 0
+  m_EnableOculus: 0
+  m_EnableGeneratedShaderName: 0
+  m_EnableGearVr: 0
+  m_EnableKupuna: 0
+  m_EnableDaydream: 0
+  m_EnableArcore: 0
+  m_EnableArkit: 0
+  m_EnableMagicLeap: 0
+  m_EnableWearables: 0
+  m_EnableXiaomi: 0
+  m_EnableVideo: 0
+  m_EnableNewInputSystem: 0
+  m_ActiveInputHandler: 2
+  m_EnableVideoCapture: 0
+  m_UseHDRDisplay: 0
+  m_SplashScreenBackground:
+    serializedVersion: 2
+    m_Texture: {fileID: 0}
+    m_ScaleMode: 1
+    m_BackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OverrideBackgroundColor: 0
+    m_LogoFilterMode: 0
+  m_ActiveSplashScreen: 0
+  m_VirtualRealitySplashScreen: {fileID: 0}
+  m_SplashScreenLogo: {fileID: 0}
+  m_HolographicTrackingLossScreen: {fileID: 0}
+  m_RequestedDpi: 0
+  m_ClampPhysicsStep: 0
+  m_DeviceToUse: 0
+  m_ManagerControlledObjects: []
+  m_RealGfxDedicatedThread: 1
+  m_ScriptingCompatibility: 0
+  m_EditorOnlyCustomOptimization: 0
+  m_UseOnlyReferenceToExistingAssets: 0
+  m_UIStatusBarHidden: 1
+  m_UIStatusBarStyle: 0
+  m_UIRequiresFullScreen: 1
+  m_UIRequiresPersistentWiFi: 0
+  m_UIStatusBarHidden: 1
+  m_UIExitOnSuspend: 0
+  m_UIPrerenderedIcon: 0
+  m_TargetDevice: 2

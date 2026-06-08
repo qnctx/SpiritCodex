@@ -8,9 +8,13 @@ namespace LingsuMVP
     {
         [Header("Drop Settings")]
         public int materialCount = 0;
+        public int herbCount = 0;
+        public int oreCount = 0;
         public int monsterDropAmount = 1;
         public int bossDropAmount = 5;
         public int runMaterials = 0;
+        public int runHerbs = 0;
+        public int runOres = 0;
         public int normalKills = 0;
         public int bossKills = 0;
 
@@ -21,6 +25,8 @@ namespace LingsuMVP
         private static DropSystem _instance;
         private Sprite _materialIconSprite;
         private int _stageStartMaterialCount = 0;
+        private int _stageStartHerbCount = 0;
+        private int _stageStartOreCount = 0;
 
         public static DropSystem Instance
         {
@@ -103,9 +109,13 @@ namespace LingsuMVP
         {
             if (materialCountText != null)
             {
-                bool showBackpackMaterials = GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.GameState.Home;
-                materialCountText.text = showBackpackMaterials ? $"Materials: {materialCount}" : $"Loot: {runMaterials}";
+                materialCountText.gameObject.SetActive(false);
             }
+        }
+
+        public void RefreshUI()
+        {
+            UpdateUI();
         }
 
         private void PlayDropEffect()
@@ -272,6 +282,79 @@ namespace LingsuMVP
             return false;
         }
 
+        public bool ConsumeHerbs(int amount)
+        {
+            if (herbCount >= amount)
+            {
+                herbCount -= amount;
+                _stageStartHerbCount = Mathf.Min(_stageStartHerbCount, herbCount);
+                UpdateUI();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool ConsumeOres(int amount)
+        {
+            if (oreCount >= amount)
+            {
+                oreCount -= amount;
+                _stageStartOreCount = Mathf.Min(_stageStartOreCount, oreCount);
+                UpdateUI();
+                return true;
+            }
+
+            return false;
+        }
+
+        public void AwardMaterials(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            materialCount += amount;
+            _stageStartMaterialCount = materialCount;
+            UpdateUI();
+        }
+
+        public void AwardHerbs(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            herbCount += amount;
+            _stageStartHerbCount = herbCount;
+            UpdateUI();
+        }
+
+        public void AwardOres(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            oreCount += amount;
+            _stageStartOreCount = oreCount;
+            UpdateUI();
+        }
+
+        public void SetBackpackCounts(int materials, int herbs, int ores)
+        {
+            materialCount = Mathf.Max(0, materials);
+            herbCount = Mathf.Max(0, herbs);
+            oreCount = Mathf.Max(0, ores);
+            _stageStartMaterialCount = materialCount;
+            _stageStartHerbCount = herbCount;
+            _stageStartOreCount = oreCount;
+            ResetRunStats();
+        }
+
         public void ResetDrops()
         {
             ResetAllDrops();
@@ -280,6 +363,8 @@ namespace LingsuMVP
         public void ResetRunStats()
         {
             runMaterials = 0;
+            runHerbs = 0;
+            runOres = 0;
             normalKills = 0;
             bossKills = 0;
             UpdateUI();
@@ -288,21 +373,33 @@ namespace LingsuMVP
         public void CommitStageMaterials()
         {
             materialCount += runMaterials;
+            herbCount += runHerbs;
+            oreCount += runOres;
             _stageStartMaterialCount = materialCount;
+            _stageStartHerbCount = herbCount;
+            _stageStartOreCount = oreCount;
             ResetRunStats();
         }
 
         public void RollbackRunMaterials()
         {
             materialCount = _stageStartMaterialCount;
+            herbCount = _stageStartHerbCount;
+            oreCount = _stageStartOreCount;
             ResetRunStats();
         }
 
         public void ResetAllDrops()
         {
             materialCount = 0;
+            herbCount = 0;
+            oreCount = 0;
             _stageStartMaterialCount = 0;
+            _stageStartHerbCount = 0;
+            _stageStartOreCount = 0;
             runMaterials = 0;
+            runHerbs = 0;
+            runOres = 0;
             normalKills = 0;
             bossKills = 0;
             UpdateUI();

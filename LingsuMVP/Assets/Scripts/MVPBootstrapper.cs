@@ -27,16 +27,15 @@ namespace LingsuMVP
             Canvas canvas = CreateCanvas(camera);
             EnsureEventSystem();
 
-            TextMeshProUGUI materialText = CreateText("MaterialCountText", canvas.transform, new Vector2(24f, -24f), new Vector2(320f, 52f), "Materials: 0", 28f, TextAlignmentOptions.Left);
-            TextMeshProUGUI stageText = CreateText("StageText", canvas.transform, new Vector2(0f, -24f), new Vector2(260f, 52f), "Stage 1", 28f, TextAlignmentOptions.Center);
+            TextMeshProUGUI materialText = CreateText("MaterialCountText", canvas.transform, new Vector2(24f, -24f), new Vector2(320f, 52f), "材料：0", 26f, TextAlignmentOptions.Left);
+            TextMeshProUGUI stageText = CreateText("StageText", canvas.transform, new Vector2(0f, -24f), new Vector2(260f, 52f), "城镇", 26f, TextAlignmentOptions.Center);
             stageText.rectTransform.anchorMin = new Vector2(0.5f, 1f);
             stageText.rectTransform.anchorMax = new Vector2(0.5f, 1f);
             stageText.rectTransform.pivot = new Vector2(0.5f, 1f);
-            Button evolutionButton = CreateButton("EvolutionButton", canvas.transform, new Vector2(0f, 46f), new Vector2(180f, 56f), "Evolve", out TextMeshProUGUI buttonText);
-            TextMeshProUGUI statusText = CreateText("EvolutionStatusText", canvas.transform, new Vector2(0f, 24f), new Vector2(320f, 44f), "Need 3 materials", 24f, TextAlignmentOptions.Center);
-            CreateSkillBar(canvas.transform);
-            GameObject victoryPanel = CreateResultPanel(canvas.transform, "VictoryPanel", "Victory", "Play Again", out Button playAgainButton);
-            GameObject defeatPanel = CreateResultPanel(canvas.transform, "DefeatPanel", "Defeat", "Restart", out Button restartButton);
+            Button evolutionButton = CreateButton("EvolutionButton", canvas.transform, new Vector2(0f, 46f), new Vector2(180f, 56f), "进化", out TextMeshProUGUI buttonText);
+            TextMeshProUGUI statusText = CreateText("EvolutionStatusText", canvas.transform, new Vector2(0f, 24f), new Vector2(320f, 44f), "需要 3 材料", 22f, TextAlignmentOptions.Center);
+            GameObject victoryPanel = CreateResultPanel(canvas.transform, "VictoryPanel", "胜利", "再次挑战", out Button playAgainButton);
+            GameObject defeatPanel = CreateResultPanel(canvas.transform, "DefeatPanel", "失败", "重新挑战", out Button restartButton);
             playAgainButton.gameObject.SetActive(false);
             restartButton.gameObject.SetActive(false);
             TextMeshProUGUI resultText = victoryPanel.transform.Find("ResultText").GetComponent<TextMeshProUGUI>();
@@ -74,6 +73,7 @@ namespace LingsuMVP
             evolutionUI.buttonText = buttonText;
             evolutionUI.statusText = statusText;
             evolutionButton.gameObject.SetActive(false);
+            statusText.gameObject.SetActive(false);
             evolutionUI.enabled = false;
 
             battleManager.bossSpawnPoint = bossSpawnPoint;
@@ -123,10 +123,12 @@ namespace LingsuMVP
         {
             GameObject root = CreateEmpty("ArenaBackdrop", Vector3.zero);
             CreateSpritePanel("PaintedArena", root.transform, new Vector3(0f, -0.08f, 3f), new Vector3(2.08f, 2.08f, 1f), GetArenaSprite(), Color.white, -20);
-            CreateSpritePanel("HeroGroundShadow", root.transform, new Vector3(0f, -2.62f, 2.6f), new Vector3(2.9f, 1.05f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.28f), -16);
-            CreateSpritePanel("EnemyGroundShadowLeft", root.transform, new Vector3(-3f, 0.82f, 2.6f), new Vector3(1.18f, 0.42f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
-            CreateSpritePanel("EnemyGroundShadowMid", root.transform, new Vector3(0f, 1.02f, 2.6f), new Vector3(1.18f, 0.42f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
-            CreateSpritePanel("EnemyGroundShadowRight", root.transform, new Vector3(3f, 0.82f, 2.6f), new Vector3(1.18f, 0.42f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
+            CreateSpritePanel("PlayerGroundShadowTop", root.transform, new Vector3(-3.2f, 1.35f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.18f), -16);
+            CreateSpritePanel("PlayerGroundShadowMiddle", root.transform, new Vector3(-3.2f, 0.25f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.24f), -16);
+            CreateSpritePanel("PlayerGroundShadowBottom", root.transform, new Vector3(-3.2f, -0.85f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.24f), -16);
+            CreateSpritePanel("EnemyGroundShadowTop", root.transform, new Vector3(3.2f, 1.35f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.16f), -16);
+            CreateSpritePanel("EnemyGroundShadowMiddle", root.transform, new Vector3(3.2f, 0.25f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
+            CreateSpritePanel("EnemyGroundShadowBottom", root.transform, new Vector3(3.2f, -0.85f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
         }
 
         private static void CreateSpritePanel(string name, Transform parent, Vector3 position, Vector3 scale, Sprite sprite, Color color, int sortingOrder)
@@ -330,7 +332,7 @@ namespace LingsuMVP
             label.text = text;
             label.fontSize = fontSize;
             label.alignment = alignment;
-            label.color = Color.white;
+            label.color = new Color(0.82f, 0.82f, 0.76f, 1f);
             return label;
         }
 
@@ -344,7 +346,7 @@ namespace LingsuMVP
             barRect.anchorMax = new Vector2(0.5f, 0f);
             barRect.pivot = new Vector2(0.5f, 0f);
             barRect.anchoredPosition = new Vector2(0f, 10f);
-            barRect.sizeDelta = new Vector2(560f, 108f);
+            barRect.sizeDelta = new Vector2(736f, 108f);
 
             Image background = barObject.AddComponent<Image>();
             ConfigureImage(background, new Color(0f, 0f, 0f, 0.36f));
@@ -352,6 +354,7 @@ namespace LingsuMVP
             CreateSkillSlot(barObject.transform, "Ult", new Vector2(-176f, 54f), new Color(0.82f, 0.32f, 0.14f, 0.95f));
             CreateSkillSlot(barObject.transform, "S1", new Vector2(0f, 54f), new Color(0.18f, 0.42f, 0.74f, 0.95f));
             CreateSkillSlot(barObject.transform, "Burn", new Vector2(176f, 54f), new Color(0.42f, 0.22f, 0.68f, 0.95f));
+            CreateSkillSlot(barObject.transform, "Potion", new Vector2(352f, 54f), new Color(0.22f, 0.52f, 0.36f, 0.95f));
         }
 
         private static void CreateSkillSlot(Transform parent, string labelText, Vector2 anchoredPosition, Color color)

@@ -61,6 +61,18 @@ namespace LingsuMVP
             hp = maxHp;
         }
 
+        public int Heal(int amount)
+        {
+            if (amount <= 0)
+            {
+                return 0;
+            }
+
+            int before = hp;
+            hp = Mathf.Min(maxHp, hp + amount);
+            return hp - before;
+        }
+
         private void Die()
         {
             Debug.Log("Hero died!");
@@ -76,6 +88,15 @@ namespace LingsuMVP
             maxHp = _initialHp;
             attack = _initialAttack;
             defense = _initialDefense;
+        }
+
+        public void ApplyLevelStats(int level)
+        {
+            int bonusLevel = Mathf.Max(0, level - 1);
+            maxHp = _initialHp + bonusLevel * 10;
+            hp = maxHp;
+            attack = _initialAttack + bonusLevel * 2;
+            defense = _initialDefense + bonusLevel;
         }
     }
 }

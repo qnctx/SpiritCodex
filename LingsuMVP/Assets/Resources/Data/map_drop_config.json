@@ -1,0 +1,28 @@
+{
+  "maps": [
+    {
+      "page": 1,
+      "map": 1,
+      "name": "草木坡",
+      "sweepSpiritDust": 3,
+      "victoryHerbs": 2,
+      "victoryOres": 0
+    },
+    {
+      "page": 1,
+      "map": 2,
+      "name": "铁砂岭",
+      "sweepSpiritDust": 4,
+      "victoryHerbs": 0,
+      "victoryOres": 2
+    },
+    {
+      "page": 1,
+      "map": 3,
+      "name": "余烬祭坛",
+      "sweepSpiritDust": 5,
+      "victoryHerbs": 1,
+      "victoryOres": 1
+    }
+  ]
+}

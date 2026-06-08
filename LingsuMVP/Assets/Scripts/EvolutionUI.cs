@@ -55,10 +55,6 @@ namespace LingsuMVP
                     UpdateButtonState();
                 }
 
-                if (_canEvolve && !_hasEvolved)
-                {
-                    OnEvolutionClicked();
-                }
             }
         }
 
@@ -71,7 +67,7 @@ namespace LingsuMVP
 
             if (statusText != null)
             {
-                statusText.text = _hasEvolved ? "Evolution complete" : (_canEvolve ? "Auto evolving" : $"Need {materialCost} materials");
+                statusText.text = _hasEvolved ? "进化完成" : (_canEvolve ? "可手动进化" : $"需要 {materialCost} 材料");
             }
         }
 
@@ -81,7 +77,7 @@ namespace LingsuMVP
 
             if (buttonText != null)
             {
-                buttonText.text = "Evolve";
+                buttonText.text = "进化";
             }
         }
 

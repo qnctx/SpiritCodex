@@ -1,0 +1,164 @@
+{
+  "materials": [
+    {
+      "id": "spirit_dust",
+      "name": "灵尘",
+      "quality": "普通",
+      "category": "货币",
+      "tradable": true,
+      "description": "基础货币，用于商店、打造和炼丹手续费。"
+    },
+    {
+      "id": "spirit_jade",
+      "name": "灵玉",
+      "quality": "稀有",
+      "category": "珍贵货币",
+      "tradable": false,
+      "description": "珍贵货币，用于稀有商店和高阶材料兑换。"
+    },
+    {
+      "id": "red_herb",
+      "name": "赤草",
+      "quality": "普通",
+      "category": "炼丹",
+      "tradable": true,
+      "description": "基础草药，用于小回血药和低阶生命丹。"
+    },
+    {
+      "id": "clear_dew",
+      "name": "清露",
+      "quality": "普通",
+      "category": "炼丹",
+      "tradable": true,
+      "description": "基础露水，用于回灵丹和低阶防御丹。"
+    },
+    {
+      "id": "iron_sand",
+      "name": "铁砂",
+      "quality": "普通",
+      "category": "锻造",
+      "tradable": true,
+      "description": "基础矿材，用于训练武器、普通护甲和低阶强化。"
+    },
+    {
+      "id": "beast_hide",
+      "name": "兽皮",
+      "quality": "普通",
+      "category": "锻造",
+      "tradable": true,
+      "description": "基础皮革，用于皮甲、护手和鞋类装备。"
+    },
+    {
+      "id": "skill_page",
+      "name": "技能残页",
+      "quality": "普通",
+      "category": "技能",
+      "tradable": true,
+      "description": "低阶技能升级材料。"
+    },
+    {
+      "id": "vermillion_fruit",
+      "name": "朱果",
+      "quality": "稀有",
+      "category": "炼丹",
+      "tradable": true,
+      "description": "中阶炼丹材料，用于中回血药和攻击丹。"
+    },
+    {
+      "id": "moon_dew",
+      "name": "月华露",
+      "quality": "稀有",
+      "category": "炼丹",
+      "tradable": true,
+      "description": "中阶炼丹材料，用于回灵丹和冷却类丹药。"
+    },
+    {
+      "id": "red_copper",
+      "name": "赤铜",
+      "quality": "稀有",
+      "category": "锻造",
+      "tradable": true,
+      "description": "稀有矿材，用于稀有武器和装备强化。"
+    },
+    {
+      "id": "demon_bone",
+      "name": "妖骨",
+      "quality": "稀有",
+      "category": "锻造",
+      "tradable": false,
+      "description": "特殊锻造材料，用于职业装备和饰品。"
+    },
+    {
+      "id": "skill_secret_page",
+      "name": "技能秘页",
+      "quality": "稀有",
+      "category": "技能",
+      "tradable": false,
+      "description": "中阶技能升级材料。"
+    },
+    {
+      "id": "phoenix_flower",
+      "name": "凤髓花",
+      "quality": "史诗",
+      "category": "炼丹",
+      "tradable": false,
+      "description": "高阶炼丹和进化丹材料。"
+    },
+    {
+      "id": "star_dew",
+      "name": "星髓露",
+      "quality": "史诗",
+      "category": "炼丹",
+      "tradable": false,
+      "description": "高阶灵力丹和突破丹材料。"
+    },
+    {
+      "id": "black_iron",
+      "name": "玄铁",
+      "quality": "史诗",
+      "category": "锻造",
+      "tradable": false,
+      "description": "史诗武器和装备突破材料。"
+    },
+    {
+      "id": "dragon_scale",
+      "name": "龙鳞",
+      "quality": "史诗",
+      "category": "锻造",
+      "tradable": false,
+      "description": "高阶护甲和进化装备材料。"
+    },
+    {
+      "id": "skill_true_scroll",
+      "name": "技能真卷",
+      "quality": "史诗",
+      "category": "技能",
+      "tradable": false,
+      "description": "高阶技能和奥义突破材料。"
+    },
+    {
+      "id": "fire_shard",
+      "name": "火灵屑",
+      "quality": "普通",
+      "category": "进化",
+      "tradable": true,
+      "description": "火系低阶进化和元素技能材料。"
+    },
+    {
+      "id": "fire_core",
+      "name": "火灵核",
+      "quality": "稀有",
+      "category": "进化",
+      "tradable": false,
+      "description": "火系正式进化材料。"
+    },
+    {
+      "id": "flame_soul",
+      "name": "炎魄",
+      "quality": "史诗",
+      "category": "进化",
+      "tradable": false,
+      "description": "火系高阶进化和形态突破材料。"
+    }
+  ]
+}

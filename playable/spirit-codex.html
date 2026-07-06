@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵素图谱 SPIRIT CODEX</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   SPIRIT CODEX — Dark Fantasy HTML5 Prototype
+   ═══════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+@font-face{font-family:'Game';src:local('PingFang SC'),local('Microsoft YaHei'),local('Hiragino Sans GB'),sans-serif}
+:root{
+  --bg:#0a0a14;--bg2:#12122a;--bg3:#1a1a3e;
+  --text:#e8e6f0;--text2:#9996b0;--gold:#f7dc6f;
+  --border:#2a2a5c;--border-hi:#5b5ea6;
+  --fire:#e84530;--fire-g:#ff8c42;
+  --water:#2e86ab;--water-g:#7ec8e3;
+  --wind:#90be6d;--wind-g:#b8e994;
+  --thunder:#5b5ea6;--thunder-g:#9b59b6;
+  --dark:#4a4a5c;--dark-g:#9b59b6;
+  --light:#f7dc6f;--light-g:#f8ebc8;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Game','PingFang SC','Microsoft YaHei',sans-serif}
+#game{width:100%;height:100%;position:relative;overflow:hidden}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center}
+.screen.active{display:flex}
+
+/* Title Screen */
+#title-screen{justify-content:center;background:linear-gradient(180deg,#0a0a14 0%,#1a1040 50%,#0a0a14 100%)}
+#title-screen canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+.title-content{position:relative;z-index:1;text-align:center}
+.game-title{font-size:3em;font-weight:bold;color:var(--gold);text-shadow:0 0 20px rgba(247,220,111,.4),0 0 40px rgba(247,220,111,.2);margin-bottom:.2em;letter-spacing:.1em}
+.game-subtitle{font-size:1.3em;color:var(--text2);letter-spacing:.3em;margin-bottom:2em}
+.start-btn{
+  padding:16px 60px;font-size:1.2em;font-weight:bold;
+  background:linear-gradient(135deg,#2a1a5c,#1a1040);color:var(--gold);
+  border:2px solid var(--gold);border-radius:8px;cursor:pointer;
+  transition:all .3s;letter-spacing:.1em;font-family:inherit
+}
+.start-btn:hover{background:linear-gradient(135deg,#3a2a6c,#2a1a5c);box-shadow:0 0 20px rgba(247,220,111,.3);transform:scale(1.05)}
+
+/* Roster Screen */
+#roster-screen{padding:10px}
+.screen-header{display:flex;align-items:center;width:100%;padding:10px 15px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.screen-header h2{flex:1;text-align:center;font-size:1.2em;color:var(--gold)}
+.back-btn{padding:6px 14px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:inherit;font-size:.9em}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+#roster-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  padding:12px;width:100%;flex:1;overflow-y:auto;
+  align-content:start
+}
+.char-card{
+  background:var(--bg2);border:2px solid var(--border);border-radius:8px;
+  padding:10px;cursor:pointer;transition:all .2s;text-align:center;
+  position:relative;overflow:hidden
+}
+.char-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.char-card.selected{border-color:var(--gold);background:rgba(247,220,111,.08)}
+.char-avatar{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;position:relative}
+.char-avatar canvas{width:100%;height:100%;border-radius:50%}
+.char-name{font-size:1em;font-weight:bold;margin-bottom:2px}
+.char-element{font-size:.75em;color:var(--text2)}
+.char-role{font-size:.7em;color:var(--text2);opacity:.7}
+.element-badge{
+  position:absolute;top:-2px;right:-2px;width:22px;height:22px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.7em;border:2px solid var(--bg2)
+}
+
+/* Team Formation */
+#formation-screen{padding:10px}
+#formation-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+  gap:10px;padding:20px;width:100%;max-width:500px;flex:1;align-content:center
+}
+.formation-slot{
+  background:var(--bg2);border:2px dashed var(--border);border-radius:8px;
+  min-height:120px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;cursor:pointer;transition:all .2s;position:relative;
+  padding:8px
+}
+.formation-slot:hover{border-color:var(--gold)}
+.formation-slot.occupied{border-style:solid}
+.formation-slot .slot-label{font-size:.75em;color:var(--text2);margin-top:4px}
+.formation-slot .slot-role{font-size:.65em;color:var(--text2);opacity:.6}
+#team-roster{
+  display:flex;gap:8px;padding:10px;width:100%;overflow-x:auto;
+  background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;
+  justify-content:center;flex-wrap:wrap
+}
+.mini-card{
+  width:70px;padding:6px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:6px;cursor:pointer;text-align:center;flex-shrink:0;
+  transition:all .2s;font-size:.7em
+}
+.mini-card:hover{border-color:var(--gold)}
+.mini-card.in-team{opacity:.4;pointer-events:none}
+.mini-card canvas{width:40px;height:40px;border-radius:50%;margin:0 auto 3px;display:block}
+.battle-start-btn{
+  margin:10px;padding:12px 40px;font-size:1.1em;font-weight:bold;
+  background:linear-gradient(135deg,#e84530,#c0392b);color:white;
+  border:none;border-radius:8px;cursor:pointer;font-family:inherit;
+  transition:all .3s;flex-shrink:0
+}
+.battle-start-btn:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(232,69,48,.4)}
+.battle-start-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Battle Screen */
+#battle-screen{padding:0}
+#battle-canvas{width:100%;flex:1;display:block}
+#battle-ui{
+  width:100%;background:var(--bg2);border-top:1px solid var(--border);
+  padding:8px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;
+  max-height:45%;overflow-y:auto
+}
+.battle-hud{
+  display:flex;justify-content:space-between;padding:4px 12px;
+  background:var(--bg);border-radius:6px;font-size:.8em;color:var(--text2)
+}
+.battle-hud span{display:flex;align-items:center;gap:4px}
+#turn-order{display:flex;gap:4px;padding:4px 12px;flex-wrap:wrap}
+.turn-icon{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);position:relative;opacity:.6}
+.turn-icon.active{opacity:1;border-color:var(--gold);box-shadow:0 0 8px rgba(247,220,111,.4)}
+.turn-icon.dead{opacity:.2}
+#team-status{
+  display:flex;gap:8px;padding:4px 12px;flex-wrap:wrap;justify-content:center
+}
+.member-status{
+  background:var(--bg3);border-radius:6px;padding:4px 8px;min-width:90px;
+  font-size:.75em;border:1px solid var(--border)
+}
+.member-status.dead{opacity:.3}
+.member-status canvas{width:24px;height:24px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.hp-bar,.energy-bar{height:4px;background:#1a1a3e;border-radius:2px;margin-top:2px;overflow:hidden}
+.hp-bar-fill{height:100%;background:#4caf50;border-radius:2px;transition:width .3s}
+.energy-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+#skill-buttons{
+  display:flex;gap:6px;padding:4px 12px;justify-content:center;flex-wrap:wrap
+}
+.skill-btn{
+  padding:8px 16px;background:var(--bg3);color:var(--text);border:1px solid var(--border);
+  border-radius:6px;cursor:pointer;font-family:inherit;font-size:.85em;
+  transition:all .2s;flex:1;max-width:120px;text-align:center
+}
+.skill-btn:hover{border-color:var(--gold);color:var(--gold)}
+.skill-btn:disabled{opacity:.3;cursor:not-allowed}
+.skill-btn.ultimate{border-color:var(--fire);color:var(--fire-g)}
+.skill-btn.ultimate:disabled{border-color:var(--border);color:var(--text2)}
+
+/* Character Detail Modal */
+#detail-modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.8);z-index:100;display:none;
+  align-items:center;justify-content:center
+}
+#detail-modal.show{display:flex}
+.detail-card{
+  background:var(--bg2);border:2px solid var(--border);border-radius:12px;
+  padding:20px;width:90%;max-width:360px;max-height:85vh;overflow-y:auto;
+  position:relative
+}
+.detail-close{
+  position:absolute;top:8px;right:12px;font-size:1.4em;cursor:pointer;
+  color:var(--text2);background:none;border:none;font-family:inherit
+}
+.detail-close:hover{color:var(--gold)}
+.detail-header{text-align:center;margin-bottom:12px}
+.detail-header canvas{width:80px;height:80px;border-radius:50%;margin:0 auto 8px;display:block}
+.detail-name{font-size:1.4em;font-weight:bold;color:var(--gold)}
+.detail-element{font-size:.85em;margin-top:2px}
+.detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}
+.stat-row{display:flex;justify-content:space-between;padding:3px 8px;background:var(--bg3);border-radius:4px;font-size:.8em}
+.stat-val{color:var(--gold)}
+.detail-skills{margin-top:12px}
+.skill-item{padding:8px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border)}
+.skill-name{font-weight:bold;font-size:.85em}
+.skill-desc{font-size:.75em;color:var(--text2);margin-top:2px}
+
+/* Floating Damage */
+.float-dmg{
+  position:absolute;pointer-events:none;font-weight:bold;font-size:1.2em;
+  animation:floatUp 1.2s ease-out forwards;z-index:50
+}
+@keyframes floatUp{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  50%{opacity:1;transform:translateY(-30px) scale(1.1)}
+  100%{opacity:0;transform:translateY(-60px) scale(.8)}
+}
+
+/* Result Screen */
+#result-screen{justify-content:center;background:var(--bg)}
+.result-content{text-align:center}
+.result-title{font-size:2.5em;font-weight:bold;margin-bottom:10px}
+.result-title.win{color:var(--gold);text-shadow:0 0 20px rgba(247,220,111,.4)}
+.result-title.lose{color:var(--fire);text-shadow:0 0 20px rgba(232,69,48,.4)}
+.result-detail{font-size:1em;color:var(--text2);margin-bottom:20px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+<div id="game">
+  <!-- Title Screen -->
+  <div id="title-screen" class="screen active">
+    <canvas id="title-bg"></canvas>
+    <div class="title-content">
+      <div class="game-title">灵素图谱</div>
+      <div class="game-subtitle">SPIRIT CODEX</div>
+      <button class="start-btn" onclick="showScreen('roster-screen')">开 始 游 戏</button>
+    </div>
+  </div>
+
+  <!-- Roster Screen -->
+  <div id="roster-screen" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('title-screen')">返回</button>
+      <h2>角色图鉴 · ROSTER</h2>
+      <button class="back-btn" onclick="showScreen('formation-screen')">组队 →</button>
+    </div>
+    <div id="roster-grid"></div>
+  </div>
+
+  <!-- Team Formation -->
+  <div id="formation-screen" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('roster-screen')">← 图鉴</button>
+      <h2>队伍编成 · FORMATION</h2>
+      <div style="width:60px"></div>
+    </div>
+    <div id="formation-grid"></div>
+    <button class="battle-start-btn" id="start-battle-btn" disabled onclick="startBattle()">⚔ 出发战斗</button>
+    <div id="team-roster"></div>
+  </div>
+
+  <!-- Battle Screen -->
+  <div id="battle-screen" class="screen">
+    <canvas id="battle-canvas"></canvas>
+    <div id="battle-ui">
+      <div class="battle-hud">
+        <span id="hud-wave">波次 1/3</span>
+        <span id="hud-turn">回合 1</span>
+        <span id="hud-phase">准备中</span>
+      </div>
+      <div id="turn-order"></div>
+      <div id="team-status"></div>
+      <div id="skill-buttons"></div>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div id="result-screen" class="screen">
+    <div class="result-content">
+      <div class="result-title" id="result-title"></div>
+      <div class="result-detail" id="result-detail"></div>
+      <button class="start-btn" onclick="resetGame()">返回主界面</button>
+    </div>
+  </div>
+
+  <!-- Character Detail Modal -->
+  <div id="detail-modal">
+    <div class="detail-card" id="detail-card"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   GAME DATA
+   ═══════════════════════════════════════════════════════════════ */
+
+const ELEMENTS = {
+  fire:     { name:'火', symbol:'🔥', color:'#e84530', glow:'#ff8c42', nameEn:'Fire' },
+  water:    { name:'水', symbol:'💧', color:'#2e86ab', glow:'#7ec8e3', nameEn:'Water' },
+  wind:     { name:'风', symbol:'🌪', color:'#90be6d', glow:'#b8e994', nameEn:'Wind' },
+  thunder:  { name:'雷', symbol:'⚡', color:'#5b5ea6', glow:'#9b59b6', nameEn:'Thunder' },
+  dark:     { name:'暗', symbol:'🌑', color:'#6a4c93', glow:'#9b59b6', nameEn:'Dark' },
+  light:    { name:'光', symbol:'☀️', color:'#f7dc6f', glow:'#f8ebc8', nameEn:'Light' }
+};
+
+// Element advantage chart:
+// Fire > Wind > Thunder > Water > Fire; Dark <-> Light (mutual)
+const ADVANTAGE = {
+  fire: 'wind', wind: 'thunder', thunder: 'water', water: 'fire',
+  dark: 'light', light: 'dark'
+};
+
+const CHARACTERS = [
+  // Fire
+  { id:'yanwu', name:'炎舞', element:'fire', role:'输出',
+    hp:280, atk:95, def:40, spd:72,
+    skills:[
+      { name:'烈焰斩', desc:'挥出烈焰之刃，造成ATK×120%火元素伤害', type:'attack', mult:1.2 },
+      { name:'炎爆弹', desc:'投掷火球造成ATK×160%伤害，30%概率灼烧2回合', type:'attack', mult:1.6, dotChance:.3 },
+      { name:'炎狱天舞', desc:'【终极】火焰风暴席卷全场，对单体造成ATK×250%火元素伤害', type:'ultimate', mult:2.5 }
+    ]
+  },
+  { id:'zhuoxin', name:'灼心', element:'fire', role:'输出',
+    hp:250, atk:80, def:35, spd:68,
+    skills:[
+      { name:'灼心焰', desc:'灼烧之焰攻击，造成ATK×100%伤害并灼烧3回合', type:'attack', mult:1.0, dot:3 },
+      { name:'焚烬', desc:'引爆目标身上所有灼烧效果，每层造成ATK×80%伤害', type:'attack', mult:1.2 },
+      { name:'灭世之焰', desc:'【终极】焚天烈焰吞噬敌人，造成ATK×220%伤害，灼烧5回合', type:'ultimate', mult:2.2, dot:5 }
+    ]
+  },
+  // Water
+  { id:'hanyuan', name:'寒渊', element:'water', role:'控制',
+    hp:300, atk:60, def:55, spd:60,
+    skills:[
+      { name:'冰刺', desc:'冰锥穿刺，造成ATK×110%水元素伤害，20%冰冻1回合', type:'attack', mult:1.1, freezeChance:.2 },
+      { name:'寒潮', desc:'寒流席卷，造成ATK×130%伤害，30%冰冻1回合', type:'attack', mult:1.3, freezeChance:.3 },
+      { name:'深渊冰封', desc:'【终极】绝对零度冻结一切，造成ATK×200%伤害，必定冰冻1回合', type:'ultimate', mult:2.0, freezeChance:1 }
+    ]
+  },
+  { id:'chaoxi_char', name:'潮汐', element:'water', role:'治疗',
+    hp:320, atk:45, def:50, spd:55,
+    skills:[
+      { name:'涌泉', desc:'水流冲击，造成ATK×100%水元素伤害', type:'attack', mult:1.0 },
+      { name:'治愈之泉', desc:'召唤治愈之泉，恢复全队20%最大HP', type:'heal', healPct:.2 },
+      { name:'深澜之颂', desc:'【终极】全队治愈，恢复全队40%最大HP并清除debuff', type:'ultimate', healPct:.4, cleanse:true }
+    ]
+  },
+  // Wind
+  { id:'jifeng', name:'疾风', element:'wind', role:'输出',
+    hp:240, atk:85, def:30, spd:95,
+    skills:[
+      { name:'风刃', desc:'高速风刃切割，造成ATK×110%风元素伤害', type:'attack', mult:1.1 },
+      { name:'疾风突袭', desc:'闪电突袭，造成ATK×150%伤害，必定先手', type:'attack', mult:1.5 },
+      { name:'风神之怒', desc:'【终极】风暴席卷，造成ATK×230%伤害并降低目标30%DEF持续2回合', type:'ultimate', mult:2.3, defBreak:.3 }
+    ]
+  },
+  { id:'juying', name:'飓影', element:'wind', role:'输出',
+    hp:230, atk:75, def:28, spd:90,
+    skills:[
+      { name:'影袭', desc:'隐身突袭，造成ATK×100%伤害，30%闪避反击', type:'attack', mult:1.0 },
+      { name:'飓风斩', desc:'旋风斩击，造成ATK×140%风元素伤害', type:'attack', mult:1.4 },
+      { name:'暴风骤影', desc:'【终极】化身风暴，造成ATK×200%伤害，自身闪避率+50%持续2回合', type:'ultimate', mult:2.0, selfBuff:true }
+    ]
+  },
+  // Thunder
+  { id:'leiming', name:'雷鸣', element:'thunder', role:'输出',
+    hp:260, atk:100, def:35, spd:80,
+    skills:[
+      { name:'雷击', desc:'雷电轰击，造成ATK×120%雷元素伤害', type:'attack', mult:1.2 },
+      { name:'雷霆万钧', desc:'天雷降世，造成ATK×180%伤害，15%麻痹1回合', type:'attack', mult:1.8, stunChance:.15 },
+      { name:'万雷天牢', desc:'【终极】雷狱降临，造成ATK×260%伤害，30%麻痹1回合', type:'ultimate', mult:2.6, stunChance:.3 }
+    ]
+  },
+  { id:'dianhu', name:'电弧', element:'thunder', role:'输出',
+    hp:245, atk:85, def:32, spd:82,
+    skills:[
+      { name:'电弧', desc:'电弧弹射，造成ATK×100%伤害并弹射至1个额外目标', type:'attack', mult:1.0, chain:1 },
+      { name:'连锁闪电', desc:'链式闪电，造成ATK×130%伤害并弹射至2个额外目标', type:'attack', mult:1.3, chain:2 },
+      { name:'雷霆风暴', desc:'【终极】电磁风暴，造成ATK×220%伤害并弹射至所有敌人', type:'ultimate', mult:2.2, chainAll:true }
+    ]
+  },
+  // Dark
+  { id:'anshi', name:'暗蚀', element:'dark', role:'输出',
+    hp:270, atk:88, def:38, spd:70,
+    skills:[
+      { name:'暗影刺', desc:'暗影突袭，造成ATK×110%暗元素伤害，吸血20%', type:'attack', mult:1.1, lifesteal:.2 },
+      { name:'暗蚀之触', desc:'腐蚀攻击，造成ATK×140%伤害，吸血30%', type:'attack', mult:1.4, lifesteal:.3 },
+      { name:'暗影吞噬', desc:'【终极】暗影吞噬一切，造成ATK×230%伤害，吸血40%', type:'ultimate', mult:2.3, lifesteal:.4 }
+    ]
+  },
+  { id:'zhuzhou', name:'诅咒', element:'dark', role:'控制',
+    hp:290, atk:65, def:45, spd:62,
+    skills:[
+      { name:'诅咒之矢', desc:'诅咒之箭，造成ATK×100%伤害，降低目标ATK15%持续2回合', type:'attack', mult:1.0, atkBreak:.15 },
+      { name:'虚弱诅咒', desc:'强力诅咒，造成ATK×120%伤害，降低目标ATK25%持续3回合', type:'attack', mult:1.2, atkBreak:.25 },
+      { name:'永恒诅咒', desc:'【终极】古老诅咒降临，造成ATK×200%伤害，降低目标ATK&DEF各30%持续3回合', type:'ultimate', mult:2.0, atkBreak:.3, defBreak:.3 }
+    ]
+  },
+  // Light
+  { id:'shenghui', name:'圣辉', element:'light', role:'治疗',
+    hp:310, atk:50, def:52, spd:58,
+    skills:[
+      { name:'圣光', desc:'圣光照射，造成ATK×100%光元素伤害', type:'attack', mult:1.0 },
+      { name:'净化之光', desc:'净化全队，清除所有debuff并恢复15%HP', type:'heal', healPct:.15, cleanse:true },
+      { name:'神圣洗礼', desc:'【终极】神圣洗礼，恢复全队35%HP，清除debuff，附加20%减伤2回合', type:'ultimate', healPct:.35, cleanse:true }
+    ]
+  },
+  { id:'chenxi', name:'晨曦', element:'light', role:'治疗',
+    hp:330, atk:42, def:58, spd:52,
+    skills:[
+      { name:'曙光', desc:'曙光之力，造成ATK×90%光元素伤害', type:'attack', mult:0.9 },
+      { name:'晨曦护盾', desc:'为全队施加护盾，吸收相当于自身DEF×200%的伤害', type:'shield', shieldPct:2.0 },
+      { name:'黎明之盾', desc:'【终极】全队护盾+治愈，护盾值DEF×300%，并恢复20%HP', type:'ultimate', shieldPct:3.0, healPct:.2 }
+    ]
+  }
+];
+
+// Enemy data
+const ENEMIES = [
+  // Wave 1 — basic mobs
+  [
+    { name:'暗影狼', element:'dark', hp:200, atk:55, def:25, spd:65, skills:[{name:'撕咬',type:'attack',mult:1.0}] },
+    { name:'暗影狼', element:'dark', hp:200, atk:55, def:25, spd:63, skills:[{name:'撕咬',type:'attack',mult:1.0}] },
+    { name:'暗影蝠', element:'dark', hp:150, atk:60, def:20, spd:75, skills:[{name:'暗影袭',type:'attack',mult:1.1}] }
+  ],
+  // Wave 2 — mixed
+  [
+    { name:'炎魔兵', element:'fire', hp:280, atk:70, def:35, spd:58, skills:[{name:'火焰斩',type:'attack',mult:1.1}] },
+    { name:'冰霜守卫', element:'water', hp:320, atk:50, def:50, spd:48, skills:[{name:'冰锤',type:'attack',mult:1.0}] },
+    { name:'风暴使者', element:'wind', hp:240, atk:75, def:28, spd:78, skills:[{name:'风刃',type:'attack',mult:1.2}] }
+  ],
+  // Wave 3 — boss
+  [
+    { name:'混沌元素', element:'dark', hp:800, atk:90, def:55, spd:70, boss:true,
+      skills:[{name:'暗影冲击',type:'attack',mult:1.2},{name:'混沌风暴',type:'attack',mult:1.8}] }
+  ]
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   GAME STATE
+   ═══════════════════════════════════════════════════════════════ */
+let state = {
+  team: [],         // indices into CHARACTERS (max 6)
+  wave: 0,
+  turn: 0,
+  turnOrder: [],
+  currentTurnIdx: 0,
+  allies: [],       // battle copies
+  enemies: [],      // battle copies
+  battlePhase: 'idle', // idle | player | enemy | animating | done
+  selectedSkill: null,
+  particles: [],
+  floatTexts: []
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'roster-screen') buildRoster();
+  if (id === 'formation-screen') buildFormation();
+}
+
+function getAdvantage(atkEl, defEl) {
+  if (ADVANTAGE[atkEl] === defEl) return 1.5;
+  if (ADVANTAGE[defEl] === atkEl) return 0.5;
+  return 1.0;
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function rand(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHARACTER PORTRAIT DRAWING (Canvas)
+   ═══════════════════════════════════════════════════════════════ */
+function drawPortrait(canvas, charData, size) {
+  const s = size || 64;
+  canvas.width = s * 2; canvas.height = s * 2;
+  canvas.style.width = s + 'px'; canvas.style.height = s + 'px';
+  const ctx = canvas.getContext('2d');
+  const cx = s, cy = s, r = s * 0.85;
+
+  const el = ELEMENTS[charData.element];
+
+  // Background circle
+  const grad = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r);
+  grad.addColorStop(0, el.color + '40');
+  grad.addColorStop(0.6, el.color + '18');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+
+  // Character body silhouette
+  ctx.fillStyle = el.color + 'cc';
+  // Head
+  ctx.beginPath(); ctx.arc(cx, cy - r * 0.25, r * 0.22, 0, Math.PI * 2); ctx.fill();
+  // Body
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.25, cy + r * 0.05);
+  ctx.lineTo(cx + r * 0.25, cy + r * 0.05);
+  ctx.lineTo(cx + r * 0.3, cy + r * 0.5);
+  ctx.lineTo(cx - r * 0.3, cy + r * 0.5);
+  ctx.closePath(); ctx.fill();
+
+  // Element symbol
+  ctx.fillStyle = el.glow;
+  ctx.font = `bold ${s * 0.35}px sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(el.symbol, cx, cy + r * 0.15);
+
+  // Glow ring
+  ctx.strokeStyle = el.color;
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.6;
+  ctx.beginPath(); ctx.arc(cx, cy, r - 2, 0, Math.PI * 2); ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+function drawMiniPortrait(canvas, charData, size) {
+  const s = size || 40;
+  canvas.width = s * 2; canvas.height = s * 2;
+  canvas.style.width = s + 'px'; canvas.style.height = s + 'px';
+  const ctx = canvas.getContext('2d');
+  const el = ELEMENTS[charData.element];
+  const cx = s, cy = s, r = s * 0.85;
+
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+  grad.addColorStop(0, el.color + '60');
+  grad.addColorStop(1, el.color + '10');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = el.color + 'cc';
+  ctx.beginPath(); ctx.arc(cx, cy - r * 0.15, r * 0.3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.3, cy + r * 0.1);
+  ctx.lineTo(cx + r * 0.3, cy + r * 0.1);
+  ctx.lineTo(cx + r * 0.35, cy + r * 0.65);
+  ctx.lineTo(cx - r * 0.35, cy + r * 0.65);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = el.glow;
+  ctx.font = `bold ${s * 0.4}px sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(el.symbol, cx, cy + r * 0.2);
+
+  ctx.strokeStyle = el.color;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2); ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ROSTER SCREEN
+   ═══════════════════════════════════════════════════════════════ */
+function buildRoster() {
+  const grid = document.getElementById('roster-grid');
+  grid.innerHTML = '';
+  CHARACTERS.forEach((c, i) => {
+    const el = ELEMENTS[c.element];
+    const card = document.createElement('div');
+    card.className = 'char-card';
+    card.style.borderColor = el.color + '40';
+    card.innerHTML = `
+      <div class="char-avatar" style="position:relative">
+        <canvas data-char="${i}"></canvas>
+        <div class="element-badge" style="background:${el.color}">${el.symbol}</div>
+      </div>
+      <div class="char-name">${c.name}</div>
+      <div class="char-element" style="color:${el.color}">${el.symbol} ${el.name}元素</div>
+      <div class="char-role">${c.role}</div>
+    `;
+    card.onclick = () => showDetail(i);
+    grid.appendChild(card);
+    drawPortrait(card.querySelector('canvas'), c, 64);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHARACTER DETAIL MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function showDetail(idx) {
+  const c = CHARACTERS[idx];
+  const el = ELEMENTS[c.element];
+  const modal = document.getElementById('detail-modal');
+  const card = document.getElementById('detail-card');
+  card.innerHTML = `
+    <button class="detail-close" onclick="hideDetail()">✕</button>
+    <div class="detail-header">
+      <canvas id="detail-portrait"></canvas>
+      <div class="detail-name">${c.name}</div>
+      <div class="detail-element" style="color:${el.color}">${el.symbol} ${el.name}元素 · ${el.nameEn} · ${c.role}</div>
+    </div>
+    <div class="detail-stats">
+      <div class="stat-row"><span>❤️ HP</span><span class="stat-val">${c.hp}</span></div>
+      <div class="stat-row"><span>⚔ ATK</span><span class="stat-val">${c.atk}</span></div>
+      <div class="stat-row"><span>🛡 DEF</span><span class="stat-val">${c.def}</span></div>
+      <div class="stat-row"><span>💨 SPD</span><span class="stat-val">${c.spd}</span></div>
+    </div>
+    <div class="detail-skills">
+      ${c.skills.map((sk, si) => {
+        const typeLabel = sk.type === 'ultimate' ? '【终极】' : sk.type === 'heal' ? '【治疗】' : sk.type === 'shield' ? '【护盾】' : '';
+        return `<div class="skill-item" style="border-left-color:${el.color}">
+          <div class="skill-name" style="color:${el.color}">${typeLabel} ${sk.name}</div>
+          <div class="skill-desc">${sk.desc}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  modal.classList.add('show');
+  drawPortrait(document.getElementById('detail-portrait'), c, 80);
+}
+
+function hideDetail() {
+  document.getElementById('detail-modal').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEAM FORMATION
+   ═══════════════════════════════════════════════════════════════ */
+function buildFormation() {
+  const grid = document.getElementById('formation-grid');
+  grid.innerHTML = '';
+  const roles = ['前排护卫','前排输出','前排控制','后排输出','后排治疗','后排辅助'];
+  for (let i = 0; i < 6; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'formation-slot' + (state.team[i] !== undefined ? ' occupied' : '');
+    if (state.team[i] !== undefined) {
+      const c = CHARACTERS[state.team[i]];
+      const el = ELEMENTS[c.element];
+      slot.innerHTML = `
+        <canvas data-slot="${i}"></canvas>
+        <div class="char-name" style="color:${el.color}">${c.name}</div>
+        <div class="char-element">${el.symbol} ${c.role}</div>
+        <div class="slot-label" style="color:#e84530;font-size:.65em">点击移除</div>
+      `;
+      slot.onclick = () => { state.team.splice(i, 1); buildFormation(); };
+      slot.style.borderColor = el.color;
+    } else {
+      slot.innerHTML = `
+        <div style="font-size:2em;opacity:.2">+</div>
+        <div class="slot-role">${roles[i]}</div>
+      `;
+    }
+    grid.appendChild(slot);
+    if (state.team[i] !== undefined) {
+      drawPortrait(slot.querySelector('canvas'), CHARACTERS[state.team[i]], 56);
+    }
+  }
+
+  // Roster bar at bottom
+  const roster = document.getElementById('team-roster');
+  roster.innerHTML = '';
+  CHARACTERS.forEach((c, i) => {
+    const mini = document.createElement('div');
+    mini.className = 'mini-card' + (state.team.includes(i) ? ' in-team' : '');
+    mini.innerHTML = `<canvas></canvas>${c.name}`;
+    mini.onclick = () => {
+      if (!state.team.includes(i) && state.team.length < 6) {
+        state.team.push(i);
+        buildFormation();
+      }
+    };
+    roster.appendChild(mini);
+    drawMiniPortrait(mini.querySelector('canvas'), c, 40);
+  });
+
+  const btn = document.getElementById('start-battle-btn');
+  btn.disabled = state.team.length < 3;
+  btn.textContent = state.team.length < 3
+    ? `至少需要3名角色 (当前${state.team.length}/6)`
+    : `⚔ 出发战斗 (${state.team.length}人)`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BATTLE SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+function makeBattleChar(template, isEnemy) {
+  return {
+    ...template,
+    curHp: template.hp,
+    maxHp: template.hp,
+    energy: 0,
+    maxEnergy: 100,
+    alive: true,
+    isEnemy,
+    shield: 0,
+    buffs: [],
+    debuffs: [],
+    dot: [] // {type:'burn', turns:n}
+  };
+}
+
+function startBattle() {
+  if (state.team.length < 3) return;
+  state.wave = 0;
+  state.turn = 0;
+  state.allies = state.team.map(i => makeBattleChar(CHARACTERS[i], false));
+  state.enemies = ENEMIES[0].map(e => makeBattleChar(e, true));
+  state.battlePhase = 'idle';
+  showScreen('battle-screen');
+  initBattleCanvas();
+  nextTurn();
+}
+
+function nextTurn() {
+  // Check win/lose
+  const aliveAllies = state.allies.filter(a => a.alive);
+  const aliveEnemies = state.enemies.filter(e => e.alive);
+  if (aliveAllies.length === 0) { endBattle(false); return; }
+  if (aliveEnemies.length === 0) {
+    state.wave++;
+    if (state.wave >= ENEMIES.length) { endBattle(true); return; }
+    state.enemies = ENEMIES[state.wave].map(e => makeBattleChar(e, true));
+    renderBattle();
+    updateHUD();
+    setTimeout(() => nextTurn(), 600);
+    return;
+  }
+
+  // Build turn order from all alive units
+  const all = [...aliveAllies, ...aliveEnemies];
+  all.sort((a, b) => b.spd - a.spd + (Math.random() - 0.5) * 10);
+  state.turnOrder = all;
+  state.currentTurnIdx = 0;
+  state.turn++;
+  processNextInTurnOrder();
+}
+
+function processNextInTurnOrder() {
+  // Skip dead
+  while (state.currentTurnIdx < state.turnOrder.length && !state.turnOrder[state.currentTurnIdx].alive) {
+    state.currentTurnIdx++;
+  }
+  if (state.currentTurnIdx >= state.turnOrder.length) {
+    // End of round — process DOT
+    processDOT();
+    return;
+  }
+
+  const unit = state.turnOrder[state.currentTurnIdx];
+  renderBattle();
+  updateHUD();
+  updateTurnOrder();
+
+  if (unit.isEnemy) {
+    state.battlePhase = 'enemy';
+    document.getElementById('skill-buttons').innerHTML = '<div style="color:var(--text2);padding:8px;text-align:center">敌人行动中...</div>';
+    setTimeout(() => enemyAction(unit), 800);
+  } else {
+    state.battlePhase = 'player';
+    showSkillButtons(unit);
+  }
+}
+
+function processDOT() {
+  const allUnits = [...state.allies, ...state.enemies];
+  allUnits.forEach(u => {
+    if (!u.alive) return;
+    u.dot = u.dot.filter(d => {
+      if (d.type === 'burn') {
+        const dmg = Math.floor(u.maxHp * 0.05);
+        u.curHp -= dmg;
+        spawnFloatText(u, `-${dmg}`, '#ff8c42');
+        if (u.curHp <= 0) { u.curHp = 0; u.alive = false; }
+      }
+      return d.turns-- > 1;
+    });
+  });
+  renderBattle();
+  setTimeout(() => nextTurn(), 500);
+}
+
+function showSkillButtons(unit) {
+  const btns = document.getElementById('skill-buttons');
+  const el = ELEMENTS[unit.element];
+  btns.innerHTML = unit.skills.map((sk, i) => {
+    const isUlt = sk.type === 'ultimate';
+    const ready = isUlt ? unit.energy >= unit.maxEnergy : true;
+    return `<button class="skill-btn ${isUlt ? 'ultimate' : ''}"
+      ${!ready ? 'disabled' : ''}
+      onclick="playerAction(${i})"
+      style="border-left:3px solid ${el.color}">
+      ${isUlt ? '✦ ' : ''}${sk.name}
+    </button>`;
+  }).join('');
+}
+
+function playerAction(skillIdx) {
+  if (state.battlePhase !== 'player') return;
+  const unit = state.turnOrder[state.currentTurnIdx];
+  const skill = unit.skills[skillIdx];
+  state.battlePhase = 'animating';
+
+  // Pick target — first alive enemy
+  const targets = state.enemies.filter(e => e.alive);
+  if (targets.length === 0) return;
+  const target = targets[0];
+
+  // Handle heal/shield skills
+  if (skill.type === 'heal') {
+    const allies = state.allies.filter(a => a.alive);
+    const healAmt = Math.floor(unit.atk * (skill.healPct || 0.2));
+    allies.forEach(a => {
+      a.curHp = Math.min(a.maxHp, a.curHp + healAmt);
+      spawnFloatText(a, `+${healAmt}`, '#4caf50');
+    });
+    if (skill.cleanse) allies.forEach(a => { a.debuffs = []; a.dot = []; });
+    unit.energy = Math.min(unit.maxEnergy, unit.energy + 15);
+  } else if (skill.type === 'shield') {
+    const allies = state.allies.filter(a => a.alive);
+    const shieldAmt = Math.floor(unit.def * (skill.shieldPct || 2.0));
+    allies.forEach(a => {
+      a.shield += shieldAmt;
+      spawnFloatText(a, `🛡${shieldAmt}`, '#f7dc6f');
+    });
+    unit.energy = Math.min(unit.maxEnergy, unit.energy + 15);
+  } else {
+    // Damage skill
+    const mult = skill.mult || 1.0;
+    const advantage = getAdvantage(unit.element, target.element);
+    let dmg = Math.floor(unit.atk * mult * advantage);
+    // Crit chance
+    const crit = Math.random() < 0.15;
+    if (crit) dmg = Math.floor(dmg * 1.5);
+
+    // Apply shield first
+    let remaining = dmg;
+    if (target.shield > 0) {
+      const absorbed = Math.min(target.shield, remaining);
+      target.shield -= absorbed;
+      remaining -= absorbed;
+    }
+    target.curHp -= remaining;
+    if (target.curHp <= 0) { target.curHp = 0; target.alive = false; }
+
+    // Lifesteal
+    if (skill.lifesteal) {
+      const heal = Math.floor(dmg * skill.lifesteal);
+      unit.curHp = Math.min(unit.maxHp, unit.curHp + heal);
+      spawnFloatText(unit, `+${heal}`, '#9b59b6');
+    }
+
+    // DOT
+    if (skill.dot) {
+      target.dot.push({ type: 'burn', turns: skill.dot });
+    }
+    if (skill.dotChance && Math.random() < skill.dotChance) {
+      target.dot.push({ type: 'burn', turns: 2 });
+    }
+
+    // Freeze
+    if (skill.freezeChance && Math.random() < skill.freezeChance) {
+      target.debuffs.push({ type: 'frozen', turns: 1 });
+      spawnFloatText(target, '冰冻!', '#7ec8e3');
+    }
+
+    // Stun
+    if (skill.stunChance && Math.random() < skill.stunChance) {
+      target.debuffs.push({ type: 'stunned', turns: 1 });
+      spawnFloatText(target, '麻痹!', '#9b59b6');
+    }
+
+    // ATK/DEF break
+    if (skill.atkBreak) {
+      target.debuffs.push({ type: 'atkBreak', turns: 2, val: skill.atkBreak });
+    }
+    if (skill.defBreak) {
+      target.debuffs.push({ type: 'defBreak', turns: 2, val: skill.defBreak });
+    }
+
+    // Chain
+    if (skill.chain || skill.chainAll) {
+      const extras = skill.chainAll ? state.enemies.filter(e => e.alive && e !== target) : state.enemies.filter(e => e.alive && e !== target).slice(0, skill.chain || 0);
+      extras.forEach(e => {
+        const chainDmg = Math.floor(dmg * 0.5);
+        e.curHp -= chainDmg;
+        if (e.curHp <= 0) { e.curHp = 0; e.alive = false; }
+        spawnFloatText(e, `⚡${chainDmg}`, '#9b59b6');
+      });
+    }
+
+    spawnFloatText(target, crit ? `💥${dmg}` : `-${dmg}`, crit ? '#ffd700' : '#ff4444');
+    if (advantage > 1) spawnFloatText(target, '克制!', '#ff8c42');
+    if (advantage < 1) spawnFloatText(target, '抵抗', '#7ec8e3');
+
+    // Gain energy
+    unit.energy = Math.min(unit.maxEnergy, unit.energy + (skill.type === 'ultimate' ? -unit.maxEnergy : 20));
+    // Gain energy from being hit (already handled in enemy action)
+  }
+
+  // Spawn particles
+  spawnSkillParticles(unit, target, skill);
+
+  renderBattle();
+  updateHUD();
+
+  setTimeout(() => {
+    state.currentTurnIdx++;
+    processNextInTurnOrder();
+  }, 800);
+}
+
+function enemyAction(unit) {
+  if (!unit.alive) { state.currentTurnIdx++; processNextInTurnOrder(); return; }
+
+  // Check if frozen/stunned
+  const frozen = unit.debuffs.find(d => d.type === 'frozen' || d.type === 'stunned');
+  if (frozen) {
+    spawnFloatText(unit, frozen.type === 'frozen' ? '冰冻中' : '麻痹中', '#7ec8e3');
+    state.currentTurnIdx++;
+    setTimeout(() => processNextInTurnOrder(), 500);
+    return;
+  }
+
+  const allies = state.allies.filter(a => a.alive);
+  if (allies.length === 0) { state.currentTurnIdx++; processNextInTurnOrder(); return; }
+  const target = allies[Math.floor(Math.random() * allies.length)];
+  const skill = unit.skills[Math.floor(Math.random() * unit.skills.length)];
+  const mult = skill.mult || 1.0;
+  const advantage = getAdvantage(unit.element, target.element);
+
+  // Calculate ATK with debuffs
+  let effAtk = unit.atk;
+  unit.debuffs.forEach(d => { if (d.type === 'atkBreak') effAtk *= (1 - d.val); });
+
+  let dmg = Math.floor(effAtk * mult * advantage);
+  const crit = Math.random() < 0.1;
+  if (crit) dmg = Math.floor(dmg * 1.5);
+
+  let remaining = dmg;
+  if (target.shield > 0) {
+    const absorbed = Math.min(target.shield, remaining);
+    target.shield -= absorbed;
+    remaining -= absorbed;
+  }
+  target.curHp -= remaining;
+  if (target.curHp <= 0) { target.curHp = 0; target.alive = false; }
+
+  spawnFloatText(target, crit ? `💥${dmg}` : `-${dmg}`, '#ff4444');
+  if (advantage > 1) spawnFloatText(target, '克制!', '#ff8c42');
+
+  // Target gains energy from being hit
+  target.energy = Math.min(target.maxEnergy, target.energy + 10);
+
+  spawnSkillParticles(unit, target, skill);
+  renderBattle();
+
+  setTimeout(() => {
+    state.currentTurnIdx++;
+    processNextInTurnOrder();
+  }, 600);
+}
+
+function endBattle(won) {
+  state.battlePhase = 'done';
+  showScreen('result-screen');
+  const title = document.getElementById('result-title');
+  const detail = document.getElementById('result-detail');
+  title.className = 'result-title ' + (won ? 'win' : 'lose');
+  title.textContent = won ? '✨ 胜 利 ✨' : '💀 败 北 💀';
+  const kills = state.enemies.filter(e => !e.alive).length;
+  detail.textContent = won
+    ? `成功通关全部${ENEMIES.length}波敌人！ 击败${kills}个敌人。`
+    : `在第${state.wave + 1}波战败。击败了${kills}个敌人。`;
+}
+
+function resetGame() {
+  state.team = [];
+  showScreen('title-screen');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BATTLE CANVAS RENDERING
+   ═══════════════════════════════════════════════════════════════ */
+let battleCanvas, battleCtx;
+
+function initBattleCanvas() {
+  battleCanvas = document.getElementById('battle-canvas');
+  resizeBattleCanvas();
+  window.addEventListener('resize', resizeBattleCanvas);
+  renderBattle();
+}
+
+function resizeBattleCanvas() {
+  if (!battleCanvas) return;
+  const rect = battleCanvas.parentElement.getBoundingClientRect();
+  const uiH = document.getElementById('battle-ui').getBoundingClientRect().height;
+  battleCanvas.width = rect.width * 2;
+  battleCanvas.height = (rect.height - uiH) * 2;
+  battleCanvas.style.width = rect.width + 'px';
+  battleCanvas.style.height = (rect.height - uiH) + 'px';
+  battleCtx = battleCanvas.getContext('2d');
+  renderBattle();
+}
+
+function renderBattle() {
+  if (!battleCtx) return;
+  const ctx = battleCtx;
+  const W = battleCanvas.width, H = battleCanvas.height;
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0a0a14');
+  bg.addColorStop(0.4, '#1a1040');
+  bg.addColorStop(1, '#0a0a14');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#1a1a3e40';
+  ctx.lineWidth = 1;
+  for (let y = 0; y < H; y += 60) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Draw enemies (top)
+  const aliveEnemies = state.enemies.filter(e => e.alive);
+  const enemySpacing = W / (aliveEnemies.length + 1);
+  aliveEnemies.forEach((e, i) => {
+    const x = enemySpacing * (i + 1);
+    const y = H * 0.22;
+    drawBattleUnit(ctx, e, x, y, true);
+  });
+
+  // Draw allies (bottom)
+  const aliveAllies = state.allies.filter(a => a.alive);
+  const allySpacing = W / (aliveAllies.length + 1);
+  aliveAllies.forEach((a, i) => {
+    const x = allySpacing * (i + 1);
+    const y = H * 0.68;
+    drawBattleUnit(ctx, a, x, y, false);
+  });
+
+  // Particles
+  updateParticles(ctx);
+}
+
+function drawBattleUnit(ctx, unit, x, y, isEnemy) {
+  const el = ELEMENTS[unit.element];
+  const size = unit.boss ? 70 : 50;
+
+  // Glow
+  const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
+  glow.addColorStop(0, el.color + '30');
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.beginPath(); ctx.arc(x, y, size * 2, 0, Math.PI * 2); ctx.fill();
+
+  // Body
+  ctx.fillStyle = el.color + 'cc';
+  ctx.beginPath(); ctx.arc(x, y - size * 0.3, size * 0.35, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x - size * 0.4, y + size * 0.1);
+  ctx.lineTo(x + size * 0.4, y + size * 0.1);
+  ctx.lineTo(x + size * 0.45, y + size * 0.7);
+  ctx.lineTo(x - size * 0.45, y + size * 0.7);
+  ctx.closePath(); ctx.fill();
+
+  // Element symbol
+  ctx.fillStyle = el.glow;
+  ctx.font = `bold ${size * 0.5}px sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(el.symbol, x, y + size * 0.3);
+
+  // Name
+  ctx.fillStyle = '#e8e6f0';
+  ctx.font = `bold ${size * 0.28}px sans-serif`;
+  ctx.fillText(unit.name, x, y - size * 0.75);
+
+  // HP bar
+  const barW = size * 1.4, barH = 8;
+  const barX = x - barW / 2, barY = y - size * 0.55;
+  ctx.fillStyle = '#1a1a3e';
+  ctx.fillRect(barX, barY, barW, barH);
+  const hpPct = unit.curHp / unit.maxHp;
+  ctx.fillStyle = hpPct > 0.5 ? '#4caf50' : hpPct > 0.25 ? '#ff9800' : '#f44336';
+  ctx.fillRect(barX, barY, barW * hpPct, barH);
+  ctx.strokeStyle = '#2a2a5c';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(barX, barY, barW, barH);
+
+  // HP text
+  ctx.fillStyle = '#e8e6f0';
+  ctx.font = `${size * 0.18}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`${unit.curHp}/${unit.maxHp}`, x, barY + barH + size * 0.15);
+
+  // Shield indicator
+  if (unit.shield > 0) {
+    ctx.strokeStyle = '#f7dc6f80';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(x, y, size * 0.9, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#f7dc6f';
+    ctx.font = `${size * 0.2}px sans-serif`;
+    ctx.fillText(`🛡${unit.shield}`, x, y + size * 0.95);
+  }
+
+  // Energy bar (allies only)
+  if (!isEnemy) {
+    const eBarW = barW * 0.8, eBarH = 4;
+    const eBarX = x - eBarW / 2, eBarY = barY + barH + size * 0.22;
+    ctx.fillStyle = '#1a1a3e';
+    ctx.fillRect(eBarX, eBarY, eBarW, eBarH);
+    ctx.fillStyle = '#f7dc6f';
+    ctx.fillRect(eBarX, eBarY, eBarW * (unit.energy / unit.maxEnergy), eBarH);
+  }
+
+  // Dead overlay
+  if (!unit.alive) {
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(x - size, y - size, size * 2, size * 2);
+    ctx.fillStyle = '#f44336';
+    ctx.font = `bold ${size * 0.35}px sans-serif`;
+    ctx.fillText('💀', x, y);
+  }
+
+  // Active indicator
+  const curUnit = state.turnOrder[state.currentTurnIdx];
+  if (curUnit === unit && unit.alive) {
+    ctx.strokeStyle = '#f7dc6f';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.arc(x, y, size + 8, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTICLES & EFFECTS
+   ═══════════════════════════════════════════════════════════════ */
+function spawnSkillParticles(attacker, target, skill) {
+  const el = ELEMENTS[attacker.element];
+  for (let i = 0; i < 15; i++) {
+    state.particles.push({
+      x: battleCanvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: battleCanvas.height * (attacker.isEnemy ? 0.22 : 0.68),
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8,
+      life: 1,
+      decay: 0.02 + Math.random() * 0.02,
+      color: el.color,
+      size: 3 + Math.random() * 5
+    });
+  }
+}
+
+function updateParticles(ctx) {
+  state.particles = state.particles.filter(p => {
+    p.x += p.vx; p.y += p.vy;
+    p.life -= p.decay;
+    if (p.life <= 0) return false;
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    return true;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FLOATING TEXT
+   ═══════════════════════════════════════════════════════════════ */
+function spawnFloatText(unit, text, color) {
+  const isAlly = state.allies.includes(unit);
+  const idx = isAlly ? state.allies.indexOf(unit) : state.enemies.indexOf(unit);
+  const alive = isAlly ? state.allies.filter(a => a.alive) : state.enemies.filter(e => e.alive);
+  const posIdx = alive.indexOf(unit);
+
+  const battleDiv = document.getElementById('battle-screen');
+  const rect = battleDiv.getBoundingClientRect();
+  const W = rect.width;
+  const H = rect.height - document.getElementById('battle-ui').getBoundingClientRect().height;
+
+  const aliveList = isAlly ? state.allies.filter(a => a.alive) : state.enemies.filter(e => e.alive);
+  const spacing = W / (aliveList.length + 1);
+  const x = spacing * (posIdx + 1);
+  const y = H * (isAlly ? 0.55 : 0.15);
+
+  const el = document.createElement('div');
+  el.className = 'float-dmg';
+  el.textContent = text;
+  el.style.color = color;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.style.textShadow = `0 0 8px ${color}`;
+  battleDiv.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HUD UPDATES
+   ═══════════════════════════════════════════════════════════════ */
+function updateHUD() {
+  document.getElementById('hud-wave').textContent = `波次 ${state.wave + 1}/${ENEMIES.length}`;
+  document.getElementById('hud-turn').textContent = `回合 ${state.turn}`;
+  document.getElementById('hud-phase').textContent =
+    state.battlePhase === 'player' ? '玩家回合' :
+    state.battlePhase === 'enemy' ? '敌人行动' : '准备中';
+
+  // Team status
+  const ts = document.getElementById('team-status');
+  ts.innerHTML = state.allies.map(a => {
+    const el = ELEMENTS[a.element];
+    const hpPct = (a.curHp / a.maxHp * 100).toFixed(0);
+    const ePct = (a.energy / a.maxEnergy * 100).toFixed(0);
+    return `<div class="member-status ${a.alive ? '' : 'dead'}">
+      <span style="color:${el.color}">${el.symbol} ${a.name}</span>
+      <div class="hp-bar"><div class="hp-bar-fill" style="width:${hpPct}%;background:${a.curHp/a.maxHp>.5?'#4caf50':a.curHp/a.maxHp>.25?'#ff9800':'#f44336'}"></div></div>
+      <div style="font-size:.65em;color:var(--text2)">${a.curHp}/${a.maxHp}</div>
+      <div class="energy-bar"><div class="energy-bar-fill" style="width:${ePct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function updateTurnOrder() {
+  const to = document.getElementById('turn-order');
+  to.innerHTML = '<span style="font-size:.75em;color:var(--text2);margin-right:4px">行动序:</span>';
+  state.turnOrder.forEach((u, i) => {
+    if (!u.alive) return;
+    const el = ELEMENTS[u.element];
+    const div = document.createElement('div');
+    div.className = 'turn-icon' + (i === state.currentTurnIdx ? ' active' : '');
+    div.style.background = el.color + '40';
+    div.style.borderColor = i === state.currentTurnIdx ? '#f7dc6f' : el.color + '60';
+    div.title = u.name;
+    div.innerHTML = `<span style="font-size:14px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${el.symbol}</span>`;
+    to.appendChild(div);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TITLE SCREEN BACKGROUND
+   ═══════════════════════════════════════════════════════════════ */
+function initTitleBg() {
+  const c = document.getElementById('title-bg');
+  const parent = c.parentElement;
+  c.width = parent.clientWidth * 2;
+  c.height = parent.clientHeight * 2;
+  c.style.width = '100%'; c.style.height = '100%';
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  // Animated background particles
+  const titleParticles = [];
+  for (let i = 0; i < 40; i++) {
+    titleParticles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 1,
+      vy: (Math.random() - 0.5) * 1,
+      size: 2 + Math.random() * 4,
+      color: ['#e84530','#2e86ab','#90be6d','#5b5ea6','#6a4c93','#f7dc6f'][Math.floor(Math.random()*6)],
+      alpha: 0.2 + Math.random() * 0.4
+    });
+  }
+
+  function animTitle() {
+    if (!document.getElementById('title-screen').classList.contains('active')) return;
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0a0a14');
+    bg.addColorStop(0.5, '#1a1040');
+    bg.addColorStop(1, '#0a0a14');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    titleParticles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animTitle);
+  }
+  animTitle();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  initTitleBg();
+});
+</script>
+</body>
+</html>

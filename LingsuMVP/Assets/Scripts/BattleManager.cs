@@ -34,6 +34,7 @@ namespace LingsuMVP
         private readonly List<AllyCombatant> _allies = new List<AllyCombatant>();
         private bool _battleVisualsVisible = true;
         private string _selectedAllyName = "主角";
+        private static readonly Dictionary<string, Sprite> _allySpriteCache = new Dictionary<string, Sprite>();
 
         private class AllyCombatant
         {
@@ -783,6 +784,11 @@ namespace LingsuMVP
 
         private static Sprite CreateAllySprite(string recruitName, Color bodyColor)
         {
+            if (_allySpriteCache.TryGetValue(recruitName, out Sprite cached))
+            {
+                return cached;
+            }
+
             const int size = 96;
             Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
             Color clear = new Color(0f, 0f, 0f, 0f);
@@ -823,7 +829,9 @@ namespace LingsuMVP
 
             texture.Apply();
             texture.filterMode = FilterMode.Bilinear;
-            return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+            _allySpriteCache[recruitName] = sprite;
+            return sprite;
         }
 
         private static Color GetAllyAccentColor(string recruitName)

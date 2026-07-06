@@ -6861,22 +6861,9 @@ namespace LingsuMVP
         private void SetBattleHudVisible(bool visible)
         {
             GameObject skillBar = GameObject.Find("SkillBar");
-            if (skillBar == null)
-            {
-                GameObject[] gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                foreach (GameObject gameObject in gameObjects)
-                {
-                    if (gameObject != null && gameObject.name == "SkillBar")
-                    {
-                        skillBar = gameObject;
-                        break;
-                    }
-                }
-            }
-
             if (skillBar != null)
             {
-                skillBar.SetActive(false);
+                skillBar.SetActive(visible);
             }
         }
 

@@ -428,7 +428,8 @@ let state = {
   battlePhase: 'idle', // idle | player | enemy | animating | done
   selectedSkill: null,
   particles: [],
-  floatTexts: []
+  floatTexts: [],
+  totalKills: 0     // running kill count across all waves
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -677,6 +678,7 @@ function startBattle() {
   if (state.team.length < 3) return;
   state.wave = 0;
   state.turn = 0;
+  state.totalKills = 0;
   state.allies = state.team.map(i => makeBattleChar(CHARACTERS[i], false));
   state.enemies = ENEMIES[0].map(e => makeBattleChar(e, true));
   state.battlePhase = 'idle';
@@ -710,6 +712,14 @@ function nextTurn() {
 }
 
 function processNextInTurnOrder() {
+  // Check win/lose mid-round (e.g. all enemies died from a chain/ultimate
+  // before every ally acted). Without this, the next ally would get a turn
+  // with no targets and the battle would softlock in the 'animating' phase.
+  const aliveAllies = state.allies.filter(a => a.alive);
+  const aliveEnemies = state.enemies.filter(e => e.alive);
+  if (aliveAllies.length === 0) { endBattle(false); return; }
+  if (aliveEnemies.length === 0) { nextTurn(); return; }
+
   // Skip dead
   while (state.currentTurnIdx < state.turnOrder.length && !state.turnOrder[state.currentTurnIdx].alive) {
     state.currentTurnIdx++;
@@ -721,16 +731,18 @@ function processNextInTurnOrder() {
   }
 
   const unit = state.turnOrder[state.currentTurnIdx];
+  // Set the phase BEFORE updateHUD, otherwise the HUD reads the previous
+  // phase and shows "准备中" during the player's turn — which looks like the
+  // battle is stuck and hides the fact that the player needs to click a skill.
+  state.battlePhase = unit.isEnemy ? 'enemy' : 'player';
   renderBattle();
   updateHUD();
   updateTurnOrder();
 
   if (unit.isEnemy) {
-    state.battlePhase = 'enemy';
     document.getElementById('skill-buttons').innerHTML = '<div style="color:var(--text2);padding:8px;text-align:center">敌人行动中...</div>';
     setTimeout(() => enemyAction(unit), 800);
   } else {
-    state.battlePhase = 'player';
     showSkillButtons(unit);
   }
 }
@@ -744,7 +756,7 @@ function processDOT() {
         const dmg = Math.floor(u.maxHp * 0.05);
         u.curHp -= dmg;
         spawnFloatText(u, `-${dmg}`, '#ff8c42');
-        if (u.curHp <= 0) { u.curHp = 0; u.alive = false; }
+        if (u.curHp <= 0) { u.curHp = 0; u.alive = false; if (u.isEnemy) state.totalKills++; }
       }
       return d.turns-- > 1;
     });
@@ -782,7 +794,7 @@ function playerAction(skillIdx) {
   // Handle heal/shield skills
   if (skill.type === 'heal') {
     const allies = state.allies.filter(a => a.alive);
-    const healAmt = Math.floor(unit.atk * (skill.healPct || 0.2));
+    const healAmt = Math.floor(unit.maxHp * (skill.healPct || 0.2));
     allies.forEach(a => {
       a.curHp = Math.min(a.maxHp, a.curHp + healAmt);
       spawnFloatText(a, `+${healAmt}`, '#4caf50');
@@ -814,7 +826,7 @@ function playerAction(skillIdx) {
       remaining -= absorbed;
     }
     target.curHp -= remaining;
-    if (target.curHp <= 0) { target.curHp = 0; target.alive = false; }
+    if (target.curHp <= 0) { target.curHp = 0; target.alive = false; state.totalKills++; }
 
     // Lifesteal
     if (skill.lifesteal) {
@@ -857,7 +869,7 @@ function playerAction(skillIdx) {
       extras.forEach(e => {
         const chainDmg = Math.floor(dmg * 0.5);
         e.curHp -= chainDmg;
-        if (e.curHp <= 0) { e.curHp = 0; e.alive = false; }
+        if (e.curHp <= 0) { e.curHp = 0; e.alive = false; state.totalKills++; }
         spawnFloatText(e, `⚡${chainDmg}`, '#9b59b6');
       });
     }
@@ -927,6 +939,7 @@ function enemyAction(unit) {
 
   spawnSkillParticles(unit, target, skill);
   renderBattle();
+  updateHUD();
 
   setTimeout(() => {
     state.currentTurnIdx++;
@@ -941,7 +954,7 @@ function endBattle(won) {
   const detail = document.getElementById('result-detail');
   title.className = 'result-title ' + (won ? 'win' : 'lose');
   title.textContent = won ? '✨ 胜 利 ✨' : '💀 败 北 💀';
-  const kills = state.enemies.filter(e => !e.alive).length;
+  const kills = state.totalKills;
   detail.textContent = won
     ? `成功通关全部${ENEMIES.length}波敌人！ 击败${kills}个敌人。`
     : `在第${state.wave + 1}波战败。击败了${kills}个敌人。`;
@@ -960,6 +973,8 @@ let battleCanvas, battleCtx;
 function initBattleCanvas() {
   battleCanvas = document.getElementById('battle-canvas');
   resizeBattleCanvas();
+  // Re-registering on every battle would leak listeners; remove first.
+  window.removeEventListener('resize', resizeBattleCanvas);
   window.addEventListener('resize', resizeBattleCanvas);
   renderBattle();
 }

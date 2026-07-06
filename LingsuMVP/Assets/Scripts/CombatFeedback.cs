@@ -8,6 +8,7 @@ namespace LingsuMVP
     public static class CombatFeedback
     {
         private static Sprite _effectSprite;
+        private static Canvas _cachedCanvas;
 
         public static void PlayBasicAttack(MonoBehaviour runner, Transform attacker, Transform target, int damage, Color effectColor, Func<int> applyDamage)
         {
@@ -143,7 +144,12 @@ namespace LingsuMVP
 
         private static bool CreateUiDamageNumber(Vector3 worldPosition, int damage, Color color)
         {
-            Canvas canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+            Canvas canvas = _cachedCanvas;
+            if (canvas == null)
+            {
+                _cachedCanvas = canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+            }
+
             Camera camera = Camera.main;
             if (canvas == null || camera == null)
             {

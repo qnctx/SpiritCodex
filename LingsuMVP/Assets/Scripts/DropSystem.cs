@@ -129,8 +129,14 @@ namespace LingsuMVP
 
         private void PlayMaterialFlyEffect(Vector3 worldPosition, bool isBoss)
         {
+            if (materialCountText == null)
+            {
+                PlayDropEffect();
+                return;
+            }
+
             Canvas canvas = materialCountText.GetComponentInParent<Canvas>();
-            if (canvas == null || materialCountText == null)
+            if (canvas == null)
             {
                 PlayDropEffect();
                 return;

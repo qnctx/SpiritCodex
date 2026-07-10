@@ -370,8 +370,8 @@ const CHARACTERS = [
     hp:290, atk:65, def:45, spd:62,
     skills:[
       { name:'诅咒之矢', desc:'诅咒之箭，造成ATK×100%伤害，降低目标ATK15%持续2回合', type:'attack', mult:1.0, atkBreak:.15 },
-      { name:'虚弱诅咒', desc:'强力诅咒，造成ATK×120%伤害，降低目标ATK25%持续3回合', type:'attack', mult:1.2, atkBreak:.25 },
-      { name:'永恒诅咒', desc:'【终极】古老诅咒降临，造成ATK×200%伤害，降低目标ATK&DEF各30%持续3回合', type:'ultimate', mult:2.0, atkBreak:.3, defBreak:.3 }
+      { name:'虚弱诅咒', desc:'强力诅咒，造成ATK×120%伤害，降低目标ATK25%持续3回合', type:'attack', mult:1.2, atkBreak:.25, turns:3 },
+      { name:'永恒诅咒', desc:'【终极】古老诅咒降临，造成ATK×200%伤害，降低目标ATK&DEF各30%持续3回合', type:'ultimate', mult:2.0, atkBreak:.3, defBreak:.3, turns:3 }
     ]
   },
   // Light
@@ -425,6 +425,7 @@ let state = {
   currentTurnIdx: 0,
   allies: [],       // battle copies
   enemies: [],      // battle copies
+  totalKills: 0,
   battlePhase: 'idle', // idle | player | enemy | animating | done
   selectedSkill: null,
   particles: [],
@@ -676,6 +677,7 @@ function makeBattleChar(template, isEnemy) {
 function startBattle() {
   if (state.team.length < 3) return;
   state.wave = 0;
+  state.totalKills = 0;
   state.turn = 0;
   state.allies = state.team.map(i => makeBattleChar(CHARACTERS[i], false));
   state.enemies = ENEMIES[0].map(e => makeBattleChar(e, true));
@@ -735,6 +737,57 @@ function processNextInTurnOrder() {
   }
 }
 
+function getEffectiveDefense(target) {
+  const defenseBreak = target.debuffs
+    .filter(d => d.type === 'defBreak')
+    .reduce((total, debuff) => total + (debuff.val || 0), 0);
+  return Math.max(0, Math.floor(target.def * (1 - clamp(defenseBreak, 0, 0.9))));
+}
+
+function calculateDamage(attacker, target, multiplier, advantage, critMultiplier) {
+  const rawDamage = Math.floor(attacker.atk * multiplier * advantage * critMultiplier);
+  return Math.max(1, rawDamage - getEffectiveDefense(target));
+}
+
+function markDefeated(unit) {
+  if (unit.curHp > 0 || !unit.alive) return false;
+  unit.curHp = 0;
+  unit.alive = false;
+  if (unit.isEnemy) state.totalKills++;
+  return true;
+}
+
+function applyDamage(target, damage) {
+  let remaining = Math.max(0, damage);
+  if (target.shield > 0) {
+    const absorbed = Math.min(target.shield, remaining);
+    target.shield -= absorbed;
+    remaining -= absorbed;
+  }
+  target.curHp -= remaining;
+  markDefeated(target);
+  return remaining;
+}
+
+function advanceDebuffs(unit) {
+  unit.debuffs = unit.debuffs.filter(debuff => {
+    debuff.turns = Math.max(0, (debuff.turns || 0) - 1);
+    return debuff.turns > 0;
+  });
+}
+
+function healAllies(skill) {
+  const allies = state.allies.filter(a => a.alive);
+  allies.forEach(ally => {
+    const before = ally.curHp;
+    const requested = Math.floor(ally.maxHp * skill.healPct);
+    ally.curHp = Math.min(ally.maxHp, ally.curHp + requested);
+    const actual = ally.curHp - before;
+    if (actual > 0) spawnFloatText(ally, '+' + actual, '#4caf50');
+  });
+  if (skill.cleanse) allies.forEach(ally => { ally.debuffs = []; ally.dot = []; });
+}
+
 function processDOT() {
   const allUnits = [...state.allies, ...state.enemies];
   allUnits.forEach(u => {
@@ -744,7 +797,7 @@ function processDOT() {
         const dmg = Math.floor(u.maxHp * 0.05);
         u.curHp -= dmg;
         spawnFloatText(u, `-${dmg}`, '#ff8c42');
-        if (u.curHp <= 0) { u.curHp = 0; u.alive = false; }
+        markDefeated(u);
       }
       return d.turns-- > 1;
     });
@@ -774,106 +827,73 @@ function playerAction(skillIdx) {
   const skill = unit.skills[skillIdx];
   state.battlePhase = 'animating';
 
-  // Pick target — first alive enemy
   const targets = state.enemies.filter(e => e.alive);
   if (targets.length === 0) return;
   const target = targets[0];
 
-  // Handle heal/shield skills
-  if (skill.type === 'heal') {
+  // Ultimate describes resource usage; healPct/shieldPct describe its effects.
+  const hasHealing = typeof skill.healPct === 'number';
+  const hasShield = typeof skill.shieldPct === 'number';
+  const isSupportSkill = hasHealing || hasShield;
+  if (hasHealing) healAllies(skill);
+  if (hasShield) {
     const allies = state.allies.filter(a => a.alive);
-    const healAmt = Math.floor(unit.atk * (skill.healPct || 0.2));
-    allies.forEach(a => {
-      a.curHp = Math.min(a.maxHp, a.curHp + healAmt);
-      spawnFloatText(a, `+${healAmt}`, '#4caf50');
-    });
-    if (skill.cleanse) allies.forEach(a => { a.debuffs = []; a.dot = []; });
-    unit.energy = Math.min(unit.maxEnergy, unit.energy + 15);
-  } else if (skill.type === 'shield') {
-    const allies = state.allies.filter(a => a.alive);
-    const shieldAmt = Math.floor(unit.def * (skill.shieldPct || 2.0));
+    const shieldAmt = Math.floor(unit.def * skill.shieldPct);
     allies.forEach(a => {
       a.shield += shieldAmt;
-      spawnFloatText(a, `🛡${shieldAmt}`, '#f7dc6f');
+      spawnFloatText(a, '🛡' + shieldAmt, '#f7dc6f');
     });
-    unit.energy = Math.min(unit.maxEnergy, unit.energy + 15);
-  } else {
-    // Damage skill
+  }
+
+  if (!isSupportSkill) {
     const mult = skill.mult || 1.0;
     const advantage = getAdvantage(unit.element, target.element);
-    let dmg = Math.floor(unit.atk * mult * advantage);
-    // Crit chance
     const crit = Math.random() < 0.15;
-    if (crit) dmg = Math.floor(dmg * 1.5);
+    const critMultiplier = crit ? 1.5 : 1;
+    const damage = calculateDamage(unit, target, mult, advantage, critMultiplier);
+    const actualDamage = applyDamage(target, damage);
 
-    // Apply shield first
-    let remaining = dmg;
-    if (target.shield > 0) {
-      const absorbed = Math.min(target.shield, remaining);
-      target.shield -= absorbed;
-      remaining -= absorbed;
-    }
-    target.curHp -= remaining;
-    if (target.curHp <= 0) { target.curHp = 0; target.alive = false; }
-
-    // Lifesteal
     if (skill.lifesteal) {
-      const heal = Math.floor(dmg * skill.lifesteal);
-      unit.curHp = Math.min(unit.maxHp, unit.curHp + heal);
-      spawnFloatText(unit, `+${heal}`, '#9b59b6');
+      const before = unit.curHp;
+      unit.curHp = Math.min(unit.maxHp, unit.curHp + Math.floor(actualDamage * skill.lifesteal));
+      const actualHeal = unit.curHp - before;
+      if (actualHeal > 0) spawnFloatText(unit, '+' + actualHeal, '#9b59b6');
     }
 
-    // DOT
-    if (skill.dot) {
-      target.dot.push({ type: 'burn', turns: skill.dot });
-    }
-    if (skill.dotChance && Math.random() < skill.dotChance) {
-      target.dot.push({ type: 'burn', turns: 2 });
-    }
-
-    // Freeze
-    if (skill.freezeChance && Math.random() < skill.freezeChance) {
+    if (target.alive && skill.dot) target.dot.push({ type: 'burn', turns: skill.dot });
+    if (target.alive && skill.dotChance && Math.random() < skill.dotChance) target.dot.push({ type: 'burn', turns: 2 });
+    if (target.alive && skill.freezeChance && Math.random() < skill.freezeChance) {
       target.debuffs.push({ type: 'frozen', turns: 1 });
       spawnFloatText(target, '冰冻!', '#7ec8e3');
     }
-
-    // Stun
-    if (skill.stunChance && Math.random() < skill.stunChance) {
+    if (target.alive && skill.stunChance && Math.random() < skill.stunChance) {
       target.debuffs.push({ type: 'stunned', turns: 1 });
       spawnFloatText(target, '麻痹!', '#9b59b6');
     }
+    if (target.alive && skill.atkBreak) target.debuffs.push({ type: 'atkBreak', turns: skill.turns || 2, val: skill.atkBreak });
+    if (target.alive && skill.defBreak) target.debuffs.push({ type: 'defBreak', turns: skill.turns || 2, val: skill.defBreak });
 
-    // ATK/DEF break
-    if (skill.atkBreak) {
-      target.debuffs.push({ type: 'atkBreak', turns: 2, val: skill.atkBreak });
-    }
-    if (skill.defBreak) {
-      target.debuffs.push({ type: 'defBreak', turns: 2, val: skill.defBreak });
-    }
-
-    // Chain
     if (skill.chain || skill.chainAll) {
-      const extras = skill.chainAll ? state.enemies.filter(e => e.alive && e !== target) : state.enemies.filter(e => e.alive && e !== target).slice(0, skill.chain || 0);
-      extras.forEach(e => {
-        const chainDmg = Math.floor(dmg * 0.5);
-        e.curHp -= chainDmg;
-        if (e.curHp <= 0) { e.curHp = 0; e.alive = false; }
-        spawnFloatText(e, `⚡${chainDmg}`, '#9b59b6');
+      const extras = skill.chainAll
+        ? state.enemies.filter(e => e.alive && e !== target)
+        : state.enemies.filter(e => e.alive && e !== target).slice(0, skill.chain || 0);
+      extras.forEach(enemy => {
+        const chainDamage = calculateDamage(unit, enemy, mult * 0.5, getAdvantage(unit.element, enemy.element), critMultiplier);
+        applyDamage(enemy, chainDamage);
+        spawnFloatText(enemy, '⚡' + chainDamage, '#9b59b6');
       });
     }
 
-    spawnFloatText(target, crit ? `💥${dmg}` : `-${dmg}`, crit ? '#ffd700' : '#ff4444');
+    spawnFloatText(target, crit ? '💥' + damage : '-' + damage, crit ? '#ffd700' : '#ff4444');
     if (advantage > 1) spawnFloatText(target, '克制!', '#ff8c42');
     if (advantage < 1) spawnFloatText(target, '抵抗', '#7ec8e3');
-
-    // Gain energy
-    unit.energy = Math.min(unit.maxEnergy, unit.energy + (skill.type === 'ultimate' ? -unit.maxEnergy : 20));
-    // Gain energy from being hit (already handled in enemy action)
+    if (skill.type !== 'ultimate') unit.energy = Math.min(unit.maxEnergy, unit.energy + 20);
   }
 
-  // Spawn particles
-  spawnSkillParticles(unit, target, skill);
+  if (skill.type === 'ultimate') unit.energy = 0;
+  else if (isSupportSkill) unit.energy = Math.min(unit.maxEnergy, unit.energy + 15);
 
+  spawnSkillParticles(unit, target, skill);
   renderBattle();
   updateHUD();
 
@@ -886,10 +906,10 @@ function playerAction(skillIdx) {
 function enemyAction(unit) {
   if (!unit.alive) { state.currentTurnIdx++; processNextInTurnOrder(); return; }
 
-  // Check if frozen/stunned
-  const frozen = unit.debuffs.find(d => d.type === 'frozen' || d.type === 'stunned');
-  if (frozen) {
-    spawnFloatText(unit, frozen.type === 'frozen' ? '冰冻中' : '麻痹中', '#7ec8e3');
+  const control = unit.debuffs.find(d => d.type === 'frozen' || d.type === 'stunned');
+  if (control) {
+    spawnFloatText(unit, control.type === 'frozen' ? '冰冻中' : '麻痹中', '#7ec8e3');
+    advanceDebuffs(unit);
     state.currentTurnIdx++;
     setTimeout(() => processNextInTurnOrder(), 500);
     return;
@@ -902,27 +922,16 @@ function enemyAction(unit) {
   const mult = skill.mult || 1.0;
   const advantage = getAdvantage(unit.element, target.element);
 
-  // Calculate ATK with debuffs
-  let effAtk = unit.atk;
-  unit.debuffs.forEach(d => { if (d.type === 'atkBreak') effAtk *= (1 - d.val); });
-
-  let dmg = Math.floor(effAtk * mult * advantage);
+  let effectiveAttack = unit.atk;
+  unit.debuffs.forEach(d => { if (d.type === 'atkBreak') effectiveAttack *= (1 - d.val); });
   const crit = Math.random() < 0.1;
-  if (crit) dmg = Math.floor(dmg * 1.5);
+  const attacker = { ...unit, atk: effectiveAttack };
+  const damage = calculateDamage(attacker, target, mult, advantage, crit ? 1.5 : 1);
+  applyDamage(target, damage);
+  advanceDebuffs(unit);
 
-  let remaining = dmg;
-  if (target.shield > 0) {
-    const absorbed = Math.min(target.shield, remaining);
-    target.shield -= absorbed;
-    remaining -= absorbed;
-  }
-  target.curHp -= remaining;
-  if (target.curHp <= 0) { target.curHp = 0; target.alive = false; }
-
-  spawnFloatText(target, crit ? `💥${dmg}` : `-${dmg}`, '#ff4444');
+  spawnFloatText(target, crit ? '💥' + damage : '-' + damage, '#ff4444');
   if (advantage > 1) spawnFloatText(target, '克制!', '#ff8c42');
-
-  // Target gains energy from being hit
   target.energy = Math.min(target.maxEnergy, target.energy + 10);
 
   spawnSkillParticles(unit, target, skill);
@@ -941,7 +950,7 @@ function endBattle(won) {
   const detail = document.getElementById('result-detail');
   title.className = 'result-title ' + (won ? 'win' : 'lose');
   title.textContent = won ? '✨ 胜 利 ✨' : '💀 败 北 💀';
-  const kills = state.enemies.filter(e => !e.alive).length;
+  const kills = state.totalKills;
   detail.textContent = won
     ? `成功通关全部${ENEMIES.length}波敌人！ 击败${kills}个敌人。`
     : `在第${state.wave + 1}波战败。击败了${kills}个敌人。`;
@@ -956,11 +965,15 @@ function resetGame() {
    BATTLE CANVAS RENDERING
    ═══════════════════════════════════════════════════════════════ */
 let battleCanvas, battleCtx;
+let battleResizeRegistered = false;
 
 function initBattleCanvas() {
   battleCanvas = document.getElementById('battle-canvas');
   resizeBattleCanvas();
-  window.addEventListener('resize', resizeBattleCanvas);
+  if (!battleResizeRegistered) {
+    window.addEventListener('resize', resizeBattleCanvas);
+    battleResizeRegistered = true;
+  }
   renderBattle();
 }
 

@@ -40,7 +40,9 @@ namespace LingsuMVP
         {
             public string name;
             public Transform transform;
+            public Transform spriteTransform;
             public SpriteRenderer renderer;
+            public Vector3 baseSpriteScale;
             public int attack;
             public float interval;
             public float timer;
@@ -244,6 +246,7 @@ namespace LingsuMVP
         public void SetStage(int stageIndex)
         {
             _currentStage = Mathf.Max(1, stageIndex);
+            RefreshBattleBackground();
             foreach (Monster monster in monsters)
             {
                 if (monster != null)
@@ -251,6 +254,24 @@ namespace LingsuMVP
                     monster.ApplyStageScale(_currentStage);
                 }
             }
+        }
+
+        private void RefreshBattleBackground()
+        {
+            GameObject backdropObject = GameObject.Find("PaintedArena");
+            SpriteRenderer backdropRenderer = backdropObject != null ? backdropObject.GetComponent<SpriteRenderer>() : null;
+            Sprite background = ArtCatalog.LoadBattleBackground(_currentStage);
+            Camera camera = Camera.main;
+            if (backdropRenderer == null || background == null || camera == null || background.bounds.size.x <= 0f || background.bounds.size.y <= 0f)
+            {
+                return;
+            }
+
+            backdropRenderer.sprite = background;
+            float cameraHeight = camera.orthographicSize * 2f;
+            float cameraWidth = cameraHeight * camera.aspect;
+            float scale = Mathf.Max(cameraWidth / background.bounds.size.x, cameraHeight / background.bounds.size.y);
+            backdropRenderer.transform.localScale = new Vector3(scale, scale, 1f);
         }
 
         public void StopBattle()
@@ -481,6 +502,12 @@ namespace LingsuMVP
                 return _runtimeBossSprite;
             }
 
+            _runtimeBossSprite = ArtCatalog.LoadBoss();
+            if (_runtimeBossSprite != null)
+            {
+                return _runtimeBossSprite;
+            }
+
             foreach (Monster monster in monsters)
             {
                 if (monster == null)
@@ -560,7 +587,7 @@ namespace LingsuMVP
 
             if (skillController != null)
             {
-                skillController.ResetEnergy();
+                skillController.ResetBattleState();
             }
 
             // Reset all monsters
@@ -648,11 +675,18 @@ namespace LingsuMVP
             GameObject visual = new GameObject("Ally_" + recruitName);
             visual.transform.position = position;
 
-            SpriteRenderer renderer = visual.AddComponent<SpriteRenderer>();
-            renderer.sprite = CreateAllySprite(recruitName, color);
+            GameObject spriteObject = new GameObject("Sprite");
+            spriteObject.transform.SetParent(visual.transform, false);
+            SpriteRenderer renderer = spriteObject.AddComponent<SpriteRenderer>();
+            renderer.sprite = ArtCatalog.LoadRecruit(recruitName);
+            if (renderer.sprite == null)
+            {
+                renderer.sprite = CreateAllySprite(recruitName, color);
+            }
             renderer.color = Color.white;
             renderer.sortingOrder = 11;
-            visual.transform.localScale = new Vector3(1.15f, 1.15f, 1f);
+            FitSpriteHeight(spriteObject.transform, renderer, 1.15f);
+            Vector3 baseSpriteScale = spriteObject.transform.localScale;
 
             GameObject labelObject = new GameObject("Name");
             labelObject.transform.SetParent(visual.transform, false);
@@ -676,7 +710,9 @@ namespace LingsuMVP
             {
                 name = recruitName,
                 transform = visual.transform,
+                spriteTransform = spriteObject.transform,
                 renderer = renderer,
+                baseSpriteScale = baseSpriteScale,
                 attack = Mathf.Max(1, attack),
                 interval = GetAllyAttackInterval(recruitName),
                 timer = 0f
@@ -697,9 +733,12 @@ namespace LingsuMVP
                 ally.renderer.color = ally.name == _selectedAllyName
                     ? new Color(1.15f, 1.15f, 1.15f, 1f)
                     : Color.white;
-                ally.transform.localScale = ally.name == _selectedAllyName
-                    ? new Vector3(1.28f, 1.28f, 1f)
-                    : new Vector3(1.15f, 1.15f, 1f);
+                if (ally.spriteTransform != null)
+                {
+                    ally.spriteTransform.localScale = ally.name == _selectedAllyName
+                        ? ally.baseSpriteScale * 1.11f
+                        : ally.baseSpriteScale;
+                }
             }
         }
 

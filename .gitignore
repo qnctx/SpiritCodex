@@ -25,3 +25,14 @@ LingsuMVP/Recordings/
 *.unitypackage
 *.bak
 *.bak.meta
+
+# Local dependencies, browser profiles and generated verification output
+/node_modules/
+/test-results/
+/playwright-report/
+/output/
+/.tmp-edge-cdp/
+/.workbuddy/
+/.agents/
+/\!ids.includes(x))}
+/ids.indexOf(x)!

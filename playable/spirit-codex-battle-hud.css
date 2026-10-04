@@ -1,0 +1,74 @@
+/* v13: the battlefield owns the screen; a compact command dock overlays only
+   its reserved empty floor. Canvas geometry never changes with turn state. */
+#battle-stage{--battle-command-reserve:176px;position:relative;flex:1 1 0;min-height:0;isolation:isolate;overflow:hidden}
+#battle-stage #battle-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;flex:none}
+.battle-top-actions .battle-progress{display:flex;align-self:center;gap:14px;margin-right:auto;color:#aebbd0;font-size:13px;white-space:nowrap}
+.battle-progress b{color:#f5e4ab;font-variant-numeric:tabular-nums}
+#battle-stage #battle-ui{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;min-height:0;max-height:min(var(--battle-command-reserve),55%);padding:12px 20px;display:flex;gap:8px;overflow-y:auto;border:0;border-top:1px solid #8b796745;background:linear-gradient(180deg,#0c1323d9,#090f1bef);box-shadow:0 -12px 24px #070c1540;z-index:5;scrollbar-width:thin}
+#battle-ui[data-mode=observe]{padding-top:10px;padding-bottom:10px}
+.battle-command-heading{display:flex;align-items:center;gap:14px;min-height:30px}
+#battle-command-label{flex:0 0 auto;font:500 12px/20px system-ui,"Microsoft YaHei",sans-serif;color:#a3b5cc}
+#battle-ui .turn-banner{flex:1;min-width:0;text-align:left;padding:0;border:0;background:none!important;border-radius:0;box-shadow:none;transition:none;font:600 14px/22px system-ui,"Microsoft YaHei",sans-serif;color:#f5e7c1;overflow-wrap:anywhere}
+#battle-ui .turn-banner.enemy{color:#ffc2ab}#battle-ui .turn-banner.anim{color:#ced7ff}
+#battle-commands{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;width:100%;max-width:1120px;margin:0 auto}
+#battle-ui[data-fusion=true] #battle-commands{grid-template-columns:repeat(6,minmax(0,1fr))}
+#battle-ui #skill-bar,#battle-ui .combo-battle-control{display:contents}
+#battle-ui #skill-bar .skill-btn{width:100%;max-width:none;min-width:0;min-height:54px;padding:8px 10px;border-radius:9px}
+#battle-ui #skill-bar .skill-btn:not(:disabled) .sn{color:color-mix(in srgb,var(--ec) 55%,#fff 45%)}
+#battle-ui #skill-bar .skill-btn.cooling .sn,#battle-ui #skill-bar .skill-btn.cooling .sc{opacity:1}
+#battle-ui #skill-bar .skill-btn.cooling::before{opacity:.15}
+#battle-ui #combo-battle-btn{min-height:54px;margin:0;padding:8px 10px;line-height:1.4;font-size:13px;width:100%;max-width:none;border-radius:9px}
+#battle-ui #target-tip{grid-column:1/-1;text-align:left;margin:0;padding:0;font-size:13px;color:#e4d7a9}
+#battle-ui #target-chips{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin:0}
+#battle-ui #target-chips .tgt{display:block;min-height:44px;white-space:normal;overflow-wrap:anywhere;padding:8px;font-size:13px;margin:0}
+#battle-ui [hidden]{display:none!important}
+#battle-threat{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:32px;padding:5px 10px;border:1px solid #a9844e;border-radius:7px;color:#ffdcaa;background:#443018d9;font-size:13px;text-align:left;cursor:pointer}
+#battle-ui[data-mode=cinematic] .battle-command-heading{display:none}
+#battle-ui #live-combo{margin:0;border:0;padding:0;background:none;min-height:42px;gap:10px}
+#battle-ui #live-combo strong{font-size:16px}#battle-ui #live-combo button{min-height:44px}
+/* The report is deliberately modal: reading tactical information freezes the
+   battle clock, not just the text or a cloned snapshot. */
+#battle-report-modal{position:fixed;inset:0 0 0 auto;margin:0;width:min(520px,100vw);height:100dvh;max-width:100vw;max-height:100dvh;padding:0;border:0;border-left:1px solid #7e7160;background:#111b2b;color:#dbe5ee;font:14px/1.6 system-ui,"Microsoft YaHei",sans-serif;box-shadow:-15px 0 60px #0008;overflow:hidden}
+#battle-report-modal[open]{display:flex;flex-direction:column}
+#battle-report-modal::backdrop{background:#030814a6}
+.battle-report-header{padding:18px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #465368}
+.battle-report-header h2{margin:0;font-size:20px;color:#f3e5be}.battle-report-header p{margin:3px 0 0;color:#a2b5c9;font-size:12px}
+.battle-report-header .btn{font-size:14px;min-height:44px;white-space:nowrap}
+.battle-report-tabs{display:flex;padding:10px 16px;gap:8px;border-bottom:1px solid #38475a}
+.battle-report-tabs button{flex:1;min-height:44px;color:#b9c8dc;background:#1b293d;border:1px solid #53657d;border-radius:7px;font:inherit;cursor:pointer}
+.battle-report-tabs button[aria-selected=true]{color:#fff0c4;background:#3c3940;border-color:#cbb178}
+.battle-report-body{padding:16px;min-height:0;overflow:auto;overscroll-behavior:contain}
+.battle-report-body [hidden]{display:none!important}.battle-report-body h3{font-size:16px;margin:0 0 12px;color:#eee0be}
+.battle-report-run{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;color:#abbdd4;margin-bottom:12px}
+#battle-report-modal #battle-expedition-status{margin-bottom:14px}
+#battle-report-modal .intent-copy{display:flex;flex-direction:column;gap:2px}
+#battle-report-modal .intent-enemy{color:#b9c7d9}#battle-report-modal .intent-action{font-size:13px}
+#battle-report-modal #turn-order{margin-top:16px;display:grid;grid-template-columns:1fr;gap:6px;overflow:visible}
+#battle-report-modal #turn-order .lbl{font-size:14px;color:#dce2ee;margin-bottom:3px}
+#battle-report-modal .to-icon{width:100%;height:auto;min-height:44px;border-radius:7px;border-width:1px;display:flex;justify-content:flex-start;gap:10px;padding:6px 10px;opacity:1;transform:none;box-shadow:none;transition:none;overflow:visible}
+#battle-report-modal .to-icon.on{background:#343035!important}#battle-report-modal .to-icon.dead{opacity:.65}
+#battle-report-modal .turn-art{position:relative;inset:auto;width:30px;height:30px;flex:0 0 30px;border-radius:50%;overflow:hidden}
+#battle-report-modal .turn-order-name{font-size:13px;line-height:20px;white-space:normal}
+#battle-report-modal #team-status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;overflow:visible}
+#battle-report-modal .member{min-width:0;max-width:none;width:auto;flex:none;padding:10px}.battle-report-body .member .mn{font-size:13px;white-space:normal}
+#battle-report-modal .member{grid-template-columns:1fr;align-content:start;gap:5px;transition:none}
+#battle-report-modal .member-art{width:38px;height:42px}#battle-report-modal .member.dead{opacity:.7}
+.member-vitals,.member-effects{font-size:12px;line-height:1.6;overflow-wrap:anywhere;margin-top:6px;color:#c5d4e6}.member-effects{color:#a5b6cd}
+#battle-report-modal #log{height:auto;min-height:0;max-height:none;margin:0;padding:0;background:none;border:0;overflow:visible;color:#d3deeb;font:14px/1.8 system-ui,"Microsoft YaHei",sans-serif;text-align:left}
+#battle-report-modal #log b{display:block;padding:10px 0;border-bottom:1px solid #344158;font-weight:400}
+@media(max-width:680px){
+  .battle-top-actions{gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-start;padding:6px 8px}
+  .battle-top-actions .battle-progress{flex:1 0 100%;gap:16px;font-size:12px}
+  .battle-top-actions .btn,.battle-settings>summary{padding:8px 9px;font-size:13px;min-height:44px}
+  .battle-top-actions #battle-settings{margin-left:auto}
+  #battle-stage{--battle-command-reserve:248px}
+  #battle-stage #battle-ui{padding:10px;gap:7px}
+  #battle-commands,#battle-ui[data-fusion=true] #battle-commands{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  #battle-ui[data-fusion=false] #combo-battle-btn{grid-column:1/-1;min-height:44px;padding:5px 8px}
+  .battle-command-heading{gap:8px;min-height:24px}#battle-command-label{font-size:11px}
+  #battle-ui .turn-banner{font-size:13px;line-height:20px}
+  #battle-ui #skill-bar .skill-btn{padding:6px 8px;min-height:50px}
+  #battle-ui #combo-battle-btn{font-size:12px;padding:6px 8px;min-height:50px}
+  #battle-ui #target-chips{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .battle-report-header{padding:14px}.battle-report-body{padding:12px}
+}

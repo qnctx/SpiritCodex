@@ -52,7 +52,7 @@ namespace LingsuMVP
             skillOneEnergyGain = config.skillOneEnergyGain;
             skillTwoEnergyGain = config.skillTwoEnergyGain;
             ultimateDamage = config.ultimateDamage;
-            ResetEnergy();
+            ResetBattleState();
         }
 
         private void Update()
@@ -187,6 +187,13 @@ namespace LingsuMVP
         public void ResetEnergy()
         {
             _energy = 0;
+        }
+
+        public void ResetBattleState()
+        {
+            _skillOneTimer = 0f;
+            _skillTwoTimer = 0f;
+            ResetEnergy();
         }
 
         private void AddEnergy(int amount)

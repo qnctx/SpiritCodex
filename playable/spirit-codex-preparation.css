@@ -1,0 +1,202 @@
+/* Preparation UI follows ref-preparation-v2.png: readable type, quiet surfaces, one task per view. */
+#formation-screen,#combo-modal{--font-cn:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif;font-family:var(--font-cn);font-size:16px;color:#ececf3}
+#formation-screen * ,#combo-modal *{font-family:var(--font-cn)}
+#formation-screen{align-items:stretch;background:#0c101b;background-image:radial-gradient(ellipse at 0 55%,rgba(77,65,102,.14),transparent 24%),radial-gradient(ellipse at 100% 45%,rgba(77,65,102,.14),transparent 24%)}
+#formation-screen::after{display:none}body:has(#formation-screen.active) #bg-canvas{visibility:hidden}
+#formation-screen :is(p,span,small,b,button,summary,li),#combo-modal :is(p,span,small,b,button,summary,li){font-size:14px;line-height:1.6;letter-spacing:0}
+#formation-screen h2,#formation-screen h3,#formation-screen h4,#combo-modal h2,#combo-modal h3,#combo-modal h4{font-family:var(--font-cn);font-size:22px;font-weight:700;line-height:1.4;letter-spacing:0;color:#f0e5d1;text-shadow:none}
+#formation-screen :is(button,.btn),#combo-modal .btn{min-height:44px;padding:10px 16px;border:1px solid #555361;border-radius:8px;background:#1c2131;color:#ececf3;box-shadow:none;font-size:14px;line-height:1.5;letter-spacing:0;white-space:normal;overflow-wrap:anywhere}
+#formation-screen :is(button,.btn):focus-visible,#combo-modal .btn:focus-visible{outline:2px solid #e6bf75;outline-offset:3px;box-shadow:none}
+#formation-screen :is(button,.btn):hover:not(:disabled),#combo-modal .btn:hover:not(:disabled){border-color:#cbb083;background:#292e40;transform:none}
+#formation-screen :is(button,.btn):disabled,#combo-modal .btn:disabled{opacity:.65;filter:none;cursor:not-allowed}
+#formation-screen .preparation-header{width:min(1320px,100%);margin:0 auto;padding:20px 24px 16px;gap:16px;border:0;background:none;box-shadow:none;flex:0 0 auto}
+#formation-screen .preparation-header h2{font-size:24px;text-align:left;flex:1}
+#formation-screen .preparation-header .btn{font-size:14px;flex:0 0 auto;background:transparent;padding:10px 16px}
+.preparation-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:min(1272px,calc(100% - 48px));margin:0 auto;gap:4px;border-bottom:1px solid #41414e;flex:0 0 auto}
+#formation-screen .preparation-tab{min-height:52px;border:0;border-bottom:3px solid transparent;border-radius:9px 9px 0 0;background:transparent;font-size:16px;color:#b7b7c6}
+#formation-screen .preparation-tab[aria-selected="true"]{background:#1b2030;border-bottom-color:#dfb46b;color:#f8e4b6;font-weight:700}
+#formation-screen #combo-craft-message{width:min(1272px,calc(100% - 48px));margin:10px auto 0;padding:10px 14px;background:#1c2830;border:1px solid #4b6b6c;border-radius:8px;font-size:14px;line-height:1.5;color:#d1eadb;flex:0 0 auto}
+#formation-screen #combo-craft-message:empty{display:none}
+#formation-screen #combo-craft-message.error{background:#302024;border-color:#8a5557;color:#ffd3cb}
+#formation-screen .preparation-body{width:min(1320px,100%);min-height:0;margin:0 auto;padding:20px 24px;display:block;flex:1 1 auto;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#585567 transparent}
+.preparation-view{min-width:0}.preparation-view[hidden]{display:none!important}
+.preparation-panel,#formation-screen :is(.team-panel,.formation-style-panel,.combo-formation-panel,.expedition-config-panel){min-width:0;padding:20px;border:1px solid #484855;border-radius:12px;background:#191e2e;box-shadow:none;backdrop-filter:none;overflow:visible}
+.preparation-panel::before,.preparation-panel::after,#formation-screen .expedition-config-panel::after{display:none}
+#formation-screen .preparation-team-grid{display:grid;grid-template-columns:minmax(0,1fr) 292px;align-items:stretch;gap:20px}
+#formation-screen .team-panel-title,.preparation-section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+#formation-screen .team-panel-title h4{font-size:22px}
+#formation-screen .team-panel-title>span{max-width:none;color:#b9bdcc;font-size:14px;text-align:left}
+#formation-screen .formation-summary{display:block;width:auto;margin:0 0 16px;padding:0;border:0;border-radius:0;background:none;font-size:14px;font-weight:400;line-height:1.6;color:#bfc3d2;white-space:normal;overflow-wrap:anywhere}
+.preparation-active-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#formation-screen .formation-zone{min-width:0;padding:0;margin:0;border:0;background:none}
+#formation-screen .row-label{margin:0 0 10px;gap:12px;align-items:center;color:#cbc7d0}
+#formation-screen .row-label b{font-size:16px;color:#e2deea;font-weight:500}
+#formation-screen .preparation-active-rows .row-label>span{display:none}
+#formation-screen .row-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#formation-screen .slot{position:relative;min-width:0;min-height:228px;padding:0;display:flex;flex-direction:column;align-items:stretch;gap:0;overflow:hidden;border:1px solid #565567;border-radius:9px;background:#101625;cursor:pointer}
+#formation-screen .slot.filled{background:#101625;border-color:#5a5665}
+#formation-screen .slot.selected{border-color:#f0c36e;outline:2px solid #d9ad5c;outline-offset:2px;box-shadow:none}
+#formation-screen .slot .sg{display:block;width:100%;height:180px;border:0;border-radius:0;background:#0e1423;font-size:32px;flex:0 0 auto}
+#formation-screen .slot .sg .art-stack{background:#121726}.preparation-roster-board .slot-art img{object-fit:cover;object-position:center 15%}
+#formation-screen .art-stack img{animation:none;opacity:1;transform:none;transition:none}
+#formation-screen .art-stack .art-fallback{transition:none}
+#formation-screen .slot .sinfo{padding:10px 10px 12px;min-width:0}
+#formation-screen .slot .snm{font-size:16px;font-weight:700;color:#efebdf;line-height:1.4;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+#formation-screen .slot .srole{margin-top:4px;font-size:14px;color:#b9bdcc;line-height:1.4;white-space:normal}
+#formation-screen .slot .srm{position:absolute;top:6px;right:6px;display:grid;place-items:center;width:36px;min-width:36px;min-height:36px;padding:0;border:1px solid #737180;border-radius:7px;background:#111725;color:#edeaf4;line-height:1;z-index:3}
+#formation-screen .slot.empty{justify-content:center;align-items:center;border-style:dashed;color:#a1a6b8;background:#141a29}
+#formation-screen .slot-empty-mark{font-size:28px}.slot-empty-copy{font-size:14px}
+#formation-screen .reserve-zone{margin-top:18px}
+#formation-screen .reserve-zone .slot{min-height:82px;display:flex;flex-direction:row;align-items:center}
+#formation-screen .reserve-zone .slot .sg{width:62px;height:80px;flex:0 0 62px}
+#formation-screen .reserve-zone .slot .sinfo{padding:9px 40px 9px 10px}
+#formation-screen .reserve-zone .slot.empty{min-height:82px;gap:10px}
+#formation-screen .reserve-zone .slot .srm{top:23px;right:5px}
+#formation-screen .formation-style-panel{margin-top:18px;padding:18px 0 0;border:0;border-top:1px solid #454656;border-radius:0;background:none}
+#formation-screen .formation-style-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#formation-screen .formation-style{min-width:0;min-height:48px;padding:10px 8px;background:#1b2131}
+#formation-screen .formation-style.selected{border-color:#ddb576;background:#292b39;box-shadow:none}
+#formation-screen .formation-style .style-name{font-size:15px;justify-content:center;white-space:normal;color:#ede5d9}
+#formation-screen .formation-style .style-desc{display:none}
+#formation-screen #formation-style-summary{margin-top:12px;font-size:14px;color:#c3c6d3;line-height:1.7}
+.preparation-side-panel{display:flex;flex-direction:column;gap:18px}.preparation-side-panel h3{margin:0}
+.preparation-run-summary,.preparation-combo-summary{display:flex;flex-direction:column;gap:12px;min-width:0}
+.preparation-run-summary>div,.preparation-combo-summary>div{padding:13px;border-radius:8px;background:#111727;line-height:1.6;overflow-wrap:anywhere}
+.preparation-run-summary :is(b,strong),.preparation-combo-summary :is(b,strong){color:#eee7d9}
+.preparation-summary-list{display:flex;flex-direction:column;gap:10px;margin:0}
+.preparation-summary-list>div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;padding:12px;background:#111727;border-radius:8px}
+#formation-screen .preparation-summary-list dt{font-size:14px;color:#aeb6c9;line-height:1.6}
+#formation-screen .preparation-summary-list dd{margin:0;font-size:16px;color:#ebe5d8;line-height:1.5;overflow-wrap:anywhere}
+.preparation-combo-entry{display:flex;flex-direction:column;gap:5px}
+.preparation-combo-summary>p{color:#bec4d3;line-height:1.7}
+.preparation-side-divider{height:1px;background:#454655;flex:0 0 auto}
+.preparation-side-panel .btn{width:100%}
+#formation-screen .preparation-pool-panel{margin-top:20px}
+#formation-screen #char-pool{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;max-height:none;overflow:visible}
+#formation-screen .mini{min-width:0;padding:0 0 12px;border:1px solid #535465;background:#111726;border-radius:9px;overflow:hidden;opacity:1;filter:none}
+#formation-screen .mini.in{border-color:#c7a263;background:#252938}
+#formation-screen .mini-art{width:100%;height:130px;margin:0 0 10px;border:0;border-radius:0;background:#121827}
+#formation-screen .mini .mn{padding:0 8px;font-size:15px;font-weight:700;line-height:1.5;color:#efebdf;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+#formation-screen .mini .ms{padding:4px 8px 0;font-size:14px;line-height:1.5;white-space:normal;color:#b8bdcf}
+#formation-screen .formation-tip{padding:16px 2px 2px;border:0;background:none;color:#b8bdcd;font-size:14px;line-height:1.65;text-align:left}
+.preparation-departure{display:flex;align-items:center;justify-content:space-between;gap:20px;width:min(1320px,100%);margin:0 auto;padding:14px 24px max(14px,env(safe-area-inset-bottom));background:#111623;border-top:1px solid #454653;flex:0 0 auto;z-index:8}
+#formation-screen .preparation-departure p{font-size:14px;color:#bdc1cf}
+#formation-screen #start-battle-btn{min-width:240px;min-height:54px;padding:12px 28px;background:#b37b33;border-color:#e2b668;color:#fff4d7;font-size:20px;font-weight:700;box-shadow:none}
+#formation-screen #start-battle-btn:hover:not(:disabled){background:#c59045}
+#formation-screen :is(.combo-panel-heading,.expedition-config-heading){align-items:center;gap:16px;margin-bottom:14px}
+#formation-screen .combo-panel-heading h4,#formation-screen .expedition-config-heading h4{margin:0;font-size:22px}
+#formation-screen .combo-panel-intro,.preparation-description{margin:0 0 20px;color:#c0c4d1;font-size:15px;line-height:1.7}
+#formation-screen .combo-recipe-list,#combo-modal .combo-recipe-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
+#formation-screen .combo-recipe-card,#combo-modal .combo-recipe-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#111726;border:1px solid #555264;border-radius:10px;box-shadow:none}
+#formation-screen .combo-recipe-card.ready,#combo-modal .combo-recipe-card.ready{border-color:#d5b173}
+#formation-screen .combo-recipe-art,#combo-modal .combo-recipe-art{width:100%;height:auto;min-height:0;aspect-ratio:16/9;object-fit:cover;border:0;border-bottom:1px solid #42414f}
+#formation-screen .combo-recipe-body,#combo-modal .combo-recipe-body{padding:18px;gap:12px;min-width:0}
+#formation-screen .combo-recipe-card h4,#combo-modal .combo-recipe-card h4{font-size:22px;margin:0;color:#f0e2c9}
+#formation-screen .combo-recipe-kicker,#combo-modal .combo-recipe-kicker{display:none}
+#formation-screen :is(.combo-recipe-pair,.combo-recipe-effect,.combo-recipe-cost,.combo-recipe-requirements,.combo-recipe-setup,.combo-recipe-status),#combo-modal :is(.combo-recipe-pair,.combo-recipe-effect,.combo-recipe-cost,.combo-recipe-requirements,.combo-recipe-setup,.combo-recipe-status){font-size:14px;line-height:1.7;letter-spacing:0}
+#formation-screen .combo-recipe-effect,#combo-modal .combo-recipe-effect{color:#ced0dc;font-size:15px}
+#formation-screen .combo-recipe-cost,#combo-modal .combo-recipe-cost{color:#e7c792;margin-top:0}
+#formation-screen .combo-recipe-status,#combo-modal .combo-recipe-status{border-color:#424451;color:#d7bba9}
+#formation-screen .combo-recipe-card.ready .combo-recipe-status,#combo-modal .combo-recipe-card.ready .combo-recipe-status{color:#a9ddbd}
+#formation-screen .combo-recipe-requirements,#combo-modal .combo-recipe-requirements{padding:10px;background:#1b2131;border-radius:6px;color:#d0ccdd}
+#formation-screen .combo-recipe-setup,#combo-modal .combo-recipe-setup{color:#b9bfce}
+#formation-screen .combo-recipe-card details,#combo-modal .combo-recipe-card details{min-width:0;padding:10px 0;border-top:1px solid #414453;border-bottom:1px solid #414453}
+#formation-screen .combo-recipe-card summary,#combo-modal .combo-recipe-card summary{cursor:pointer;font-size:14px;color:#d5c3e7;line-height:1.6}
+#formation-screen .combo-recipe-card details[open]>:not(summary),#combo-modal .combo-recipe-card details[open]>:not(summary){margin-top:10px}
+#formation-screen :is(.combo-cast-btn,.combo-equip-btn,.combo-preview-btn),#combo-modal .combo-cast-btn{min-height:44px;margin-top:0;font-size:14px;line-height:1.5}
+.combo-recipe-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:auto;padding-top:4px}
+#formation-screen .combo-preview-btn{background:transparent;border-color:#566475;color:#d2e3f5}
+#formation-screen .expedition-config-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+#formation-screen .expedition-config-main{gap:18px}
+#formation-screen .expedition-config-summary{max-width:65%;padding:10px 14px;background:#111726;border-color:#494e61;border-radius:8px;font-size:14px;color:#e2d4b7;text-align:left;line-height:1.6}
+#formation-screen .expedition-rule-group{padding:18px;border:1px solid #42495c;background:#111726;border-radius:10px}
+#formation-screen .expedition-rule-head{align-items:flex-start;flex-direction:column;gap:5px;margin-bottom:14px}
+#formation-screen .expedition-rule-head h5{font-size:18px;line-height:1.5;color:#ede5d6;white-space:normal}
+#formation-screen .expedition-rule-head>span{font-size:14px;text-align:left;color:#b8bfce}
+#formation-screen .difficulty-options{grid-template-columns:1fr;gap:10px}
+#formation-screen .expedition-rule-option{min-height:70px;grid-template-columns:30px minmax(0,1fr);padding:12px;gap:12px;background:#1a2131;text-align:left}
+#formation-screen .expedition-rule-option.selected{background:#292d3c;border-color:#d4b17d;box-shadow:none}
+#formation-screen .rule-glyph{width:30px;height:30px;font-size:18px}
+#formation-screen .rule-copy b{font-size:16px;color:#eee5d2}.rule-copy small{white-space:normal}
+#formation-screen .rule-copy small{font-size:14px;color:#bdc2d1;line-height:1.6}
+#formation-screen .expedition-compact-grid{grid-template-columns:1fr;gap:18px}
+#formation-screen .segmented-rule-options{gap:8px}
+#formation-screen :is(.seed-mode-option,.auto-strategy-option){min-height:46px;font-size:14px;background:#1b2131}
+#formation-screen :is(.seed-mode-option,.auto-strategy-option).selected{border-color:#d4b17d;background:#292d3c;color:#f1dfb8}
+#formation-screen .contract-options{grid-template-columns:1fr;gap:12px}
+#formation-screen .contract-option{grid-template-columns:34px minmax(0,1fr) auto;padding:13px;gap:12px;background:#1b2131;min-height:80px;text-align:left}
+#formation-screen .contract-option.selected{background:#292d3c;border-color:#d4b17d;box-shadow:none}
+#formation-screen .contract-mark{width:34px;height:34px;font-size:16px}
+#formation-screen .contract-copy b{font-size:16px;line-height:1.5;color:#e4dfeb}
+#formation-screen .contract-copy small{font-size:14px;line-height:1.6;color:#bbc0d0}
+#formation-screen .contract-reward{font-size:14px;color:#e3c189}
+#formation-screen .contract-help{margin-top:15px;font-size:14px;color:#b8bdce;line-height:1.7}
+.preparation-materials{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 24px}
+.preparation-materials>div,.preparation-materials>span{min-width:160px;padding:14px 18px;border:1px solid #4c5061;border-radius:9px;background:#111726;line-height:1.7}
+#formation-screen .combo-inventory{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:20px}
+#formation-screen .combo-item{grid-template-columns:minmax(0,1fr) auto;padding:20px;gap:14px;background:#111726;border:1px solid #4d5263;border-radius:10px}
+#formation-screen .combo-item-name{font-size:18px;font-weight:700;color:#ead8b7}
+#formation-screen .combo-item-count{font-size:20px;color:#f2e0b8}
+#formation-screen .combo-item-cost{font-size:14px;color:#c0c5d5}
+#formation-screen .combo-item .btn{grid-column:1/-1;grid-row:auto;font-size:14px;min-height:46px;margin-top:8px}
+#combo-modal{background:rgba(5,8,15,.92);backdrop-filter:none}
+#combo-modal .frame{background:#181e2d;border:1px solid #6c6474;box-shadow:0 20px 80px rgba(0,0,0,.55)}
+#combo-modal .frame::before,#combo-modal .frame::after{display:none}
+#combo-modal .combo-modal-card{width:min(1240px,96vw);padding:24px;max-height:calc(100dvh - 32px)}
+#combo-modal .combo-modal-header{top:-24px;padding:12px 0 18px;background:#181e2d}
+#combo-modal .combo-modal-header .expedition-kicker{display:none}
+#combo-modal .combo-modal-summary{padding:14px;margin-bottom:18px;background:#111727;border-color:#4d5063;font-size:14px;line-height:1.7;color:#d6d7e3}
+#combo-modal .combo-modal-footnote{margin-top:18px;color:#b9c0d1;font-size:14px;line-height:1.7}
+@media(max-width:1100px){
+  #formation-screen .preparation-team-grid{grid-template-columns:minmax(0,1fr) 260px;gap:16px}
+  #formation-screen .preparation-roster-board{padding:16px}#formation-screen .slot .sg{height:144px}#formation-screen .slot{min-height:200px}
+  #formation-screen #char-pool{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #formation-screen .combo-recipe-list,#combo-modal .combo-recipe-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #formation-screen .combo-inventory{grid-template-columns:1fr}
+}
+@media(max-width:860px){
+  #formation-screen .preparation-team-grid{grid-template-columns:1fr}
+  .preparation-side-panel{display:grid;grid-template-columns:1fr 1fr;align-items:start}.preparation-side-panel h3{grid-column:1/-1}.preparation-side-divider{grid-column:1/-1}
+  #formation-screen .slot .sg{height:180px}
+  #formation-screen .expedition-config-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  #formation-screen .preparation-header{padding:14px 14px 12px;gap:12px}#formation-screen .preparation-header h2{font-size:22px}
+  #formation-screen .preparation-header .btn{font-size:14px;padding:8px 10px}
+  .preparation-tabs{width:calc(100% - 28px);grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;border-bottom:0}
+  #formation-screen .preparation-tab{min-height:46px;border:1px solid #454959;border-bottom-width:2px;border-radius:8px;font-size:15px;padding:9px}
+  #formation-screen .preparation-tab[aria-selected="true"]{border-color:#d4b17d}
+  #formation-screen #combo-craft-message{width:calc(100% - 28px);margin-top:10px;padding:10px;font-size:14px}
+  #formation-screen .preparation-body{width:100%;padding:16px 14px}
+  .preparation-panel,#formation-screen :is(.team-panel,.combo-formation-panel,.expedition-config-panel){padding:14px;border-radius:10px}
+  #formation-screen .team-panel-title,.preparation-section-heading{align-items:flex-start;flex-wrap:wrap;gap:10px}
+  #formation-screen .team-panel-title h4{font-size:22px}#formation-screen .team-panel-title>span{font-size:14px;max-width:none}
+  .preparation-active-rows{grid-template-columns:1fr;gap:16px}
+  #formation-screen .slot .sg{height:156px}#formation-screen .slot{min-height:210px}
+  #formation-screen .slot .snm{font-size:16px}#formation-screen .slot .srole{font-size:14px}
+  #formation-screen .slot .sinfo{padding:10px 8px}
+  #formation-screen .reserve-zone .row-slots{grid-template-columns:1fr}
+  #formation-screen .reserve-zone .row-label{align-items:flex-start;flex-direction:column;gap:3px}
+  #formation-screen .row-label>span{font-size:14px;text-align:left}
+  #formation-screen .formation-style-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #formation-screen .formation-style .style-name{font-size:15px}
+  .preparation-side-panel{display:flex;gap:16px}
+  #formation-screen #char-pool{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #formation-screen .mini-art{height:138px}#formation-screen .mini .mn{font-size:15px}#formation-screen .mini .ms{font-size:14px}
+  .preparation-departure{padding:10px 14px max(10px,env(safe-area-inset-bottom));gap:10px}
+  #formation-screen .preparation-departure p{display:none}
+  #formation-screen #start-battle-btn{width:100%;min-width:0;min-height:50px;font-size:18px;padding:10px 20px}
+  #formation-screen :is(.combo-panel-heading,.expedition-config-heading){align-items:flex-start;flex-direction:column;gap:12px}
+  #formation-screen .combo-recipe-list,#combo-modal .combo-recipe-list{grid-template-columns:1fr;gap:18px}
+  #formation-screen .combo-recipe-body,#combo-modal .combo-recipe-body{padding:16px;gap:12px}
+  #formation-screen .expedition-config-summary{max-width:none;width:100%;padding:12px;font-size:14px}
+  #formation-screen .expedition-rule-group{padding:14px}
+  #formation-screen .contract-option{grid-template-columns:30px minmax(0,1fr);padding:12px;gap:10px}
+  #formation-screen .contract-reward{grid-column:2;justify-self:start;padding:0;border:0;background:none;font-size:14px}
+  #formation-screen .contract-mark{width:30px;height:30px;font-size:16px}
+  #formation-screen .combo-item{padding:16px;gap:12px}#formation-screen .combo-item-name{font-size:17px}#formation-screen .combo-item-count{font-size:20px}
+  #formation-screen .combo-item-cost{grid-column:1/-1;grid-row:auto}
+  #combo-modal{padding:8px}#combo-modal .combo-modal-card{width:100%;max-height:calc(100dvh - 16px);padding:14px}
+  #combo-modal .combo-modal-header{top:-14px;gap:12px;padding:10px 0 14px}#combo-modal .combo-modal-header .btn{max-width:52%;font-size:14px;padding:8px 10px}
+  #combo-modal .combo-modal-header h2{font-size:22px}#combo-modal .combo-modal-summary{padding:12px;font-size:14px}
+}

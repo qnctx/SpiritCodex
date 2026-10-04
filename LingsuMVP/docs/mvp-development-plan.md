@@ -8,6 +8,8 @@ SpiritCodex 的长期方向是移动端策略角色养成游戏。
 
 当前 `LingsuMVP` 只是原型沙盒，用来验证核心系统，不是正式产品工程。
 
+当前玩法收敛与成长路线以 [《灵素图谱》玩法优化与成长策略攻略 v1.0](../../docs/GAMEPLAY_OPTIMIZATION_GUIDE.md) 为准；本文件继续记录各开发切片的实际实现和验证历史。
+
 当前优先级：
 
 ```text
@@ -1996,6 +1998,78 @@ HP +25 DEF +4
 - 角色阁 -> 属性 now has a role selector. It can inspect the main hero and every owned recruit. Recruit detail shows rarity, role, position, star, fragments, HP/attack/defense, normal attack damage, skill one damage, and skill two damage. These recruit damage values match the current MVP battle formulas.
 - Formation battle sync test: open 角色阁 -> 布阵 after owning at least two recruits, click a non-hero grid cell on the left, click a recruit name on the right, then click `确认上阵`. Repeat with another cell and recruit. Confirm 布阵 does not show intro/skill text; those details only appear under 名册. Restart Play Mode and confirm the grid persists. Enter 灵素图谱 battle and confirm the main hero plus placed recruits appear in a left 3x3 layout, while monsters appear in a right 3x3 layout. Move a recruit to another grid cell, re-enter battle, and confirm the left-side visual position changes. Confirm no 角色阁 tab text, grid label, action button, or bottom hint is clipped at the current 16:9 editor Game view.
 - Ally combat test: deploy 铁甲卫 or another recruit, enter battle, and wait 1-2 seconds. Confirm additional damage numbers appear from the ally's position even when the main hero has not just attacked. Click 铁甲卫 and confirm it becomes visually highlighted/scaled, the skill bar label changes from 主角 to 铁甲卫, and the two skill buttons read 盾击 / 铁壁 instead of 技能一 / 灼烧. Click those skills and confirm damage numbers use the 铁甲卫 skill values from 角色阁 -> 属性. Click the main hero and confirm the buttons return to 技能一 / 灼烧.
+
+## v0.7 Image 2 运行时美术管线切片
+
+### 目标与完成状态
+
+- [x] 新增集中式 `ArtCatalog`，所有 Image 2 运行时资源使用 `Assets/Resources/Art/Generated/` 下的稳定路径。
+- [x] 接入城镇背景、战斗背景、主角、三只普通怪、独立 Boss，以及青木术士、铁甲卫、炼药童子三名队友。
+- [x] 资源允许分批到位：优先使用生成图；主角、普通怪和 Boss 缺图时回退现有 `Art/Hero` / `Art/Monster`；其余缺图时保留程序图。
+- [x] 城镇主页使用 `Backgrounds/bg_title_codex_hall`；每个 TownPanel 会先尝试 `Backgrounds/bg_town_<panel>`，缺失时回退同一大厅背景。
+- [x] `GameManager.OnGUI` 的基础面板、标题、文字和建筑按钮统一为暗靛底色与旧黄铜高光，保留元素色作为语义强调。
+- [x] 新增 `LingsuMVP/Validate Generated Art` 编辑器菜单，可列出稳定路径中缺失或未按 Sprite 导入的文件。
+- [x] Generated 图片自动按 Sprite、Clamp、无 Mipmap 导入；桌面端使用高质量压缩，Android 背景使用 ASTC 6x6、透明角色使用 ASTC 4x4。
+
+### 稳定资源路径
+
+- `Art/Generated/Backgrounds/bg_title_codex_hall`
+- `Art/Generated/Backgrounds/bg_town_alchemy_haven`
+- `Art/Generated/Backgrounds/bg_roster_archive`
+- `Art/Generated/Backgrounds/bg_formation_war_table`
+- `Art/Generated/Backgrounds/bg_battle_wave_01_shadow_ruins`
+- `Art/Generated/Backgrounds/bg_battle_wave_02_elemental_foundry`
+- `Art/Generated/Backgrounds/bg_battle_wave_03_chaos_sanctum`
+- `Art/Generated/Characters/char_h1_fire_ranger`（当前 Unity 主角）
+- `Art/Generated/Characters/char_h2_fire_guardian`、`char_w1_water_healer`、`char_w2_tide_warden`、`char_a1_wind_ranger`、`char_a2_wind_alchemist`、`char_t1_thunder_warrior`、`char_t2_thunder_mage`、`char_d1_shadow_assassin`、`char_d2_necromancer`、`char_l1_light_priestess`、`char_l2_light_paladin`（已登记到 Catalog，供后续角色切片使用）
+- `Art/Generated/Enemies/monster_01`、`monster_02`、`monster_03`、`boss_ember`
+- `Art/Generated/Allies/ally_wood_mage`、`ally_iron_guard`、`ally_alchemy_child`
+- 语义复用入口：`Enemies/enemy_shadow_wolf`、`enemy_shadow_bat`、`enemy_flame_demon_soldier`、`enemy_frost_guardian`、`enemy_storm_herald`、`enemy_chaos_elemental`
+- 后续召唤入口：`Summons/summon_wind_eagle`、`summon_skeleton_warrior`；炼药队友另登记 `Allies/ally_alchemy_apprentice` 作为备用资源
+
+以上路径是 Resources 路径，不包含 `Assets/Resources/` 前缀和 `.png` 后缀。炼药铺、角色属性/名册、布阵分别优先使用已经落地的 `bg_town_alchemy_haven`、`bg_roster_archive`、`bg_formation_war_table`。其他 TownPanel 的可选专属背景命名为 `bg_town_home`、`bg_town_shop`、`bg_town_blacksmith`、`bg_town_evolution`、`bg_town_training`、`bg_town_equipment`、`bg_town_inventory`、`bg_town_recruit`、`bg_town_task_board`；未生成时统一回退 `bg_title_codex_hall`。三张战斗背景按图谱地图 1/2/3 切换，wave 1 同时作为战斗默认回退。
+
+### 同切片稳定性修复
+
+- `MVPSceneBuilder` 只重建 `GameSceneClean.unity` 的相机与方向光，让 `MVPBootstrapper` 保持唯一的运行时组装入口；不再生成会让 Bootstrapper 提前退出的旧 GameManager。
+- Bootstrapper 会复用场景中现有方向光，不再叠加第二盏 Directional Light。
+- EventSystem 保留已有输入模块；缺少模块时优先添加 Input System UI 模块，未安装新输入系统时回退 `StandaloneInputModule`。
+- `SkillController.ResetBattleState()` 同时清空能量与两个技能冷却，确保回城、重开和下一场战斗不会继承上一局冷却。
+- 队友 Sprite 使用独立子节点按目标高度缩放，生成的竖版透明立绘不会把角色名称同步缩小。
+
+### 验收步骤
+
+1. 在 Unity 执行 `LingsuMVP/Validate Generated Art`；当前应显示 `35/35 expected sprites are available`。
+2. 打开 `Assets/Scenes/GameSceneClean.unity` 进入 Play Mode；确认 Console 没有 C# 红错，Hierarchy 只有一盏方向光，EventSystem 带一个可用输入模块。
+3. 在仅有 `bg_title_codex_hall.png` 时进入城镇及任意 TownPanel；确认页面使用同一生成背景回退，中文、按钮和点击区域仍清晰可用。
+4. 分别进入地图 1/2/3；确认三张战斗背景按地图切换，主角、三只普通怪、Boss 和已上阵队友都使用生成 Sprite。
+5. 施放两个技能后退出或完成战斗，再进入下一图；确认两个技能都从可用状态开始，能量为 0。
+6. 使用 `LingsuMVP/Rebuild MVP Scene` 后重新进入 Play Mode；确认仍由 Bootstrapper 创建完整游戏，而不是停在旧方块原型。
+
+本机批处理编译检查命令：
+
+```text
+"E:\Unity\Editor\Tuanjie.exe" -batchmode -nographics -quit -projectPath "E:\myProject\SpiritCodex\LingsuMVP" -logFile "E:\myProject\SpiritCodex\LingsuMVP\Logs\image2-art-pipeline-compile.log"
+```
+
+静态差异检查：
+
+```text
+git diff --check -- LingsuMVP
+```
+
+### 本次验证结果（2026-09-04）
+
+- Tuanjie `2022.3.61t12` 已重复执行隐藏 batchmode 导入/编译，最终日志以 `Exiting batchmode successfully` 退出，未发现 `error CS` 或 `warning CS`。
+- `GeneratedArtValidator.ValidateGeneratedArt` 已通过 batchmode 执行：当前 35/35 张登记图片全部通过真实 `Resources.Load<Sprite>` 路径加载。
+- `git diff --check -- LingsuMVP` 通过；仅有仓库现存的 LF/CRLF 转换提示。
+- 批处理日志发现既存数据资源问题：`material_config.json.meta` 与 `map_drop_config.json.meta` 的 GUID 无法由当前 Personal license 编辑器解析，两个 JSON 在该次导入中被忽略，运行时会退回代码内默认数据。本切片没有改写或删除这些用户资源。
+
+### 已知边界
+
+- 本切片没有把约 6886 行 IMGUI 全量迁移为 UGUI；它建立统一主题和真实图片入口，后续页面可按独立切片迁移。
+- 中文世界空间 TMP 字体仍需单独引入有授权的 CJK 字库并配置 fallback。
+- 铁壁、药雾的实际技能效果以及队友承伤/站位战术仍属于后续玩法切片，不在本次美术管线改动内。
 
 ## 文档维护规则
 

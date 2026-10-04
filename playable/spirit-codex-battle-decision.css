@@ -1,0 +1,14 @@
+/* v14: situational information stays next to the relevant action. */
+#battle-stage[data-boss-tactics=true]{--battle-command-reserve:216px}
+#battle-ui[data-mode=target] #target-tip:empty{display:none}
+#skill-preview{grid-column:1/-1;font:13px/1.55 system-ui,"Microsoft YaHei",sans-serif;color:#d3e5ea;padding:6px 9px;border-left:3px solid #91efcc;background:#16303066;overflow-wrap:anywhere}
+#skill-preview[data-kind=attack]{border-color:#ffb785;background:#37292366}
+#combo-opportunity{position:absolute;right:12px;bottom:calc(var(--battle-dock-height,55px) + 8px);z-index:7;min-height:44px;max-width:calc(100% - 24px);padding:8px 14px;border:1px solid #ecd18b;border-radius:8px;background:#2c2544ed;color:#fff0b7;box-shadow:0 0 14px #ffd98225;cursor:pointer;font:600 13px/1.5 system-ui,"Microsoft YaHei",sans-serif}
+#combo-opportunity[hidden]{display:none}#combo-opportunity:disabled{cursor:default;border-color:#748596;color:#c2d8e5}
+#boss-tactical-detail{padding:10px;background:#352d24;border:1px solid #b39455;border-radius:8px;font-size:14px;color:#ffe5b2;margin:0 0 14px}
+.combo-reason{display:block;white-space:normal;line-height:1.5;overflow-wrap:anywhere}
+#battle-ui #combo-battle-btn .combo-reason{font-size:11px}
+#battle-ui #target-chips .target-confirm{color:#ffe7a2;border-color:#d2b76c;background:#423647}
+#battle-lab-boss-presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+#battle-lab-boss-presets .btn{white-space:normal;min-height:50px}
+@media(max-width:680px){#battle-stage[data-boss-tactics=true]{--battle-command-reserve:296px}#skill-preview{font-size:12px;padding:5px 7px}#combo-opportunity{right:8px;padding:7px 10px;font-size:12px}}

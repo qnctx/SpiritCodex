@@ -1,0 +1,72 @@
+/* v12: a small, stable action surface. Details occupy flow, never cover combat. */
+.battle-top-actions{flex-wrap:wrap;align-items:flex-start;gap:8px}
+.battle-top-actions .btn,.battle-settings>summary{min-height:44px;font-size:14px;letter-spacing:0;padding:10px 12px;line-height:22px}
+.battle-speed-btn{font-variant-numeric:tabular-nums;white-space:nowrap}
+.battle-speed-btn.on{border-color:#8adac7!important;color:#c9fff1!important;background:#173e42!important}
+.battle-settings{min-width:0;max-width:100%;color:#dce5ed}
+.battle-settings>summary{border:1px solid #66596f;border-radius:9px;cursor:pointer;background:#191322;list-style:revert}
+.battle-settings-content{display:flex;gap:8px;flex-wrap:wrap;padding:8px 0 0;justify-content:flex-end}
+.battle-settings .battle-strategy-control{min-height:44px;padding:0 8px;font-size:13px}
+.battle-settings .battle-strategy-control>span{position:static;width:auto;height:auto;clip-path:none;overflow:visible}
+.battle-settings select{font-size:14px;min-height:40px;max-width:none;min-width:88px}
+.battle-hud{flex-wrap:wrap;justify-content:flex-start;position:static}
+.battle-hud .chip{font-size:12px;letter-spacing:0}
+.battle-disclosure{border:1px solid #454355;border-radius:9px;background:#0c1020;color:#d6dfeb;min-width:0}
+.battle-disclosure>summary{min-height:44px;cursor:pointer;padding:10px 12px;font:500 14px/24px system-ui,"Microsoft YaHei",sans-serif;overflow-wrap:anywhere}
+.battle-disclosure>summary small{font:400 12px/22px system-ui,"Microsoft YaHei",sans-serif;color:#aab9cb;margin-left:10px}
+.battle-disclosure>summary small.warning{color:#ffc57a;font-weight:650}
+.battle-disclosure[open]>summary{border-bottom:1px solid #454355}
+.battle-disclosure>div,.battle-disclosure>section{margin:8px}
+#battle-intel .enemy-intents{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr));overflow:visible;gap:7px}
+#battle-intel :is(.enemy-intent-card,.intent-card){min-width:0;grid-template-columns:26px minmax(0,1fr) auto;padding:8px}
+#battle-intel :is(.intent-actor,.intent-enemy,.intent-action,.intent-target){white-space:normal;overflow:visible;text-overflow:clip;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+#battle-intel .tactics-head strong{font-size:14px;letter-spacing:0}
+#battle-intel .tactics-head>span{font-size:12px}
+#battle-intel .battle-expedition-status{flex-wrap:wrap;justify-content:flex-start;overflow:visible}
+#battle-intel .expedition-status-chip{font-size:12px;white-space:normal}
+#battle-intel .expedition-status-chip b{max-width:none;overflow:visible}
+#battle-intel :is(.boss-meter-label,.boss-meter b,.boss-state-head strong,.boss-phase){font-size:12px}
+#battle-team-details #log{height:100px;max-height:140px;font-size:12px;line-height:1.6}
+#skill-bar .skill-btn{min-height:52px;letter-spacing:0}
+#skill-bar .skill-btn .sn{font-size:14px}#skill-bar .skill-btn .sc{font-size:11px;line-height:1.4}
+#skill-bar .skill-btn:disabled{opacity:1;filter:none;background:#171624;border-color:#414254}
+#skill-bar .skill-btn:disabled .sn{color:#a6adbd}#skill-bar .skill-btn:disabled .sc{color:#969db0}
+#battle-ui .target-tip{font-size:12px;line-height:1.5;letter-spacing:0}
+#battle-ui .turn-banner{letter-spacing:0;text-shadow:none}
+#combo-battle-btn{min-height:48px;white-space:normal;line-height:1.5;font-size:13px}
+#combo-battle-btn small{display:block;color:#b7c4d6;font-size:11px;font-weight:400}
+.town-future{border:1px solid #595269;border-radius:10px;background:#141123b3;color:#c6cfdd}
+.town-future>summary{min-height:44px;padding:12px;font:500 14px/22px system-ui,"Microsoft YaHei",sans-serif;cursor:pointer}
+.town-future .town-grid{padding:10px}.town-future .town-building{cursor:default;opacity:.65}
+#town-notice{font-size:13px;line-height:1.7}
+#battle-lab-panel .battle-lab-tabs{display:flex;gap:6px;padding:6px 12px;flex:0 0 auto;background:#152831;border-bottom:1px solid #425c59}
+#battle-lab-panel .battle-lab-tabs .btn{flex:1;min-height:44px;padding:6px}
+#battle-lab-panel [role=tab][aria-selected=true]{background:#36564e;color:#fff0af;border-color:#c5b875}
+#battle-lab-panel [role=tabpanel][hidden]{display:none!important}
+#battle-lab-panel[data-expanded=false] .battle-lab-tabs,#battle-lab-panel[data-expanded=false] .battle-lab-message{display:none}
+#battle-lab-panel .battle-lab-header{flex-wrap:wrap}
+#battle-lab-panel .battle-lab-header>div{flex:1 0 100%;max-width:none}
+#battle-lab-panel .battle-lab-header strong,#battle-lab-panel .battle-lab-header span{display:inline;margin-right:10px}
+#battle-lab-panel .battle-lab-header strong{font-size:16px!important}
+#battle-lab-panel .battle-lab-header span{font-size:12px}
+#battle-lab-panel .battle-lab-header .btn{flex:1;padding:6px 9px}
+#battle-lab-panel .battle-lab-message{max-height:68px;overflow-y:auto;font-size:13px}
+#battle-lab-panel .btn:disabled{opacity:1;color:#9bafb6;background:#182b33;border-color:#40575d}
+#battle-lab-panel label{margin:6px 0}
+#battle-lab-panel #battle-lab-skill-prepare{width:100%;margin:6px 0 10px}
+/* The lab has its own always-visible speed control, including when collapsed. */
+.battle-lab-active .battle-top-actions{display:none}
+@media(max-width:680px){
+  .battle-top-actions{justify-content:space-between;padding:6px;gap:6px}
+  .battle-top-actions .btn,.battle-settings>summary{font-size:13px;padding:10px}
+  .battle-settings[open]{flex:1 0 100%}.battle-settings-content{justify-content:space-between}
+  .battle-disclosure>summary small{display:block;margin-left:0}
+}
+@media(max-width:1000px){
+  #battle-lab-panel .battle-lab-header{flex-wrap:nowrap}
+  #battle-lab-panel .battle-lab-header>div{flex:1;flex-direction:row;align-items:baseline}
+  #battle-lab-panel .battle-lab-header strong{margin:0;white-space:nowrap}
+  #battle-lab-panel .battle-lab-header span{display:none}
+  #battle-lab-panel .battle-lab-header .btn{flex:0 0 auto;min-width:44px}
+  #battle-lab-panel .battle-lab-tabs{padding:4px 10px}
+}

@@ -1,7 +1,7 @@
 # 🎨 SpiritCodex — 美术设定文档（草案）
 
 > 项目：灵素图谱 / SpiritCodex  
-> 版本：v0.2  （新增第四章：技能特效设定，12角色×4技能=48组中文提示词）  
+> 版本：v0.3  （Image 2 统一视觉资产已生成，并接入 HTML5 / Unity MVP）
 > 日期：2025-05-29  
 > 美术风格：神秘幻想 × 二次元融合（炼金术师 + 元素使者）
 
@@ -448,23 +448,46 @@ Phase 4: LoRA 批量生成剩余角色
 
 ---
 
-## 七、进度跟踪
+## 七、Image 2 实装清单（2026-09-04）
 
-| 角色 | 状态 | AI工具 | 备注 |
-|------|------|--------|------|
-| 艾拉·炎棘 | ⏳ 待生成 | Midjourney | |
-| 洛恩·炉火 | ⏳ 待生成 | Midjourney | |
-| 汐·深澜 | ⏳ 待生成 | Midjourney | |
-| 亚瑟·潮汐 | ⏳ 待生成 | Midjourney | |
-| 琳·风羽 | ⏳ 待生成 | Midjourney | |
-| 赛巴斯 | ⏳ 待生成 | Midjourney | |
-| 扎克·雷鸣 | ⏳ 待生成 | Midjourney | |
-| 奈娜·闪电 | ⏳ 待生成 | Midjourney | |
-| 薇洛·暗舞 | ⏳ 待生成 | Midjourney | |
-| 卡尔·冥府 | ⏳ 待生成 | Midjourney | |
-| 艾琳·圣光 | ⏳ 待生成 | Midjourney | |
-| 雷欧·裁决 | ⏳ 待生成 | Midjourney | |
+本轮确定统一方向为“秘仪炼金·灵素绘卷”：暗靛黑背景、旧黄铜结构、象牙白正文、六元素作为局部高饱和发光色。界面文字继续由运行时代码绘制，生成图不烘焙中文，避免错字、裁切和不同分辨率下不可读。
 
----
+### 7.1 正式角色
 
-> 下一步：用 Midjourney 生成第一批角色概念图，建议先从 H1（艾拉·炎棘）和 W1（汐·深澜）开始，看风格是否匹配预期。
+| 角色 | 状态 | 资产 |
+|------|------|------|
+| 艾拉·炎棘 | ✅ Image 2 已生成并接入 | `char-h1-fire-ranger.png` |
+| 洛恩·炉火 | ✅ Image 2 已生成并接入 | `char-h2-fire-guardian.png` |
+| 汐·深澜 | ✅ Image 2 已生成并接入 | `char-w1-water-healer.png` |
+| 亚瑟·潮汐 | ✅ Image 2 已生成并接入 | `char-w2-tide-warden.png` |
+| 琳·风羽 | ✅ Image 2 已生成并接入 | `char-a1-wind-ranger.png` |
+| 赛巴斯 | ✅ Image 2 已生成并接入 | `char-a2-wind-alchemist.png` |
+| 扎克·雷鸣 | ✅ Image 2 已生成并接入 | `char-t1-thunder-warrior.png` |
+| 奈娜·闪电 | ✅ Image 2 已生成并接入 | `char-t2-thunder-mage.png` |
+| 薇洛·暗舞 | ✅ Image 2 已生成并接入 | `char-d1-shadow-assassin.png` |
+| 卡尔·冥府 | ✅ Image 2 已生成并接入 | `char-d2-necromancer.png` |
+| 艾琳·圣光 | ✅ Image 2 已生成并接入 | `char-l1-light-priestess.png` |
+| 雷欧·裁决 | ✅ Image 2 已生成并接入 | `char-l2-light-paladin.png` |
+
+HTML5 资源位于 `playable/assets/characters/`；Unity 副本位于 `LingsuMVP/Assets/Resources/Art/Generated/Characters/`。
+
+### 7.2 场景、敌人、召唤物与 UI
+
+- 7 张界面/战斗背景：标题星象厅、炼金城镇、角色档案、布阵战桌、暗影遗迹、元素熔炉、混沌圣所。
+- 6 类敌人：暗影狼、暗影蝠、炎魔兵、冰霜守卫、风暴使者、混沌元素 Boss。
+- 2 个召唤物：风鹰、骷髅战士；另补齐 Unity MVP 的木系法师、铁卫、炼金学徒 3 名队友。
+- UI 资产：六元素主徽记、胜利/败北徽记、低对比面板纹理，以及城镇 6 个功能入口徽记。
+- Web 主资产根目录：`playable/assets/`；Unity 镜像根目录：`LingsuMVP/Assets/Resources/Art/Generated/`。
+
+### 7.3 生成与交付规则
+
+1. 全部位图由 OpenAI Image 2 按同一风格锚点逐张生成；角色、敌人、召唤物和入口徽记保留独立文件，便于换装、动画和点击命中。
+2. 需要透明背景的素材先使用纯色色键生成，再执行柔边、去溢色处理；源图只作为临时加工文件，游戏只引用最终 PNG。
+3. Web 与 Unity 使用同一构图和色板；Web 保留 DOM/Canvas 实时文字，Unity 保留运行时字体与按钮逻辑。
+4. 生成图缺失或加载失败时必须显示元素符号回退，不允许阻断战斗或隐藏交互按钮。
+
+### 7.4 后续边界
+
+- 当前完成静态立绘、背景与 UI 徽记；48 个技能的逐帧特效、骨骼动画和角色换装仍是后续制作项。
+- `game-design-doc.md` 中 Unity 版本与当前工程实际版本、稀有度星级及部分编队描述仍需单独统一，不能以旧草案覆盖当前可玩规则。
+- 最终文件、逐资产提示词主体与生成模式见 `docs/IMAGE2_ASSET_MANIFEST.md`。

@@ -367,6 +367,13 @@ namespace LingsuMVP
         private void OnGUI()
         {
             EnsureRuntimeGuiStyles();
+            GUI.contentColor = RuntimeTheme.TextPrimary;
+
+            if (_currentState != GameState.Playing)
+            {
+                DrawSolidRect(new Rect(0f, 0f, Screen.width, Screen.height), RuntimeTheme.Canvas);
+            }
+
             if (_currentState != GameState.Home || _activeTownPanel == TownPanel.None)
             {
                 DrawRuntimeTopHud();
@@ -759,9 +766,9 @@ namespace LingsuMVP
                 _runtimeButtonStyle = new GUIStyle(GUI.skin.button);
                 _runtimeButtonStyle.fontSize = Mathf.Max(15, Mathf.Min(18, Screen.height / 42));
                 ApplyRuntimeFont(_runtimeButtonStyle);
-                _runtimeButtonStyle.normal.textColor = new Color(0.92f, 0.88f, 0.78f, 1f);
-                _runtimeButtonStyle.hover.textColor = new Color(1f, 0.94f, 0.78f, 1f);
-                _runtimeButtonStyle.active.textColor = new Color(1f, 0.88f, 0.56f, 1f);
+                _runtimeButtonStyle.normal.textColor = RuntimeTheme.TextPrimary;
+                _runtimeButtonStyle.hover.textColor = RuntimeTheme.BrassBright;
+                _runtimeButtonStyle.active.textColor = RuntimeTheme.BrassBright;
                 _runtimeButtonStyle.normal.background = GetRuntimeWhiteTexture();
                 _runtimeButtonStyle.hover.background = GetRuntimeWhiteTexture();
                 _runtimeButtonStyle.active.background = GetRuntimeWhiteTexture();
@@ -774,7 +781,7 @@ namespace LingsuMVP
                 _runtimeTitleStyle.fontStyle = FontStyle.Bold;
                 _runtimeTitleStyle.alignment = TextAnchor.MiddleCenter;
                 ApplyRuntimeFont(_runtimeTitleStyle);
-                _runtimeTitleStyle.normal.textColor = new Color(0.96f, 0.8f, 0.48f, 1f);
+                _runtimeTitleStyle.normal.textColor = RuntimeTheme.BrassBright;
             }
 
             if (_runtimeInfoStyle == null)
@@ -783,7 +790,7 @@ namespace LingsuMVP
                 _runtimeInfoStyle.fontSize = Mathf.Max(15, Mathf.Min(17, Screen.height / 48));
                 _runtimeInfoStyle.alignment = TextAnchor.MiddleCenter;
                 ApplyRuntimeFont(_runtimeInfoStyle);
-                _runtimeInfoStyle.normal.textColor = new Color(0.82f, 0.82f, 0.76f, 1f);
+                _runtimeInfoStyle.normal.textColor = RuntimeTheme.TextPrimary;
             }
 
             if (_runtimePanelInfoStyle == null)
@@ -802,7 +809,7 @@ namespace LingsuMVP
                 _runtimeSmallStyle.alignment = TextAnchor.MiddleCenter;
                 _runtimeSmallStyle.wordWrap = true;
                 ApplyRuntimeFont(_runtimeSmallStyle);
-                _runtimeSmallStyle.normal.textColor = new Color(0.72f, 0.74f, 0.68f, 1f);
+                _runtimeSmallStyle.normal.textColor = RuntimeTheme.TextMuted;
             }
 
             if (_runtimeBuildingTitleStyle == null)
@@ -813,15 +820,15 @@ namespace LingsuMVP
                 _runtimeBuildingTitleStyle.alignment = TextAnchor.MiddleCenter;
                 _runtimeBuildingTitleStyle.wordWrap = false;
                 ApplyRuntimeFont(_runtimeBuildingTitleStyle);
-                _runtimeBuildingTitleStyle.normal.textColor = new Color(0.95f, 0.9f, 0.78f, 1f);
+                _runtimeBuildingTitleStyle.normal.textColor = RuntimeTheme.BrassBright;
             }
 
             if (_runtimeDisabledButtonStyle == null)
             {
                 _runtimeDisabledButtonStyle = new GUIStyle(_runtimeButtonStyle);
-                _runtimeDisabledButtonStyle.normal.textColor = new Color(0.42f, 0.46f, 0.5f, 1f);
-                _runtimeDisabledButtonStyle.hover.textColor = new Color(0.42f, 0.46f, 0.5f, 1f);
-                _runtimeDisabledButtonStyle.active.textColor = new Color(0.42f, 0.46f, 0.5f, 1f);
+                _runtimeDisabledButtonStyle.normal.textColor = RuntimeTheme.TextMuted;
+                _runtimeDisabledButtonStyle.hover.textColor = RuntimeTheme.TextMuted;
+                _runtimeDisabledButtonStyle.active.textColor = RuntimeTheme.TextMuted;
             }
 
             if (_runtimeMapButtonStyle == null)
@@ -840,7 +847,7 @@ namespace LingsuMVP
                 _runtimeHudStyle.fontStyle = FontStyle.Bold;
                 _runtimeHudStyle.alignment = TextAnchor.MiddleCenter;
                 ApplyRuntimeFont(_runtimeHudStyle);
-                _runtimeHudStyle.normal.textColor = new Color(0.9f, 0.88f, 0.78f, 1f);
+                _runtimeHudStyle.normal.textColor = RuntimeTheme.TextPrimary;
             }
         }
 
@@ -980,7 +987,7 @@ namespace LingsuMVP
             if (_activeTownPanel != TownPanel.None)
             {
                 Rect pageRect = GetTownFullPageRect();
-                DrawSolidRect(pageRect, new Color(0.035f, 0.04f, 0.038f, 1f));
+                DrawTownGeneratedBackdrop(pageRect, GetTownPanelArtKey(), 0.48f);
 
                 DrawTownOverlayPanel(pageRect);
                 DrawTownModalIfNeeded(pageRect);
@@ -992,7 +999,7 @@ namespace LingsuMVP
             panelHeight = Mathf.Max(400f, panelHeight);
             Rect panelRect = new Rect((Screen.width - panelWidth) * 0.5f, Screen.height * 0.06f, panelWidth, panelHeight);
 
-            GUI.backgroundColor = new Color(0.035f, 0.04f, 0.038f, 1f);
+            GUI.backgroundColor = RuntimeTheme.Panel;
             GUI.Box(panelRect, GUIContent.none);
             GUI.backgroundColor = Color.white;
 
@@ -1206,8 +1213,51 @@ namespace LingsuMVP
 
         private void DrawTownBackdrop(Rect panelRect)
         {
-            Rect innerRect = new Rect(panelRect.x + 118f, panelRect.y + 70f, panelRect.width - 236f, panelRect.height - 92f);
-            DrawSolidRect(innerRect, new Color(0.055f, 0.065f, 0.06f, 1f));
+            DrawTownGeneratedBackdrop(new Rect(panelRect.x + 3f, panelRect.y + 3f, panelRect.width - 6f, panelRect.height - 6f), "home", 0.38f);
+            Rect innerRect = new Rect(panelRect.x + 28f, panelRect.y + 92f, panelRect.width - 56f, panelRect.height - 140f);
+            DrawSolidRect(innerRect, RuntimeTheme.PanelGlass);
+        }
+
+        private void DrawTownGeneratedBackdrop(Rect rect, string panelKey, float overlayAlpha)
+        {
+            Sprite background = ArtCatalog.LoadTownBackground(panelKey);
+            if (background != null && background.texture != null)
+            {
+                RuntimeTheme.DrawTextureCover(rect, background.texture, Color.white);
+                DrawSolidRect(rect, new Color(RuntimeTheme.Canvas.r, RuntimeTheme.Canvas.g, RuntimeTheme.Canvas.b, overlayAlpha));
+                return;
+            }
+
+            DrawSolidRect(rect, RuntimeTheme.Panel);
+        }
+
+        private string GetTownPanelArtKey()
+        {
+            switch (_activeTownPanel)
+            {
+                case TownPanel.Shop:
+                    return "shop";
+                case TownPanel.Blacksmith:
+                    return "blacksmith";
+                case TownPanel.Evolution:
+                    return "evolution";
+                case TownPanel.Alchemy:
+                    return "alchemy";
+                case TownPanel.Training:
+                    return "training";
+                case TownPanel.Character:
+                    return _selectedCharacterTab == CharacterTab.Formation ? "formation" : "roster";
+                case TownPanel.Equipment:
+                    return "equipment";
+                case TownPanel.Inventory:
+                    return "inventory";
+                case TownPanel.Recruit:
+                    return "recruit";
+                case TownPanel.TaskBoard:
+                    return "task_board";
+                default:
+                    return "home";
+            }
         }
 
         private bool DrawTownBuildingButton(Rect rect, int index, string title)
@@ -1215,8 +1265,8 @@ namespace LingsuMVP
             bool placeholder = _townPageIndex == 1 && index > 1;
             bool hovered = rect.Contains(Event.current.mousePosition);
             Color baseColor = placeholder
-                ? new Color(0.045f, 0.05f, 0.05f, 1f)
-                : hovered ? new Color(0.12f, 0.32f, 0.29f, 1f) : new Color(0.075f, 0.095f, 0.09f, 1f);
+                ? RuntimeTheme.ButtonDisabled
+                : hovered ? RuntimeTheme.ButtonHover : RuntimeTheme.Button;
             GUI.backgroundColor = baseColor;
             bool clicked = GUI.Button(rect, GUIContent.none, _runtimeButtonStyle);
 
@@ -1315,7 +1365,7 @@ namespace LingsuMVP
         private void DrawSolidRect(Rect rect, Color color)
         {
             Color previousColor = GUI.color;
-            GUI.color = color;
+            GUI.color = RuntimeTheme.HarmonizeSurface(color);
             GUI.DrawTexture(rect, GetRuntimeWhiteTexture());
             GUI.color = previousColor;
         }
@@ -1382,7 +1432,7 @@ namespace LingsuMVP
         private void DrawTownOverlayPanel(Rect townRect)
         {
             Rect overlayRect = new Rect(townRect.x + 18f, townRect.y + 14f, townRect.width - 36f, townRect.height - 28f);
-            DrawSolidRect(overlayRect, new Color(0.045f, 0.052f, 0.05f, 1f));
+            DrawSolidRect(overlayRect, RuntimeTheme.PanelGlass);
 
             GUI.Label(new Rect(overlayRect.x, overlayRect.y + 12f, overlayRect.width, 36f), GetTownPanelTitle(), _runtimeTitleStyle);
             if (_activeTownPanel != TownPanel.Shop && _activeTownPanel != TownPanel.Inventory && _activeTownPanel != TownPanel.Blacksmith && _activeTownPanel != TownPanel.Alchemy && _activeTownPanel != TownPanel.Evolution && _activeTownPanel != TownPanel.Character && _activeTownPanel != TownPanel.Recruit && _activeTownPanel != TownPanel.TaskBoard)

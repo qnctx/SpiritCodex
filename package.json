@@ -1,0 +1,11 @@
+{
+  "name": "spirit-codex-playable",
+  "private": true,
+  "scripts": {
+    "test:playable": "playwright test",
+    "test:playable:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.54.1"
+  }
+}

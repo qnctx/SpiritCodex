@@ -1,272 +1,390 @@
 # SpiritCodex HTML5 Prototype Documentation
 
-> **File:** `playable/spirit-codex.html`  
-> **Version:** 1.0 (2026-07-06)  
-> **Status:** Playable prototype — all assets procedurally generated, zero external dependencies
+> **File:** `playable/spirit-codex.html`
+> **Version:** 4.8
+> **当前战斗体验 v5.3 / v14：** 新增真实技能范围预览与群体确认、合击缺失条件和自动接管提示；第三波 Boss 通过蓄力、概率打断/护盾承伤、短暂核心暴露构成可测试反击循环。提示与实际施放共用规则，接管不消费，测试场有三种战术预设。详见 [v14规则与具体测试步骤](BATTLE_DECISIONS_V14.md)。保留 [v13操作栏与暂停战况](BATTLE_HUD_V13.md)、[v12倍速和朝向规范](BATTLE_UX_V12.md)、[v11的48种技能动作](SKILL_PERFORMANCE_V11.md) 和 [v10真实战场合击](LIVE_BATTLE_V10.md)。
+
+> **v4.8 / v9：** 召唤物依据合法目标朝向，凤凰新增侧身留场战斗原画。六主题天空、天气及地面反光共享环境与时钟，旧六主体原图保留，仍是2.5D而非真3D。历史设计与六段免费演练实录见 [目标朝向与环境联动](COMBO_FACING_ENVIRONMENT_V9.md)。
+> **Status:** HTML 回合制玩法权威基线；核心规则与 Image2 美术接入已完成，实际通过项见「验证基线」。
+> **引擎映射目标：** 后续 Unity 版本应复刻本原型已经验证的战斗规则、Image2 美术方向、信息层级和交互流程。
+> **下一阶段玩法方案：** [《灵素图谱》玩法优化与成长策略攻略 v1.0](GAMEPLAY_OPTIMIZATION_GUIDE.md)
+> **v4.0 契约合击：** 六对限定角色专属大招已接入自由编队与战斗。两位正式主战存活、无硬控，行动者 60 / 协力者 40 能量，满足战斗铺垫后消耗一件催化物；每配方一局一次、全局最多两次，与普通元素融合共享锁。三类催化物有持久库存、战前合成与分波结算补给；自动策略不会消费，主动打开合击菜单会切换并保持手动。六张独立生成插画分别用于编队配方和差异化施放演出。规则、试玩步骤与测试详见 [角色合击大招](COMBO_ULTIMATES.md)，美术来源见 [提示词与资产记录](COMBO_ART_PROMPTS.md)。
+> **合击动态增强：** 保留原有图片与即时数值结算，加入双角色汇聚、蓄力、六种独立程序运动和冲击收尾。编队配方新增免费「预览动态」，不要求上阵、不扣道具/能量/次数；切页取消待加载预览并清理正在播放的预览。详细操作见 [免费预览与实战测试步骤](COMBO_ULTIMATES.md#试玩验收)。
+> **v4.1 准备页与完整命中：** 先生成新版UI参考、命中分镜和六主题命中图集，再落实四页准备导航（编队 / 合击图鉴 / 远征设置 / 补给工坊）、清晰中文无衬线字和可展开配方。演练展示施放→目标受击→HP/盾/治疗/召唤→结果，可重播关闭；实战使用真实结算快照，免费演练明确标记示例数值。详见 [设计图与原始提示词](PREPARATION_IMPACT_REDESIGN.md)。
+> **v4.2 绝招长演出：** 新增六张六阶段序列图（共36幅画面），完整演出延长至8.4秒：聚能、巨型实体显现、释放、命中、持续余波及结果。六种主题各有实体轨迹和余波，支持完整/减少动态、跳过及手机镜头跟随。真实战斗在演出完成或跳过后仅续战一次，移除旧5秒上限；规则与数值不变。六段历史游戏录制WebM及原始图片提示词见 [绝招演出记录](COMBO_EPIC_V3.md)，非AI视频生成。
+> **v4.3 人物动作与发射位置：** 新生成六张双人四姿态动作表（12人、48姿态），合击期间实际举弓/放箭、突刺/劈剑、抬杖/推掌，并逐姿态标定武器或手掌出射点。人物→融合点→技能→合法目标共享几何坐标，治疗/护盾/召唤与攻击分路，反向主导不串角色。手机先显示出招再追踪弹道，右侧人物向内镜像；真实复活及新召唤优先显示。规则和8.4秒时长不变，动作源图及历史设计见 [动作修正记录](COMBO_ACTIONS_V4.md)。
+> **v4.4 战场美术重构：** 六种合击移除巨型技能贴图、头像卡框和六段流程标签，改为统一绘制场景中的完整人物与实时材质VFX。新生成夜色战场底图和8微粒纹理，41张必需图；火羽、雷潮、曲面盾、生命流、斩痕、魂阵分别运动。人物窄色键去暗底保留黑甲，灰度纹理转alpha防黑块，法效裁剪保护中文HUD，手机汇聚避开名牌。玩法数值不变，当前设计/资产/实录/验收见 [v5战场重构](COMBO_STAGE_V5.md)。
+> **v4.5 合击成型强化：** 沿用当前战场与图片，增强双源聚合、六种元素分层成型、核心压缩与局部地面受光。手机扩大成型空间，构图从双人平缓移向融合点再跟到目标；仍保护姓名/血条、免费零消费和减少动态。当前设计与测试步骤见 [v6合击成型强化](COMBO_RESONANCE_V6.md)。
+
+> **v3.2 可玩性修复：** 补齐正常能量获取；修正防御减伤方向；统一伤害、护盾、死亡、吸血、反击和击杀结算；修复 AOE+召唤组合、DOT 来源、状态时长、临时增益、首次行动被动和正式角色复活边界；修复全部融合键查询，并允许高智力角色自由选择双元素或三元素融合；加强跨局异步隔离与移动端战斗布局。
+
+> **v3.3 规则一致性修复：** 修复复活单位本轮行动序软锁；接通韧性、感电和开局加速被动；单体治疗改为手选友方；融合 DOT 继承施法者元素精通；冰霜风暴使用独立冻伤状态；明确风暴雷霆提升暴击伤害；骷髅改为前排承伤，默认队伍至少包含一名前排。
+
+> **v3.4 Image2 美术接入：** 12 位角色、6 种敌人和 2 种召唤物全部绑定透明 PNG；图鉴、详情、编队、行动序和战斗 Canvas 使用同一资产；标题、城镇、图鉴、编队和三波战斗接入 7 张 16:9 场景图，标题/结算徽记和六个城镇入口也使用独立 UI 切图，并以参考图统一暗金炼金 UI。所有图片均有元素符号/渐变背景回退，缺图不会中断玩法。
+
+> **v3.5 自动战斗切片：** 战斗默认自动，可在右上角「自动：开 / 手动」按钮随时切换，且模式在当前页面会话内跨战斗保留。自动决策只选择当前可用的普通技能或大招并匹配合法目标，不会自动融合；切回手动会用独立决策令牌取消尚未提交的动作，失效决策回退普攻。召唤物回合先进入结算态再渲染，避免短暂暴露玩家技能栏或重复行动。
+
+> **v3.6 Slice A 战术战斗：** 编队收敛为必须填满的 4 名主战（2 前排 + 2 后排）并可保存最多 2 名替补，六个槽位均可点选、互换或从角色池替换；替补当前只保存备选阵容，尚不能在波间换入。角色动作采用「普攻 0 / 技能一 2 / 技能二 3 / 大招 0」回合冷却，敌方会预告下一行动与目标规则。混沌元素 Boss 在生命跨过 70% 和 35% 时切换阶段，可见蓄力可被硬控打断；一次硬控成功后获得 2 个 Boss 行动回合的硬控抗性。同步将克制调整为 1.25 / 0.80、光暗互克 1.30，护盾总量封顶目标最大生命 40%，稀有度倍率调整为 N 0.88 / R 0.94 / SR 1.00 / SSR 1.10。
+
+> **v3.7 Slice B 单局构筑：** 战前可从坚壁、疾风、炼成、召灵四种有收益也有代价的阵式中选择；第一波后从 8 个临时灵方池随机展示 3 个并选择 1 个，第二波后在全队恢复、指定角色充能、主战与替补换位中选择 1 项。每通关一波分别把本局“锁定灵尘”推进到 30 / 65 / 100；失败结算显示本局阵式、灵方和伤害数据，并支持原阵容重试或换入替补后重试。该切片交付时锁定值尚未接入存档；v3.8 已在其上增加独立的三资源持久结算。
+
+> **v3.8 Slice C 跨局成长：** 结算会按已通关 0 / 1 / 2 / 3 波，把灵墨、元素尘、角色精华和参战熟练度原子写入本机存档；同一局不能重复领取。进化塔已接通图谱共鸣 1–30、角色专精 1–5、技能强化 0–3，以及 H1 / H2 / W1 / A1 四名核心角色共八条真实技能分支。灵启 I 在图谱 Lv.10 开放，分支卡先比较、确认按钮再扣费，已解锁路线可在城镇低成本切换，所有成长从下一场创建的正式角色单位开始生效。
+
+> **v3.9 Slice D 远征策略：** 编队页可配置剧情 / 标准 / 挑战三档难度、至多 3 个图谱契约、普通随机 / 每日固定种子和速攻 / 稳健 / 炼成三种自动策略。稳健在首次合法融合或 Boss 蓄力时暂停并推荐行动，炼成会自动施放合法的最高分融合；战中仍可即时换策略或切手动。难度与契约共同提高灵墨、元素尘和角色精华；专精 XP 只按难度与已通关波次折算，契约不加成。每日挑战按日期使用固定种子；只有出征时成长快照、阵容、规则和操作顺序一致时才可逐步复现，结算成长后重开不保证整局完全相同。
 
 ---
 
-## How to Play
+## 1. 概述
 
-### Launching
+`playable/spirit-codex.html` 是一个**无运行时外部依赖、离线可玩**的浏览器原型，作为后续 Unity 实现（LingsuMVP）的**玩法与美术参考蓝本**。入口、样式、数据和运行逻辑已经拆分；角色/敌人/召唤物立绘与场景背景由本地 Image2 PNG 提供，Canvas 继续负责单位合成、血条、高亮、死亡层和粒子，CSS 负责暗金炼金界面。双击入口 HTML 即可运行，无需服务器或网络。
 
-Open `playable/spirit-codex.html` directly in any modern browser. No server, npm, or network connection required.
+当前版本把设计文档中与**战斗可玩闭环**和**统一美术表现**直接相关的内容做成后续 Unity 的明确参照：
 
-### Screens
+- **12 位正式角色**（艾拉·炎棘、洛恩·炉火、汐·深澜…），完全对齐美术设定文档：姓名 / 元素(主+副) / 稀有度(SSR·SR) / 定位 / 前排后排 / 简介 / 技能特效提示词。
+- **4 技能体系**：普攻 + 技能1 + 技能2 + 大招（大招需满能量）；冷却依次为 0 / 2 / 3 / 0 回合。每人另有 1 个**常驻被动**（低血狂暴 / 吸血 / 反击 / 韧性 / 暴击 / 制裁 / 再生 / 召唤庇护等）。
+- **完整属性**：生命 / 攻击 / 防御 / 速度 / 暴击率 / 暴击伤害 / 韧性 / 元素精通 / 智力，均参与结算（暴击、韧性抵抗控制、智力门控融合）。
+- **元素机制**：火=灼烧、水=冰冻/护盾、风=加速/闪避、雷=麻痹/连锁、暗=吸血/诅咒、光=治疗/净化/复活；克制环为火>风>雷>水>火（1.25 / 0.80），暗↔光互克（双向 1.30）。
+- **⭐ 元素融合系统（签名玩法）**：能量满时发起融合，以自身元素 + 队友元素组合，触发 **15 种双元素 + 4 种三元素**融合效果（蒸汽 / 雷火炼狱 / 暗雷即死 / 生命洪流复活 / 虚空行者隐匿 等）。SSR/高智力(int≥60) 可进行三元素融合。
+- **丰富状态**：灼烧 / 腐蚀 / 冻伤 / 冰冻 / 麻痹 / 减速 / 致盲 / 诅咒 / 破防 / 护盾 / 加速 / 再生 / 隐匿 / 必暴，配状态图标与韧性抵抗。
+- **召唤 / 连锁 / 复活 / 即死** 等进阶机制均已落地。
+- **UI 扩展**：图鉴卡片、详情弹窗、2 前排 + 2 后排 + 2 替补可编辑槽位、四阵式与远征规则面板、波间灵方/营地面板、敌方意图、Boss 阶段/控制抗性/蓄力、战中自动策略选择器、关键决策弹窗、融合选择器、失败复盘与玩法说明模态。
+- **完整单局闭环**：必须填满 2 前排 + 2 后排才可出征，最多另存 2 名替补；选定阵式、难度、契约、种子模式和自动策略后，依次经历第一波、灵方三选一、第二波、营地三选一、Boss 与胜负结算。默认队伍含前排护卫，重开会恢复默认队伍，异步战斗回调带会话令牌，防止重复点击或上一局回调串入新战斗。战斗初始为自动模式，也可无缝切换策略或改为手动。
+- **局内构筑与重试**：8 个临时灵方只在本次远征生效；第二波营地可恢复、为指定存活角色充能，或交换一名主战与一名替补并保留生命、能量和冷却。通关里程碑显示 30 / 65 / 100 锁定灵尘；失败后可查看路线与伤害复盘，并选择原阵或换入替补重试。
+- **敌方战术信息**：普通敌人按配置的行动模式、冷却与前排/后排目标规则行动，HUD 显示下一行动；Boss 具有 70% / 35% 两次切相、一回合蓄力与打断后的硬控抗性。
+- **召唤约束**：场上最多同时存在 2 个存活召唤物，避免无限召唤挤压战场与行动序。
+- **真实美术闭环**：图鉴卡、详情、编队槽位/角色池、行动序、队伍 HUD 和战斗单位均显示同一套透明立绘；三波战斗切换对应场景，选靶、当前行动、护盾、死亡和血/能量条保持清晰可读。
+- **安全回退**：必需资产由共享预载器管理并暴露状态供测试；加载失败时 DOM/Canvas 使用元素符号和暗色渐变继续工作。标题、胜负与城镇入口徽记也沿用相同机制。
 
-| Screen | Purpose | Navigation |
-|--------|---------|------------|
-| **Title** | Game branding and entry point | Click "开始游戏" → Roster |
-| **Roster** | Browse all 12 characters, view stats and skills | Click card → Detail modal; "组队 →" → Formation |
-| **Team Formation** | Build a team of 3–6 characters | Click roster to add, click slot to remove |
-| **Battle** | Turn-based combat against 3 enemy waves | Automatic turn progression, choose skills on your turn |
-| **Result** | Victory/defeat summary | "返回主界面" → Title |
+### Image2 资产布局
 
-### Controls
+| 目录 / 配置 | 数量 | 用途 |
+|---|---:|---|
+| `assets/characters/` | 12 | H1/H2、W1/W2、A1/A2、T1/T2、D1/D2、L1/L2 正式角色透明立绘 |
+| `assets/enemies/` | 6 | 暗影狼、暗影蝠、炎魔兵、冰霜守卫、风暴使者、混沌元素 |
+| `assets/summons/` | 2 | 风鹰、骷髅战士 |
+| `assets/combos/` | 13张图 | 六张配方海报 + 一张六格命中图集 + 六张六阶段序列图 |
+| `assets/combos/videos/` | 6段视频 | 1280×720、25fps、8.4秒无声WebM，来自实时游戏演出录制；不作为战斗播放器 |
+| `assets/backgrounds/` | 7 | 标题、城镇、图鉴、编队、战斗三波场景 |
+| `assets/references/ref-ui-style-anchor.png` | 1 | 暗金天文/炼金装饰、材质和色调参考 |
+| `assets/ui/` | 10 | 六元素标题徽记、胜/负徽记、面板纹理，以及地图/图鉴/招贤/锻造/炼药/进化六个城镇入口徽记 |
 
-- **Title Screen:** Click start button
-- **Roster Screen:** Tap any character card to open detailed stats panel
-- **Formation Screen:** Tap characters in the bottom roster bar to add them to team slots (3 minimum, 6 maximum). Tap an occupied slot to remove that character
-- **Battle Screen:** When it's your character's turn, tap one of the skill buttons:
-  - Regular skills (no energy cost) can be used any time
-  - Ultimate skills (marked with ✦) require a full energy bar (100 energy)
-  - Energy is gained by attacking (20 per attack) and being hit (10 per hit taken)
+资产路径的唯一可执行映射位于 `spirit-codex-data.js` 的 `ART`、`CHARACTERS[].art`、`ENEMIES[][].art`、`SUMMONS.*.art`，以及 `spirit-codex-combos-data.js` 的 `COMBO_RECIPES[].art`，界面代码不再按名称猜文件。
 
----
-
-## Character Roster
-
-12 characters — 2 per element (6 elements total)
-
-### 🔥 Fire Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **炎舞** | 输出 (DPS) | 280 | 95 | 40 | 72 | 烈焰斩 (1.2× ATK) | 炎爆弹 (1.6× ATK, 30% burn) | 炎狱天舞 (2.5× ATK) |
-| **灼心** | 输出 (DOT) | 250 | 80 | 35 | 68 | 灼心焰 (1.0× ATK, 3-turn burn) | 焚烬 (detonate all burns) | 灭世之焰 (2.2× ATK, 5-turn burn) |
-
-### 💧 Water Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **寒渊** | 控制 (Control) | 300 | 60 | 55 | 60 | 冰刺 (1.1× ATK, 20% freeze) | 寒潮 (1.3× ATK, 30% freeze) | 深渊冰封 (2.0× ATK, guaranteed freeze) |
-| **潮汐** | 治疗 (Healer) | 320 | 45 | 50 | 55 | 涌泉 (1.0× ATK) | 治愈之泉 (heal team 20% HP) | 深澜之颂 (heal 40% + cleanse) |
-
-### 🌪 Wind Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **疾风** | 输出 (Speed DPS) | 240 | 85 | 30 | 95 | 风刃 (1.1× ATK) | 疾风突袭 (1.5× ATK) | 风神之怒 (2.3× ATK, -30% DEF) |
-| **飓影** | 输出 (Evasion) | 230 | 75 | 28 | 90 | 影袭 (1.0× ATK) | 飓风斩 (1.4× ATK) | 暴风骤影 (2.0× ATK, +50% dodge) |
-
-### ⚡ Thunder Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **雷鸣** | 输出 (Burst) | 260 | 100 | 35 | 80 | 雷击 (1.2× ATK) | 雷霆万钧 (1.8× ATK, 15% stun) | 万雷天牢 (2.6× ATK, 30% stun) |
-| **电弧** | 输出 (Chain) | 245 | 85 | 32 | 82 | 电弧 (1.0× ATK, chain 1) | 连锁闪电 (1.3× ATK, chain 2) | 雷霆风暴 (2.2× ATK, chain all) |
-
-### 🌑 Dark Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **暗蚀** | 输出 (Lifesteal) | 270 | 88 | 38 | 70 | 暗影刺 (1.1× ATK, 20% lifesteal) | 暗蚀之触 (1.4× ATK, 30% lifesteal) | 暗影吞噬 (2.3× ATK, 40% lifesteal) |
-| **诅咒** | 控制 (Debuff) | 290 | 65 | 45 | 62 | 诅咒之矢 (1.0× ATK, -15% ATK) | 虚弱诅咒 (1.2× ATK, -25% ATK) | 永恒诅咒 (2.0× ATK, -30% ATK & DEF) |
-
-### ☀️ Light Element
-
-| Name | Role | HP | ATK | DEF | SPD | Skill 1 | Skill 2 | Ultimate |
-|------|------|----|-----|-----|-----|---------|---------|----------|
-| **圣辉** | 治疗 (Cleanse) | 310 | 50 | 52 | 58 | 圣光 (1.0× ATK) | 净化之光 (cleanse + 15% HP heal) | 神圣洗礼 (35% HP heal + cleanse + 20% damage reduction) |
-| **晨曦** | 治疗 (Shield) | 330 | 42 | 58 | 52 | 曙光 (0.9× ATK) | 晨曦护盾 (shield = DEF×200%) | 黎明之盾 (shield DEF×300% + 20% HP heal) |
+> v2.1 可玩版本已备份为 `playable/spirit-codex.v2.1-playable-backup.html`；原始 v1.0 为 `playable/spirit-codex.v1-backup.html`。
 
 ---
 
-## Battle Mechanics
+## 2. 如何游玩
 
-### Turn System
+### 启动
+直接用浏览器打开 `playable/spirit-codex.html`。
 
-- **Speed (SPD)** determines turn order — highest speed acts first each round
-- When multiple units have similar speed, order is slightly randomized
-- All allies and enemies share the same turn queue
+### 流程与界面
 
-### Turn Actions
+| 界面 | 作用 | 跳转 |
+|------|------|------|
+| **标题 Title** | 品牌页 + 入口 | 点击「进入城镇」→ 城镇 |
+| **城镇 Town** | 当前系统入口 | 「角色阁」→ 图鉴；「灵素图谱」→ 编队 |
+| **图鉴 Roster** | 浏览 12 名角色，看属性/技能/克制 | 点卡片 → 详情弹窗；「组队 →」→ 编队 |
+| **远征准备 Formation** | 四页分别放编队与阵式、合击图鉴、远征规则、补给合成 | 页签切换保留阵容；先点槽位再点角色/另一槽位；填满4名主战可出征；图鉴可免费演练 |
+| **战斗 Battle** | 回合制 3 波远征，第三波为 Boss | 默认自动；右上角可切自动策略或手动。第一波后灵方三选一，第二波后恢复 / 充能 / 换替补三选一 |
+| **结算 Result** | 胜/负、锁定灵尘与本局复盘 | 原阵容重试、换入替补并重试，或「返回城镇」 |
 
-On your turn you choose from 4 options:
-1. **Attack (Skill 1)** — Basic attack, always available
-2. **Skill 2** — Stronger attack with special effects, always available
-3. **Ultimate** — Most powerful skill, requires full energy bar (100/100)
+### 操作
+- **图鉴**：点任意角色卡打开详情（六维属性条、技能说明、克制提示）。
+- **编队**：必须配置 2 名前排和 2 名后排；另可保存最多 2 名替补。先点任意槽位，再点角色池角色或另一个槽位即可替换/互换，点击槽内「✕」移除。替补不会自动参战，只能在第二波后的营地选择中由玩家主动换入一名。
+- **战前阵式**：从坚壁阵、疾风阵、炼成阵、召灵阵中选择一种；每种阵式同时带有收益和代价，并持续整次远征。
+- **远征规则**：剧情 / 标准 / 挑战分别提供 ×0.8 / ×1.0 / ×1.35 三种货币难度倍率；六个图谱契约最多同时选择 3 个，铁壁、猎杀、治疗衰减、护盾衰减、余烬地脉、封术刻印的货币加成依次为 +15% / +20% / +8% / +8% / +18% / +12%。剧情只计契约加成的 25%，标准 / 挑战计 100%。普通随机每局重掷，每日挑战按东八区日期使用固定种子；只有成长快照及全部操作条件一致时才可逐步复现。选择会保存在本机，但开战后本局的难度、契约和种子不会被战中设置改写。
+- **自动 / 手动切换**：默认自动且默认使用稳健策略。速攻提高伤害和大招权重且不主动融合；稳健更早治疗/护盾，并在首次合法融合或 Boss 蓄力时暂停推荐；炼成在合法时自动施放最高分融合。战斗右上角可即时换策略或切手动；切手动会取消尚未提交的旧自动决策。
+- **战斗（自己回合）**：
+  - 点技能按钮选择技能。
+  - **单体伤害 / 单体治疗**：进入选靶，点击战场单位或下方目标按钮确认；再次点同一技能可取消。
+  - **群体治疗 / 护盾 / 增益**：立即对全队生效，无需选靶。
+  - **技能冷却**：普攻无冷却，技能一与技能二施放后分别进入 2 / 3 回合冷却；按钮显示剩余回合且不可点击。大招仍由 100 能量限制。
+  - **终极技（✦）**：能量满（100）时可用；能量通过攻击 +20、受击 +10、治疗/护盾 +15 积累。
+- **战斗（敌方回合）**：意图区显示每个存活敌人的下一行动和目标；敌人按前排、后排、全体或友方全体等配置规则选择目标，不再全局随机选靶。
+- **Boss**：混沌元素在生命跨过 70% 和 35% 时进入新阶段；「混沌风暴」先蓄力一回合，冰冻或麻痹可在释放前打断。一次硬控成功后，Boss 获得 2 个自身行动回合的硬控抗性。
+- **第一波后**：从随机展示的 3 个临时灵方中选择 1 个；候选池共 8 个，已选效果只持续本次远征。
+- **第二波后**：在全队回复 25% 最大生命、指定一名存活角色获得 40 能量、主战与替补互换中选择 1 项。换位双方保留当前生命、能量和技能冷却。
+- **奖励与重试**：第一波、第二波和通关后分别显示 30、65、100 锁定灵尘。失败页会复盘阵式、灵方、造成/承受伤害和融合次数，可原阵重试，也可把第一名替补换入当前最虚弱的主战位置后重试。锁定灵尘仍不是永久货币；实际入账的灵墨、元素尘和角色精华按“难度倍率 ×（1 + 契约加成总和 × 契约计入系数）”分别四舍五入，剧情的计入系数为 0.25，标准 / 挑战为 1.0。专精 XP 不吃契约加成：以通关波次基础 0 / 1 / 2 / 3 乘剧情 2/3、标准 1、挑战 4/3 后四舍五入（已通关时最低 1），完整三波分别为 2 / 3 / 4。
 
-### Energy System
+### Slice D 手动验收
 
-| Source | Energy Gained |
-|--------|--------------|
-| Using a regular attack/skill | +20 energy |
-| Being hit by enemy | +10 energy |
-| Using an ultimate | -100 energy (costs full bar) |
+1. 进入远征准备 → 远征设置，在剧情 / 标准 / 挑战之间切换，确认无契约时摘要货币倍率依次为 ×0.8 / ×1.0 / ×1.35；勾选六契约中的任意三个后，第四个不能被加入，取消一个后又能选择。完整通关时实际参战角色的专精 XP 应分别为 2 / 3 / 4，加入契约后保持不变。
+2. 选择铁壁敌阵、猎杀时钟、余烬地脉：标准摘要应为 ×1.53，剧情为 ×0.906，挑战为 ×2.066；出征后 HUD 显示难度、三个契约与种子模式，敌方生命/攻击/速度及我方波初灼烧均有实际变化。另以单契约核对六项货币加成为 +15% / +20% / +8% / +8% / +18% / +12%。
+3. 先保存同一份成长存档快照，再分别从该快照选择每日挑战；保持阵容、阵式、难度、契约与操作顺序一致，第一波行动序、随机状态和第一波后的 3 个灵方应逐步一致。不要用第一局结算成长后的存档做对照；普通随机再次开局时序列应重新生成。
+4. 完成一次普通融合，确认全队进入 2 回合融合锁；选到导电潮汐后完成水雷融合，确认额外弹射生效且全队融合锁延长为 3 回合。三元素融合仍应整局至多成功一次。
+5. 在同类局势分别使用速攻、稳健、炼成：速攻偏向输出与大招且不自动融合；稳健偏向治疗/护盾；炼成在施法者满能且协力角色能量足够时自动完成融合并正确扣能。
+6. 用稳健触发本局首次合法融合或 Boss 蓄力，确认关键决策弹窗出现且战斗暂停；依次验证“采用推荐”“切换手动”“继续自动”，每次关闭只允许提交一次行动。
+7. 战斗中切换三种自动策略，再切为手动，确认没有重复行动、并发回合或旧自动决策偷跑。
+8. 在 360×640 视口重复第 1、6 步，确认远征规则可完整滚动，六契约与三个决策按钮可点击，中文不裁切、无横向溢出且键盘焦点清晰。
 
-### Damage Calculation
+---
 
+## 3. 正式角色数据
+
+当前 `spirit-codex-data.js` 是角色战斗数值与技能的唯一可执行来源，共 12 名正式角色：
+
+| 元素 | SSR | SR |
+|------|-----|----|
+| 火 | 艾拉·炎棘（狙击/后排） | 洛恩·炉火（护卫/前排） |
+| 水 | 汐·深澜（治疗/后排） | 亚瑟·潮汐（控制/前排） |
+| 风 | 琳·风羽（召唤/后排） | 赛巴斯（辅助/后排） |
+| 雷 | 扎克·雷鸣（爆发/后排） | 奈娜·闪电（控制/后排） |
+| 暗 | 薇洛·暗舞（刺客/后排） | 卡尔·冥府（召唤/前排） |
+| 光 | 艾琳·圣光（治疗/后排） | 雷欧·裁决（输出/前排） |
+
+每名角色拥有 HP、ATK、DEF、SPD、CRT、CTD、RES、EM、INT，四个主动技能和一个被动。运行时稀有度倍率已收敛为 N ×0.88、R ×0.94、SR ×1.00、SSR ×1.10；当前 12 名正式角色使用 SR / SSR，因此同配置的纯倍率差为 10%，稀有角色不再仅靠大幅数值碾压。详情页展示配置基础值，战斗单位使用倍率后的数值。技能倍率、状态概率、持续时间、召唤数量与描述均应从数据文件读取，不在文档重复维护第二份易过期数值表。
+
+---
+
+## 4. 战斗机制
+
+### 回合系统
+- **速度（SPD）** 决定行动顺序，每回合按 SPD 降序排列（含 ±微小随机）。
+- 友方与敌方共用同一行动队列；回合结束结算 DOT（灼烧 / 腐蚀 / 冻伤）。
+- 每个单位独立记录技能冷却；完整回合结束时冷却减 1。角色普攻 / 技能一 / 技能二 / 大招的配置冷却固定为 0 / 2 / 3 / 0。
+- 复活单位若仍位于当前回合的后续行动序，会跳过本轮并在下一回合正常行动，不会进入无法操作的伪玩家回合。
+- 自动模式仅为正式友方角色创建决策；敌人和召唤物使用各自行动分支。自动令牌与战斗会话令牌分离，切手动、新开/结束战斗都会使待提交决策失效。
+
+### 伤害公式
 ```
-Base Damage = ATK × Skill Multiplier × Element Advantage
-Final Damage = Base Damage × (1 - Target DEF reduction)
+基础伤害 = 有效ATK × 技能倍率 × 元素克制 × 暴击倍率
+最终HP伤害 = 基础伤害 × 120 / (120 + 目标有效DEF)，再由护盾优先吸收
 ```
+- 暴击率与暴击伤害读取行动单位的 CRT / CTD，部分被动和状态会临时修正。
+- 元素克制：循环克制为 ×1.25（克）/ ×0.80（被克）/ ×1.0（中性），暗光互克为 ×1.30。
+- 护盾先于 HP 吸收伤害，且同一单位护盾总量不超过其最大生命 40%；普通护盾技能为 20%，护盾大招为 35%，融合护盾为 25% 或 40%。破防将有效 DEF 降为 60%，不会重复额外增伤。
 
-- **Critical Hit:** 15% chance for player, 10% for enemies → 1.5× damage
-- **Element Advantage:** 1.5× damage
-- **Element Disadvantage:** 0.5× damage
-
-### Status Effects
-
-| Effect | Duration | Description |
-|--------|----------|-------------|
-| **Burn (灼烧)** | 2–5 turns | 5% max HP damage per turn |
-| **Freeze (冰冻)** | 1 turn | Target skips turn |
-| **Stun (麻痹)** | 1 turn | Target skips turn |
-| **ATK Break** | 2–3 turns | Reduces target ATK by 15–30% |
-| **DEF Break** | 2 turns | Reduces target DEF by 30% |
-| **Lifesteal** | Instant | Heals attacker for 20–40% of damage dealt |
-| **Shield** | Until broken | Absorbs damage before HP is affected |
-
-### Healing & Shields
-
-- **Heal skills** restore a percentage of max HP to allies
-- **Shield skills** add a shield value equal to DEF × multiplier
-- Shields absorb damage before HP is affected
-- Ultimate heal/cleanse skills also remove all debuffs and DOT effects
-
----
-
-## Element Advantage Chart
-
+### 元素克制（干净循环，已与 ASCII 图对齐）
 ```
-  🔥 Fire ── beats ──→ 🌪 Wind
-   ↑                        ↓
-   ↑                    ⚡ Thunder
-   ↑                        ↓
-💧 Water ←── beats ──── ⚡ Thunder
-
-🔥 Fire ←→ 💧 Water (circular advantage)
-
-🌑 Dark ←→ ☀️ Light (mutual advantage)
+🔥 火 > 🌪 风 > ⚡ 雷 > 💧 水 > 🔥 火
+🌑 暗 ↔ ☀️ 光  （互克，双向 ×1.30）
 ```
+| 攻\防 | 火 | 水 | 风 | 雷 | 暗 | 光 |
+|-------|----|----|----|----|----|----|
+| 火 | — | 0.80 | **1.25** | 1.0 | 1.0 | 1.0 |
+| 水 | **1.25** | — | 1.0 | 0.80 | 1.0 | 1.0 |
+| 风 | 0.80 | 1.0 | — | **1.25** | 1.0 | 1.0 |
+| 雷 | 1.0 | **1.25** | 0.80 | — | 1.0 | 1.0 |
+| 暗 | 1.0 | 1.0 | 1.0 | 1.0 | — | **1.30** |
+| 光 | 1.0 | 1.0 | 1.0 | 1.0 | **1.30** | — |
 
-| Attacker ↓ \ Defender → | 🔥 Fire | 💧 Water | 🌪 Wind | ⚡ Thunder | 🌑 Dark | ☀️ Light |
-|--------------------------|---------|----------|---------|-----------|---------|---------|
-| 🔥 **Fire** | — | 0.5× | **1.5×** | 0.5× | 1.0× | 1.0× |
-| 💧 **Water** | **1.5×** | — | 0.5× | 0.5× | 1.0× | 1.0× |
-| 🌪 **Wind** | 0.5× | **1.5×** | — | **1.5×** | 1.0× | 1.0× |
-| ⚡ **Thunder** | 0.5× | **1.5×** | 0.5× | — | 1.0× | 1.0× |
-| 🌑 **Dark** | 1.0× | 1.0× | 1.0× | 1.0× | — | **1.5×** |
-| ☀️ **Light** | 1.0× | 1.0× | 1.0× | 1.0× | **1.5×** | — |
+> 注：v1.0 文档中「文字环」与「矩阵表」互相矛盾，本版统一为上方干净循环（与标题页 ASCII 图一致），避免 Unity 端实现歧义。
 
-> **Tip:** Use the element chart strategically — match Fire against Wind enemies, Water against Fire enemies, etc.
+### 状态效果
+| 效果 | 持续 | 说明 |
+|------|------|------|
+| 灼烧 Burn | 2–5 回合 | 每回合损失 5% 最大 HP |
+| 腐蚀 Corrupt | 2–3 回合 | 每回合损失 6% 最大 HP |
+| 冻伤 Frostbite | 2 回合 | 每回合损失 4% 最大 HP；由冰霜风暴施加 |
+| 冰冻 Freeze | 1 回合 | 跳过行动 |
+| 麻痹 Stun | 1 回合 | 跳过行动 |
+| 攻击削弱 ATK Break | 2–3 回合 | 目标 ATK −15~30% |
+| 防御削弱 DEF Break | 2 回合 | 目标 DEF −30%，增伤 |
+| 吸血 Lifesteal | 即时 | 伤害的 20~40% 回血 |
+| 护盾 Shield | 直至破碎 | 先于 HP 吸收伤害；累计上限为目标最大生命 40% |
+| 净化 Cleanse | 即时 | 清除 debuff 与 DOT |
 
----
+### 被动与融合一致性
+- 亚瑟的「坚韧」使有效韧性 +25%；奈娜的攻击按 15% 概率追加麻痹判定。
+- 赛巴斯「启程」严格按配置使首回合速度 +20%；被冰冻或麻痹跳过不消耗扎克的首次实际行动增伤。
+- 融合施加的 DOT 保存施法者来源与元素精通。风暴雷霆提升全队暴击伤害 30%，而非暴击率。
+- 骷髅战士属于前排召唤物，会进入敌人的前排优先选靶池。
 
-## Enemy Waves
+### 能量 / 终极
+| 来源 | 能量 |
+|------|------|
+| 普攻/技能命中 | +20 |
+| 受击 | +10 |
+| 治疗/护盾技 | +15 |
+| 释放终极 | −100（消耗满槽） |
 
-| Wave | Enemies | Difficulty |
-|------|---------|------------|
-| **1** | 2× 暗影狼 (Dark) + 1× 暗影蝠 (Dark) | Easy — introduce basic combat |
-| **2** | 炎魔兵 (Fire) + 冰霜守卫 (Water) + 风暴使者 (Wind) | Medium — mixed elements |
-| **3** | 混沌元素 (Dark, Boss) — 800 HP | Hard — single powerful boss |
+### 阵式与波间构筑
 
----
+| 节点 | 当前可选内容 | 生效范围 |
+|------|--------------|----------|
+| 战前阵式 | 坚壁阵、疾风阵、炼成阵、召灵阵 | 选择 1 种，持续整次远征；每种均有收益与代价 |
+| 第一波后 | 从 8 个临时灵方池随机展示 3 个，选择 1 个 | 只持续本次远征，不写入局外成长 |
+| 第二波后 | 灵泉休整 / 聚能冥想 / 替补换阵三选一 | 分别为全队回复 25%、指定存活角色 +40 能量、主战与替补换位 |
+| 分波里程碑 | 30 / 65 / 100 锁定灵尘 | 仅记录本局已完成波次对应的结算值，尚未存入永久账户 |
 
-## What Is Implemented vs Simplified
+- 临时灵方池共 8 个：余烬孢子、澄泉引、棘甲铭文、导电潮汐、破绽追猎、应激晶壳、回响刻度、逆流蓄电池。
+- 普通融合会触发全队 2 回合融合锁；导电潮汐让水雷融合额外弹射 1 次，同时把该次融合触发的全队融合锁延长到 3 回合。三元素融合仍限定整局至多成功一次。
+- 替补换阵只在第二波营地开放一次；离场角色停止行动和参与融合，入场角色继续使用其当前生命、能量与冷却状态。
+- 失败复盘显示阵式、已选灵方、造成伤害、承受伤害和融合次数。原阵重试保留当前战前编队；换替补重试会把第一名替补换入本局结束时生命比例最低的主战所在槽位，然后开始一局新的远征。
 
-### ✅ Implemented (matches GDD)
+### 敌人波次
+| 波 | 敌人 | 难度 |
+|----|------|------|
+| 1 | 暗影狼×2 + 暗影蝠 | 易（教学） |
+| 2 | 炎魔兵 + 冰霜守卫 + 风暴使者 | 中（混元素） |
+| 3 | 混沌元素（Boss，1700 HP） | 难（70% / 35% 切相、全体蓄力） |
 
-- [x] 12 unique characters across 6 elements
-- [x] Turn-based combat with speed-based turn order
-- [x] Element advantage system (+50% / -50% damage)
-- [x] Energy bar system for ultimate skills
-- [x] All 3 skills per character (basic + skill + ultimate)
-- [x] Status effects: burn, freeze, stun, ATK/DEF break
-- [x] Lifesteal mechanic (Dark element)
-- [x] Shield mechanic (Light element)
-- [x] Healing mechanic (Water/Light support)
-- [x] Cleanse mechanic (remove debuffs)
-- [x] Chain/lightning mechanic (Thunder element)
-- [x] 3-wave enemy progression with boss
-- [x] Team formation (3–6 characters)
-- [x] Character detail view with full stats
-- [x] Procedural canvas-drawn character portraits
-- [x] Dark fantasy visual theme
-
-### ⚠️ Simplified / Not Implemented
-
-| Feature | GDD Version | Prototype Version |
-|---------|-------------|-------------------|
-| **Evolution system** | Multiple evolution paths with materials | Not implemented — characters at fixed stats |
-| **Rarity tiers** | N / R / SR / SSR with stat multipliers | All characters at base power (no rarity) |
-| **Level system** | XP → level up → stat growth | No levels — fixed stats |
-| **Equipment/Relics** | Gear slots with set bonuses | Not implemented |
-| **Element fusion** | 2–3 element fusion combos | Not implemented |
-| **Passive skills** | Passive ability system | Not implemented (only active skills) |
-| **Intelligence (INT)** | Skill-learning prerequisite system | Not implemented |
-| **Map exploration** | Fog-of-war, resource nodes | Not implemented |
-| **Gacha/summoning** | Pull system for characters | All 12 characters available by default |
-| **PvP modes** | Arena, guild wars, tournaments | PvE only |
-| **Guild system** | Social features, guild battles | Not implemented |
-| **Daily quests** | Recurring objectives | Not implemented |
-| **Stamina/AP system** | Energy-gated gameplay | Not implemented |
-| **Multiple target targeting** | Manual target selection | Auto-targets first alive enemy |
-| **AI enemy behavior** | Strategic enemy AI | Enemies choose random targets/skills |
-| **Audio** | SFX and music | No audio |
-| **Save/load** | Persistent game state | No persistence — session only |
+- 每个敌人都配置行动模式、技能冷却、意图标签和目标规则；暗影狼优先前排并受狼群增伤，暗影蝠/风暴使者可攻击后排，冰霜守卫可为敌方全体加盾并护卫，风暴使者可为敌方全体加速。
+- 意图在行动前显示；Boss 的全体「混沌风暴」会先蓄力一回合。蓄力期间成功施加冰冻或麻痹，会在 Boss 行动时打断技能并跳过该次行动。
+- Boss 的三段分别为生命 100%–70%、低于 70%–35%、低于 35%；后两段改变行动模式，并分别提供速度或攻击增幅。硬控成功后显示 2 回合控制抗性，期间新的冰冻/麻痹无效；减速、破防等软控仍可结算。
 
 ---
 
-## Mapping to Unity Version
+## 5. 已实现 vs 简化（v3.9）
 
-### Architecture Mapping
+### ✅ 已实现（贴合 GDD）
+- [x] 12 名角色覆盖 6 元素
+- [x] 回合制 + 速度行动序
+- [x] 元素克制（循环 ×1.25 / ×0.80；光暗互克 ×1.30）
+- [x] 能量系统与终极技
+- [x] 每角色 4 技能 + 常驻被动；0 / 2 / 3 / 0 回合冷却与不可用态
+- [x] 完整状态、召唤、复活、即死与元素融合
+- [x] 吸血（暗）、护盾（光）、治疗（水/光）
+- [x] 净化、连锁（雷）
+- [x] 3 波敌人 + 70% / 35% 两次切相、可打断蓄力与硬控抗性的 Boss
+- [x] 敌方下一行动、目标规则、蓄力和防护意图显示
+- [x] 4 名主战（2 前排 + 2 后排）+ 最多 2 名替补的可编辑六槽编队
+- [x] 坚壁 / 疾风 / 炼成 / 召灵四种战前阵式及其收益与代价
+- [x] 第一波后从 8 个临时灵方中随机三选一，并把效果接入本局结算
+- [x] 第二波后恢复 / 指定充能 / 主战替补换位三选一，换位状态按规则继承
+- [x] 30 / 65 / 100 分波锁定灵尘、失败复盘、原阵容与换替补重试
+- [x] 普通/大招/融合护盾倍率收敛，并统一执行最大生命 40% 护盾总上限
+- [x] 稀有度倍率收敛为 N 0.88 / R 0.94 / SR 1.00 / SSR 1.10
+- [x] 角色详情（属性条 + 技能 + 克制）
+- [x] 12 角色 + 6 敌人 + 2 召唤物 Image2 透明立绘
+- [x] 7 张 Image2 场景背景（含三波战斗动态切换）
+- [x] 真实立绘 Canvas 合成 + DOM 卡片/详情/编队复用 + 缺图回退
+- [x] **手动选敌**（新增）
+- [x] 默认自动战斗、随时切手动、智能合法选靶与普攻兜底
+- [x] 速攻 / 稳健 / 炼成三种自动策略；战前选择、战中即时切换并复用统一合法性与结算管线
+- [x] 稳健策略在首次合法融合或 Boss 蓄力时关键暂停；炼成策略自动选择最高分合法融合
+- [x] 剧情 / 标准 / 挑战三档难度，以及最多同时启用 3 个的六种图谱契约
+- [x] 普通随机与按东八区日期生成的每日固定种子；成长快照、配置与操作顺序一致时可逐步复现
+- [x] 难度与契约倍率实际作用于灵墨、元素尘、角色精华；剧情只计 25% 契约加成，专精 XP 仅按难度与波次折算，单局锁定里程碑保持独立
+- [x] **动画战场**（粒子/飘字/呼吸/高亮）
+- [x] **WebAudio 合成音效**
+- [x] 暗黑炼金风 UI
+- [x] 三种跨局资源：灵墨、元素尘、角色精华；按通关波次结算并使用版本化 `localStorage` 存档
+- [x] 图谱共鸣 1–30；每级为所有正式角色提供 2% 基础生命、攻击和防御，新角色直接继承
+- [x] 角色专精 1–5；实际参战角色按远征熟练度自动成长，依次获得属性、能量和冷却强化
+- [x] 四项技能各自强化 0–3；倍率、治疗、护盾与冷却改动进入下一场战斗的运行时技能副本
+- [x] H1 / H2 / W1 / A1 四名核心角色各两条灵启 I 分支，共八条机制改造；选择与确认分离，重复购买不会重复扣费
+- [x] 结算奖励、升级与进化均先持久化再提交内存；重试和返回标题不会清除跨局成长
 
-| Prototype | Unity Equivalent |
-|-----------|-----------------|
-| `CHARACTERS[]` array | `ScriptableObject` per character |
-| `state.team[]` | `TeamManager` component |
-| `makeBattleChar()` | `BattleUnit` MonoBehaviour |
-| `nextTurn()` | `TurnManager` state machine |
-| `playerAction()` | `SkillSystem.ExecuteSkill()` |
+### ⚠️ 简化 / 未实现（与 GDD 一致）
+v3.9 已形成“编队、阵式与远征规则 → 三波构筑 → 自动策略与关键接管 → 倍率化三资源结算 → 图谱/专精/技能/灵启 I → 每日或契约再挑战”的本地跨局闭环。30 / 65 / 100“远征锁定”仍是单局里程碑，不等同于永久货币。尚未实现云端/账户同步、可输入的自定义种子、完整战斗重放、装备、地图探索与解锁、抽卡、PVP、公会、赛季、体力、Lv.20 第二元素、Lv.30 最终节点，以及其余八名角色的进化分支。替补只可在第二波营地主动交换一次；敌人不会学习或自适应玩家阵容，自动策略也尚未开放治疗阈值、首选配方等细粒度条件。
+
+---
+
+## 6. Mapping to Unity（LingsuMVP）
+
+| 原型 | Unity 等价 |
+|------|-----------|
+| `CHARACTERS[]` | `CharacterScriptableObject`（含 rarity 字段） |
+| `ENEMIES[]` / 波次 | `WaveConfig` + `EnemySpawner` |
+| `state.formationSlots` / `state.team[]` / `state.reserves[]` | `TeamManager` + 2 前排 / 2 后排 / 2 替补槽位数据 |
+| `BATTLE_FORMATIONS[]` / `state.formationStyleId` | `FormationDefinition` + 本次远征阵式选择 |
+| `TEMPORARY_FORMULAS[]` / `state.run.formulas` | `RunModifierDefinition` + 局内触发次数状态 |
+| `CAMP_OPTIONS[]` / `state.run.intermission` | `IntermissionController` + 恢复 / 充能 / 换位流程 |
+| `WAVE_REWARD_MILESTONES` / `state.run.reward` | `RunSettlement` 的 30 / 65 / 100 单局里程碑，不作为永久货币 |
+| `PROGRESSION_RULES.rewards` / `awardExpeditionProgression()` | 按已通关波次原子结算；三种货币使用远征倍率，参战专精 XP 仅使用难度系数 |
+| `state.progression` / `spirit-codex-progression-v1` | `ProgressionProfile` + 版本化本地存档与迁移/归一化 |
+| `codexLevel` / `masteryXp` / `skillLevels` | 共享图谱等级、角色专精和技能强化数据 |
+| `EVOLUTION_BRANCHES` / `activeBranch` | 灵启 I 分支定义、已解锁路线与城镇当前路线 |
+| `EXPEDITION_DIFFICULTIES[]` / `EXPEDITION_CONTRACTS[]` | `ExpeditionRuleSet` + 难度、契约效果与奖励倍率 |
+| `seedInfo` / `createSeededRandom()` | `RunSeedService` + 普通随机 / 每日挑战固定种子随机流；完整复现仍受成长快照约束 |
+| `AUTO_STRATEGIES[]` / `setAutoStrategy()` | `AutoBattleProfile` + 速攻 / 稳健 / 炼成运行时策略切换 |
+| `COMBO_RECIPES[]` / `comboAvailability()` / `executeCombo()` | 限定角色合击配方、实时前置验证与原子消耗执行；普通融合仍独立保留 |
+| `state.progression.inventory` / `comboLoot` | 三类催化物持久库存、合成与幂等分波结算 |
+| `playComboCinematic()` / 六套序列 PNG | 8.4秒六阶段主题演出、手机镜头与减少动态适配；完成/跳过仅回调一次，取消不回调，数值不依赖图片成功加载 |
+| `ComboChoreography.sample()` / `ComboArtRig.getAnchor()` | v9目标朝向、留场召唤物动作、实际原图器官位置与独立攻击共用几何；锚点按最终朝向的真实网格三角插值 |
+| `ComboEnvironment.sample/draw()` / 实战生命周期桥 | 六主题天空、天气和地面环境共享时钟；环境位于角色/HUD下层，900ms尾韵及跳过/退出/换波清理 |
+| 关键决策弹窗 / 自动决策令牌 | `CriticalDecisionController` + 暂停、推荐和单次提交保护 |
+| `makeUnit()` | `BattleUnit` MonoBehaviour |
+| `nextTurn()` / `processTurn()` | `TurnManager` 状态机 |
+| `skillCooldown()` / `isSkillReady()` / `executePlayerSkill()` | `SkillSystem` 冷却、合法性与统一结算 |
+| `planEnemyIntent()` / `enemyChooseTarget()` / `updateBossStage()` | `EnemyIntentController` + `BossPhaseController` |
+| `chooseAutoAction()` / `playerSelectSkill()` | `AutoBattleController` + **手动选靶** `TargetingController` |
 | `getAdvantage()` | `ElementChart.GetMultiplier()` |
-| Canvas rendering | Unity URP + VFX Graph particles |
-| `drawPortrait()` | Character portrait `Sprite` assets |
-
-### What Changes in Unity
-
-1. **Graphics:** Replace procedural canvas drawing with URP shaders, sprite sheets, and VFX Graph particle systems
-2. **Audio:** Add SFX (skill sounds, hit impacts, ambient music) via Unity Audio
-3. **Networking:** Add PvP, gacha, and social features via server backend
-4. **Save System:** Persistent data via `PlayerPrefs` or JSON serialization
-5. **UI:** Replace HTML/CSS with Unity UI Toolkit or UGUI with proper animations
-6. **Targeting:** Add manual target selection in battle
-7. **AI:** Implement strategic enemy AI (target weakest, use heals when low HP)
-8. **Evolution:** Add evolution UI, material system, and stat modification
-9. **Gacha:** Implement summoning system with pity counter
+| `drawPortrait()` | 角色立绘 `Sprite` 资源 |
+| 战场 `requestAnimationFrame` 循环 / 粒子 | URP + **VFX Graph** 粒子 |
+| WebAudio `sfx()` | Unity Audio（`AudioClip` / `AudioMixer`） |
+| `ResizeObserver` 自适应 | Unity Canvas Scaler / 多分辨率布局 |
+| CSS 炼金边框 / 面板 | UI Toolkit 或 UGUI 皮肤 + 动画 |
+| 稀有度星级 | 角色数据 `Rarity` 枚举（N/R/SR/SSR） |
 
 ---
 
-## Known Limitations
-
-1. **No save/load** — game state is lost on page refresh
-2. **No audio** — silent experience
-3. **Auto-targeting only** — player cannot choose which enemy to attack (always targets first alive)
-4. **Enemy AI is random** — enemies don't strategize
-5. **No skill cooldowns** — skills can be spammed every turn
-6. **Single-file constraint** — all code in one HTML file limits maintainability
-7. **No animations** — character sprites are static canvas drawings, no walk/attack animations
-8. **Mobile touch only** — no keyboard shortcuts for desktop play
-9. **Fixed enemy阵容** — no procedural/random enemy generation
-10. **Balance not tuned** — stats are illustrative, not competitively balanced
+## 7. 已知限制
+1. 只有浏览器本机 `localStorage` 存档，没有账号、云端同步或跨浏览器迁移；`file://` 与本地测试服务器属于不同存储来源。
+2. 无音效资源文件（WebAudio 合成，可静音）。
+3. 敌人已有固定行动模式、技能冷却、意图和前/后排目标规则，但不会学习或自适应玩家阵容。
+4. 替补可在第二波后的营地与一名主战交换一次，但没有第一波换人、自动轮换或一局内多次换位。
+5. 召唤物上限为 2，且不会跨波次清场，属于当前策略取舍。
+6. 30 / 65 / 100“远征锁定”只作为当前远征里程碑；真正持久的三种货币以 0 / 45 / 100 / 180 灵墨、0 / 8 / 17 / 25 元素尘、0 / 4 / 9 / 15 角色精华为基础，再按“难度倍率 ×（1 + 契约加成总和 × 契约计入系数）”四舍五入，剧情计入系数 0.25、标准 / 挑战 1.0。专精 XP 另按通关波次与难度折算，契约不加成。
+7. Boss HUD 当前的「韧性」实际显示硬控抗性剩余回合，不是可被伤害削减的独立韧性值；元素破韧仍属后续设计。
+8. Image2 UI 与单位图仍保留符号回退；替换文件时应保持透明 PNG 与现有文件名。
+9. 原始 PNG 保留较高分辨率，当前按标题、城镇/图鉴/编队、战斗阶段分批加载；低内存设备后续仍可增加缩略图/纹理压缩管线。
+10. 已有普通随机与按东八区日期固定的每日种子，但尚无玩家输入自定义种子、导出操作记录或完整确定性重放界面；逐步复现仍要求出征时成长快照、阵容、规则和操作顺序全部一致，结算成长后重开整局不保证完全相同。
+11. 当前只完成 Lv.10 灵启 I 与 H1 / H2 / W1 / A1 八条分支；Lv.20 第二元素、Lv.30 最终节点和其余八名角色分支仍未实现，战斗中不能切换路线。
 
 ---
 
-## Technical Notes
+## 8. 技术说明
+- **零运行时外部依赖**：无 CDN / npm / fetch / 系统命令；全部 PNG 与代码均位于 `playable/`。
+- **纯静态 HTML + CSS + JS**，按职责拆为：
+  - `spirit-codex.html`：页面结构与资源加载顺序。
+  - `spirit-codex.css`：响应式布局、炼金 UI 与动画。
+  - `spirit-codex-data.js`：元素、角色、敌人、状态、融合、跨局成长/进化规则与 Image2 资产路径配置。
+  - `spirit-codex-game.js`：编队、战斗状态机、持久结算与成长、共享图片预载/回退、Canvas 合成、交互和错误浮层。
+  - `spirit-codex-combos-data.js`：六套限定配方、催化物及合击通用规则，在主引擎前加载。
+  - `spirit-codex-combos.js`：真实合击效果、前置验证、原子扣款、战前合成与配方界面。
+  - `spirit-codex-combo-fx.js`：六种主题图与差异化 CSS 演出、减少动态适配和跨局清理。
+  - `spirit-codex-combo-fx.css`：动态增强的专属样式；双角色入场、主题运动、预览按钮与移动端/减少动态规则。独立 Canvas 动画只使用自身时间，不消耗战斗随机流。
+  - `spirit-codex-preparation.js` / `.css`：四准备页导航、当前出征/合击/材料摘要、清晰中文排版；各页共用同一阵容和库存，不复制游戏数据。
+- 美术分层：Image2 PNG 提供场景/单位，Canvas 提供战斗状态叠层与 VFX 粒子，CSS 提供参考图一致的暗金炼金框架。
+- 离线可用：直接双击 HTML 打开。
+- 响应式：viewport 单位 + 自适应网格 + `ResizeObserver` 画布。
 
-- **Zero external dependencies** — no CDN, npm, fetch, or system commands
-- **Pure static HTML + CSS + JavaScript** — single file, ~1000 lines
-- **All graphics procedural** — canvas-drawn character portraits with element-colored silhouettes
-- **Works offline** — open the HTML file directly in a browser
-- **Responsive** — adapts to different screen sizes via CSS viewport units
+### 验证基线
+
+静态与规则检查：
+
+- `node --check playable/spirit-codex-data.js`
+- `node --check playable/spirit-codex-game.js`
+- `node --check playable/spirit-codex-combos-data.js`
+- `node --check playable/spirit-codex-combos.js`
+- `node --check playable/spirit-codex-combo-fx.js`
+- 契约合击数据校验：至少六套、配方 ID 唯一、成员均为有效且不同的两名角色、催化物引用合法、图片路径与前置/效果描述完整。
+- 页面启动时 `validateGameData()` 检查 12 角色、四技能、0/2/3/0 冷却、被动类型、状态引用、召唤物定位、敌人行动模式/意图/冷却、4 种阵式、8 个临时灵方、恢复/充能/换位三种营地动作、三档难度、六契约、三自动策略、全部单位立绘路径、三波背景和 15+4 融合数量。
+
+浏览器测试（开发依赖，不影响游戏离线运行）：
+
+- `npm install`
+- `npm run test:playable`
+- Playwright 使用本机 Edge，覆盖 1366×768、1024×768、390×844、360×640。
+- Slice A 应覆盖：六槽编队互换/替换、未填满 4 主战时禁止出征、替补不进入初始战场、0/2/3/0 冷却递减与不可连发、前后排目标规则、敌方意图和防护行为、Boss 70%/35% 切相、蓄力打断及随后 2 回合硬控抗性、护盾 40% 封顶、元素倍率与稀有度倍率，以及 360×640 下中文与按钮可达性。
+- Slice B 应覆盖：四阵式效果与代价、第一波 8 取 3 再选 1、第二波恢复/指定充能/主战替补换位、换位后的生命/能量/冷却继承、30/65/100 锁定里程碑、失败复盘、原阵重试和换替补重试；同时断言锁定灵尘没有被误写为持久账户余额。
+- Slice C 应覆盖：0/1/2/3 波三资源结算与幂等、仅实际参战角色获得熟练度、刷新恢复、共享等级只强化正式角色、技能倍率/冷却真实生效、四名核心角色八条分支的可观察机制、首次解锁/重复调用/低成本切换扣费、UI 二次确认、重试/重置不清存档，以及 360×640 养成页可达性。
+- Slice D 应覆盖：三档难度的敌方属性与货币倍率、六契约真实效果与最多三选、剧情契约加成 25% / 标准挑战 100%、专精 XP 完整通关 2/3/4 且契约不加成、设置持久化与战中锁定、普通/每日种子差异及相同成长快照下的逐步复现、普通融合锁 2 回合与导电潮汐水雷融合锁 3 回合、三元素整局一次、速攻/稳健/炼成评分差异、炼成自动融合与正确扣能、稳健关键暂停三个出口、战中切策略/手动后的旧决策取消，以及 360×640 远征面板和关键决策弹窗可达性。
+
+> 历史基线（v3.9）：Slice D desktop + compact 定向回归 **28/28**，四类视口全量回归 **220/220**。Slice A / B 的 **136/136** 仅为各自切片当时的历史基线。
+
+> 历史验证（v4.0，2026-09-05）：六套合击专项 desktop + compact **38/38**；全量 Playwright **296/296**（desktop / tablet / mobile / compact，含原有 220 项与新增合击 76 项）。所有新增游戏 JavaScript 和主引擎均通过语法检查；真实截图复核了桌面与 360×640 的配方、战斗按钮、弹窗及六套演出，未见横向溢出或页面脚本错误。新增资产纳入 33 张必需玩法图片的加载验证。具体规则、边界与操作步骤见 [COMBO_ULTIMATES.md](COMBO_ULTIMATES.md)。
+
+> 最终补测：最新布局四视口 **12/12**；连续加入配方时已修正为优先保留最近一键选择的完整组合，连续三配方切换与反向施法四视口 **4/4**。
+
+> 后续动态增强验证：四视口合击规则 76 项通过，动态预览 24 项经复测全部通过；最后的预览复测与旧布局检查 **12/12**（4 项预览 + 8 项布局）。首次合并运行的一个测试因演出先于断言结束而超时，已改为固定时钟验证并保留全部断言；详见合击文档的动态增强验证记录。上方 **296/296** 是合击上线基线，不代表本次增强重新跑过全量。桌面/手机六种运动、双人蓄力及免费预览均已实际截图检查。
+
+> v4.1 本次验证：四视口 **72/72 定向通过**（32 + 40，不代表全量重跑），覆盖四页准备导航、14px最低中文字号、真实补给循环、34张图片、六种完整命中/目标条变化、免费预览零消费和清理、实战前后快照一致性。桌面与360×640的准备/命中/结果/真实三目标施放另做截图复核；详见 [本次验证记录](COMBO_ULTIMATES.md#v41-完整命中与准备页切片验证2026-09-05)。
+
+> v4.2 历史验证：**80个四视口独立定向案例通过**，另含1280×720录像布局检查；不是历史全量数值回归重跑。覆盖40张必需图片、六阶段/第7秒持续余波、手机镜头、零副作用预览、系统减少动态与主动完整演出、实战自然结束/提前跳过/临界跳过/重复回调/渲染器降级及退出清理，续战均恰好一次。详见 [v3演出及复现](COMBO_EPIC_V3.md)。
+
+> v4.3 历史验证：**140个四视口独立定向案例通过**（规则/准备84＋最终动作/几何/素材/生命周期56），含46张图片、48姿态、武器/掌心→融合→合法目标真实Canvas端点、反向主导、手机镜像及滚动缩放。六组桌面/手机真实看图，file协议另复核凤凰预览和实际施放；六段v4实录重录及播放6/6通过。不是历史全量296项重跑，详见 [动作修正及验证](COMBO_ACTIONS_V4.md)。
+
+> v4.4 历史验证：本轮 **140个四视口独立定向案例通过**（84规则/准备＋最终56新材质/动作/生命周期/41图片），检验无巨图与卡片、真实渲染/无黑块/HUD不污染、48姿态和武器端点、4.7秒首命中与110ms错峰、支持角色及免费零副作用。修复手机名牌横切盾后全56复测通过；file协议和六段v5实录另验证，播放6/6通过。详见 [当前战场展示及复现](COMBO_STAGE_V5.md)。
+
+> v4.5 历史验证：本轮 **144 项不同四视口定向案例通过**（规则/准备 84＋最终材质/动作/生命周期/41图片 60），新增六招四时点真实成型轮廓、面积、地面受光与无黑底/HUD保护。原锚点、4.7秒首命中及错峰、零消费与续战规则保持；六段 v6 实录全部完成，播放 6/6 通过。详细结果与试玩见 [合击成型强化](COMBO_RESONANCE_V6.md)。
+
+> v4.6 历史验证：本轮 **144 项不同四视口定向案例通过**（原画/动作/47资源60＋规则/布阵84）。核对六原图哈希与真实纹理网格绘制，以已着色部位的非整体仿射运动证明图内各部位真正运动，另检查暗纹来源/黑底边界/HUD。原48人物动作、真实锚点、4.7秒错峰命中、零消费与生命周期保持。六段v7实录播放6/6通过；本地file模式的桌面/360px凤凰完整预览与真实施放通过，零页面错误和横向溢出。详见 [v7精细原画动态与历史录像](COMBO_PAINTED_RIG_V7.md)。
+
+> v4.7 历史验证：**156项不同四视口定向案例全通过**（原画/动作/48资源60＋新增留场/器官出口/独立出招12＋规则/布阵84）。纯Node另检查19,800组攻击网格无反折、18,672个三角/顶点锚点一致，默认动作兼容且不调用游戏RNG。本地file六招桌面/360px完整预览及真实凤凰通过，零页面错误/横向溢出；六段v8实录生成与播放6/6通过。不复用v7通过数，也不把纯函数检查当作浏览器帧率或全量回归。见 [v8验证与录像](COMBO_CHOREOGRAPHY_V8.md#验证与录像)。
+
+> v4.8 当前验证：172个独立浏览器定向案例通过（原画/动作/49资源/器官出招72＋环境16＋规则/准备84），另5个纯VM朝向测试。规则首轮两个浏览器关闭超时，原断言原超时单独复验通过；最后镜头变更另20项补验不重复计数。六招file模式桌面/360px预览及真实凤凰通过；六段v9实录生成、复看和播放6/6通过。完整过程见 [v9验证记录](COMBO_FACING_ENVIRONMENT_V9.md#验证记录)，不沿用历史通过数。

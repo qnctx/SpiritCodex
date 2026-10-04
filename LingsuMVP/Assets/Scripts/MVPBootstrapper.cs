@@ -22,8 +22,8 @@ namespace LingsuMVP
 
             CombatConfig config = CombatConfigLoader.Load();
             Camera camera = EnsureCamera();
-            CreateLight();
-            CreateArenaBackdrop();
+            EnsureLight();
+            CreateArenaBackdrop(camera);
             Canvas canvas = CreateCanvas(camera);
             EnsureEventSystem();
 
@@ -110,8 +110,17 @@ namespace LingsuMVP
             return camera;
         }
 
-        private static void CreateLight()
+        private static void EnsureLight()
         {
+            Light[] lights = Object.FindObjectsOfType<Light>();
+            for (int i = 0; i < lights.Length; i++)
+            {
+                if (lights[i] != null && lights[i].type == LightType.Directional)
+                {
+                    return;
+                }
+            }
+
             GameObject lightObject = new GameObject("Directional Light");
             lightObject.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
             Light light = lightObject.AddComponent<Light>();
@@ -119,16 +128,34 @@ namespace LingsuMVP
             light.intensity = 1.2f;
         }
 
-        private static void CreateArenaBackdrop()
+        private static void CreateArenaBackdrop(Camera camera)
         {
             GameObject root = CreateEmpty("ArenaBackdrop", Vector3.zero);
-            CreateSpritePanel("PaintedArena", root.transform, new Vector3(0f, -0.08f, 3f), new Vector3(2.08f, 2.08f, 1f), GetArenaSprite(), Color.white, -20);
+            Sprite generatedBackdrop = ArtCatalog.LoadBattleBackground();
+            Sprite backdrop = generatedBackdrop != null ? generatedBackdrop : GetArenaSprite();
+            Vector3 backdropScale = generatedBackdrop != null
+                ? GetCameraCoverScale(backdrop, camera)
+                : new Vector3(2.08f, 2.08f, 1f);
+            CreateSpritePanel("PaintedArena", root.transform, new Vector3(0f, -0.08f, 3f), backdropScale, backdrop, Color.white, -20);
             CreateSpritePanel("PlayerGroundShadowTop", root.transform, new Vector3(-3.2f, 1.35f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.18f), -16);
             CreateSpritePanel("PlayerGroundShadowMiddle", root.transform, new Vector3(-3.2f, 0.25f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.24f), -16);
             CreateSpritePanel("PlayerGroundShadowBottom", root.transform, new Vector3(-3.2f, -0.85f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.24f), -16);
             CreateSpritePanel("EnemyGroundShadowTop", root.transform, new Vector3(3.2f, 1.35f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.16f), -16);
             CreateSpritePanel("EnemyGroundShadowMiddle", root.transform, new Vector3(3.2f, 0.25f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
             CreateSpritePanel("EnemyGroundShadowBottom", root.transform, new Vector3(3.2f, -0.85f, 2.6f), new Vector3(2.8f, 0.36f, 1f), GetEllipseSprite(), new Color(0f, 0f, 0f, 0.22f), -16);
+        }
+
+        private static Vector3 GetCameraCoverScale(Sprite sprite, Camera camera)
+        {
+            if (sprite == null || camera == null || sprite.bounds.size.x <= 0f || sprite.bounds.size.y <= 0f)
+            {
+                return Vector3.one;
+            }
+
+            float cameraHeight = camera.orthographicSize * 2f;
+            float cameraWidth = cameraHeight * camera.aspect;
+            float scale = Mathf.Max(cameraWidth / sprite.bounds.size.x, cameraHeight / sprite.bounds.size.y);
+            return new Vector3(scale, scale, 1f);
         }
 
         private static void CreateSpritePanel(string name, Transform parent, Vector3 position, Vector3 scale, Sprite sprite, Color color, int sortingOrder)
@@ -175,9 +202,19 @@ namespace LingsuMVP
                 activeEventSystem = eventSystemObject.AddComponent<EventSystem>();
             }
 
-            foreach (BaseInputModule inputModule in activeEventSystem.GetComponents<BaseInputModule>())
+            if (activeEventSystem.GetComponent<BaseInputModule>() != null)
             {
-                Object.Destroy(inputModule);
+                return;
+            }
+
+            System.Type inputSystemModuleType = System.Type.GetType("UnityEngine.InputSystem.UI.InputSystemUIInputModule, Unity.InputSystem");
+            if (inputSystemModuleType != null)
+            {
+                activeEventSystem.gameObject.AddComponent(inputSystemModuleType);
+            }
+            else
+            {
+                activeEventSystem.gameObject.AddComponent<StandaloneInputModule>();
             }
         }
 
@@ -187,7 +224,11 @@ namespace LingsuMVP
             heroObject.name = "Hero";
             heroObject.transform.position = new Vector3(config.positionX, config.positionY, 0f);
             SpriteRenderer renderer = heroObject.AddComponent<SpriteRenderer>();
-            renderer.sprite = LoadOrCreateSprite("Art/Hero", new Color(0.18f, 0.72f, 1f), SpriteShape.Hero);
+            renderer.sprite = ArtCatalog.LoadHero();
+            if (renderer.sprite == null)
+            {
+                renderer.sprite = CreateFallbackSprite(new Color(0.18f, 0.72f, 1f), SpriteShape.Hero);
+            }
             ApplySpriteQuality(renderer.sprite);
             renderer.sortingOrder = 10;
             FitSpriteHeight(heroObject.transform, renderer, config.spriteHeight);
@@ -207,7 +248,11 @@ namespace LingsuMVP
             monsterObject.name = name;
             monsterObject.transform.position = new Vector3(config.positionX, config.positionY, 0f);
             SpriteRenderer renderer = monsterObject.AddComponent<SpriteRenderer>();
-            renderer.sprite = LoadOrCreateSprite("Art/Monster", new Color(1f, 0.32f, 0.42f), SpriteShape.Monster);
+            renderer.sprite = ArtCatalog.LoadMonster(config.id);
+            if (renderer.sprite == null)
+            {
+                renderer.sprite = CreateFallbackSprite(new Color(1f, 0.32f, 0.42f), SpriteShape.Monster);
+            }
             ApplySpriteQuality(renderer.sprite);
             renderer.sortingOrder = 8;
             FitSpriteHeight(monsterObject.transform, renderer, config.spriteHeight);
@@ -250,14 +295,8 @@ namespace LingsuMVP
             Monster
         }
 
-        private static Sprite LoadOrCreateSprite(string resourcePath, Color color, SpriteShape shape)
+        private static Sprite CreateFallbackSprite(Color color, SpriteShape shape)
         {
-            Sprite sprite = Resources.Load<Sprite>(resourcePath);
-            if (sprite != null)
-            {
-                return sprite;
-            }
-
             Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
             texture.filterMode = FilterMode.Point;
             Color clear = new Color(0f, 0f, 0f, 0f);

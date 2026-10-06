@@ -414,6 +414,16 @@ const CHARACTERS = [
 //   pattern 以技能下标描述基础轮转；game.js 可按冷却与阶段回退至普通攻击。
 // skill.intent: {type, label, target, telegraph}
 //   type 用于意图图标/颜色，target 与 telegraph 用于战前提示，不替代技能本身的结算字段。
+// Face centers on the existing full-body art; UI portraits use these same files.
+const CHARACTER_PORTRAITS = {
+  H1:{x:.47,y:.15,zoom:3.2}, H2:{x:.54,y:.15,zoom:3.0},
+  W1:{x:.53,y:.20,zoom:3.2}, W2:{x:.51,y:.20,zoom:3.2},
+  A1:{x:.55,y:.21,zoom:3.2}, A2:{x:.58,y:.18,zoom:3.0},
+  T1:{x:.43,y:.15,zoom:3.2}, T2:{x:.51,y:.20,zoom:3.2},
+  D1:{x:.49,y:.18,zoom:3.2}, D2:{x:.53,y:.18,zoom:3.2},
+  L1:{x:.51,y:.21,zoom:3.2}, L2:{x:.49,y:.14,zoom:3.2},
+};
+
 const ENEMIES = [
   [ {name:'暗影狼',element:'dark',art:'assets/enemies/enemy-shadow-wolf.png',hp:540,atk:86,def:34,spd:68,res:24,em:20,int:10,
      intent:{archetype:'packHunter',targetRule:'front',pattern:[0],packBonus:{allyArchetype:'packHunter',damagePerAlly:0.15,maxStacks:2}},

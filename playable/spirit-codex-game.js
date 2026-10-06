@@ -385,8 +385,13 @@ function preloadArt(paths=REQUIRED_ART){return Promise.all(paths.map(loadArt));}
 function loadedArt(src){const record=ART_CACHE.get(src);return record&&record.status==='loaded'?record.image:null;}
 function artStatus(){return [...ART_CACHE.values()].map(({src,status,image})=>({src,status,width:image?.naturalWidth||0,height:image?.naturalHeight||0}));}
 function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
-function artMarkup(src,alt,fallback,variant=''){
-  return `<span class="art-stack ${variant}"><span class="art-fallback" aria-hidden="true">${escapeHtml(fallback)}</span>${src?`<img data-art src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" draggable="false" decoding="async">`:''}</span>`;
+function artMarkup(src,alt,fallback,variant='',portraitMode=''){
+  const character=CHARACTERS.find(character=>character.art===src),portrait=CHARACTER_PORTRAITS[character?.id];
+  const face=portraitMode==='face'||['member-art','turn-art','progression-roster-art'].includes(variant);
+  const bust=portraitMode==='bust'||['detail-art','progression-main-art','mini-art'].includes(variant);
+  const framing=portrait&&(face||bust)?` character-portrait ${face?'character-face':'character-bust'}`:'';
+  const crop=framing?` data-character-art="${character.id}" style="--portrait-x:${portrait.x};--portrait-y:${portrait.y};--portrait-face-zoom:${portrait.zoom}"`:'';
+  return `<span class="art-stack ${variant}${framing}"${crop}><span class="art-fallback" aria-hidden="true">${escapeHtml(fallback)}</span>${src?`<img data-art src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" draggable="false" decoding="async">`:''}</span>`;
 }
 document.addEventListener('load',event=>{const image=event.target;if(image instanceof HTMLImageElement&&image.matches('img[data-art]'))image.parentElement?.classList.add('loaded');},true);
 document.addEventListener('error',event=>{const image=event.target;if(image instanceof HTMLImageElement&&image.matches('img[data-art]'))image.remove();},true);
@@ -2224,7 +2229,8 @@ function buildRoster(){
   const grid=$('team-roster'); grid.innerHTML='';
   CHARACTERS.forEach((c,i)=>{
     const el=ELEMENTS[c.element];
-    const card=document.createElement('div'); card.className='char-card';
+    const card=document.createElement('button');card.type='button';card.className='char-card';
+    card.setAttribute('aria-label',`${c.name} · ${el.cn}元素 · ${c.role}`);
     card.style.setProperty('--ec',el.color); card.style.setProperty('--ecg',el.glow+'66');
     card.innerHTML=`<div class="portrait">${artMarkup(c.art,c.name+'立绘',el.symbol,'roster-art')}</div>
       <div class="nm">${c.name}</div>
@@ -2403,7 +2409,7 @@ function buildFormation(){
       }else{
         const c=CHARACTERS[characterIndex],el=ELEMENTS[c.element];
         slot.style.setProperty('--ec',el.color);slot.style.setProperty('--ecg',el.glow+'55');
-        slot.innerHTML=`<div class="sg">${artMarkup(c.art,c.name+'头像',el.symbol,'slot-art')}</div><div class="sinfo"><div class="snm">${c.name}</div><div class="srole">${el.cn}·${c.role} · ${labels[zone]}</div></div><button class="srm" type="button" title="移出队伍" aria-label="移出 ${escapeHtml(c.name)}">✕</button>`;
+        slot.innerHTML=`<div class="sg">${artMarkup(c.art,c.name+'头像',el.symbol,'slot-art',zone==='reserve'?'face':'bust')}</div><div class="sinfo"><div class="snm">${c.name}</div><div class="srole">${el.cn}·${c.role} · ${labels[zone]}</div></div><button class="srm" type="button" title="移出队伍" aria-label="移出 ${escapeHtml(c.name)}">✕</button>`;
         slot.querySelector('.srm').onclick=event=>{event.stopPropagation();removeFormationCharacter(characterIndex);};
       }
       slot.onclick=()=>selectFormationSlot(zone,slotIndex);

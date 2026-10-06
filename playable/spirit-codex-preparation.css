@@ -39,6 +39,8 @@
 #formation-screen .slot .sg{display:block;width:100%;height:180px;border:0;border-radius:0;background:#0e1423;font-size:32px;flex:0 0 auto}
 #formation-screen .slot .sg .art-stack{background:#121726}.preparation-roster-board .slot-art img{object-fit:cover;object-position:center 15%}
 #formation-screen .art-stack img{animation:none;opacity:1;transform:none;transition:none}
+#formation-screen .slot[data-zone="front"] .character-bust,#formation-screen .slot[data-zone="back"] .character-bust{--portrait-zoom:1.25;--portrait-top:34%}
+#formation-screen .mini-art.character-bust{--portrait-top:42%}
 #formation-screen .art-stack .art-fallback{transition:none}
 #formation-screen .slot .sinfo{padding:10px 10px 12px;min-width:0}
 #formation-screen .slot .snm{font-size:16px;font-weight:700;color:#efebdf;line-height:1.4;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
